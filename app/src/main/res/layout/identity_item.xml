@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <aromatherapy.saiyi.cn.jinhaojiao.view.MyRadioGroup
+        android:id="@+id/my_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+        <RadioButton
+            android:id="@+id/identity_Goalkeeper_rb"
+            style="@style/radiobutton"
+            android:tag="门将"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="门将" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+        <RadioButton
+            android:id="@+id/identity_Bianwei_rb"
+            style="@style/radiobutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="后边卫"
+            android:text="后边卫" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+        <RadioButton
+            android:id="@+id/identity_Defender_tv"
+            style="@style/radiobutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="门将"
+            android:text="中后卫" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+        <RadioButton
+            android:id="@+id/identity_Midfielder_tv"
+            style="@style/radiobutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="后腰"
+            android:text="后腰" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+        <RadioButton
+            android:id="@+id/identity_Wingers_tv"
+            style="@style/radiobutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="边前卫"
+            android:text="边前卫" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+        <RadioButton
+            android:id="@+id/identity_Frontal_tv"
+            style="@style/radiobutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="前腰" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+
+        <RadioButton
+            android:id="@+id/identity_Center_tv"
+            style="@style/radiobutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="中锋" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+        <RadioButton
+            android:id="@+id/identity_Movies_tv"
+            style="@style/radiobutton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="影锋" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+        <RadioButton
+            style="@style/radiobutton"
+            android:id="@+id/identity_Wing_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="边锋"
+           />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+    </aromatherapy.saiyi.cn.jinhaojiao.view.MyRadioGroup>
+</LinearLayout>

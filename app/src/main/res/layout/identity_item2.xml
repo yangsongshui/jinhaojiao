@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+        <CheckBox
+            style="@style/checkbox"
+            android:id="@+id/identity_Goalkeeper_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="俱乐部教练" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+        <CheckBox
+            android:id="@+id/identity_Bianwei_rb"
+            style="@style/checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="学校教练" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+        <CheckBox
+            android:id="@+id/identity_Defender_tv"
+            style="@style/checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="裁判" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+        <CheckBox
+            android:id="@+id/identity_Midfielder_tv"
+            style="@style/checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="其他" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/tv_gary" />
+
+
+
+</LinearLayout>

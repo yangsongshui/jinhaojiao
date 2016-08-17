@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/crimson"
+    android:layout_height="match_parent"
+    android:clipChildren="false">
+    <RadioGroup
+        android:id="@+id/main_rgrpNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:background="@color/white"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rab_purpose"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:textColor="@color/rent_text_selector"
+            android:text="首页"
+            android:drawableTop="@drawable/main_rab_home"
+            android:gravity="center" />
+
+        <RadioButton
+            android:id="@+id/rab_rent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:textColor="@color/rent_text_selector"
+            android:text="定位"
+            android:drawableTop="@drawable/main_rab_location"
+            android:gravity="center" />
+
+        <RadioButton
+            android:id="@+id/rab_flowdeal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:textColor="@color/rent_text_selector"
+            android:text="社区"
+            android:drawableTop="@drawable/main_rab_community"
+            android:gravity="center" />
+
+        <RadioButton
+            android:id="@+id/rab_me"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:textColor="@color/rent_text_selector"
+            android:text="我的"
+            android:drawableTop="@drawable/main_rab_me"
+            android:gravity="center" />
+    </RadioGroup>
+
+    <FrameLayout
+        android:id="@+id/main_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/main_rgrpNavigation" />
+
+</RelativeLayout>

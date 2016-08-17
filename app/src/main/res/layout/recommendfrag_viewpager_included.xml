@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <aromatherapy.saiyi.cn.jinhaojiao.view.MyViewPager
+        android:id="@+id/recommendFrag_myVpager"
+        android:layout_width="match_parent"
+        android:layout_height="180dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/recommendFrag_myVpager"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:gravity="center" >
+        <View
+            android:id="@+id/recommendFrag_vpager_point1ForVpager"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/point" />
+        <View
+            android:id="@+id/recommendFrag_vpager_point2ForVpager"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/point" />
+        <View
+            android:id="@+id/recommendFrag_vpager_point3ForVpager"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/point" />
+        <View
+            android:id="@+id/recommendFrag_vpager_point4ForVpager"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/point" />
+		</LinearLayout>
+	</RelativeLayout>
