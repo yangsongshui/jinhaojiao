@@ -60,6 +60,7 @@
                     android:layout_above="@+id/home_num_tv"
                     android:layout_centerHorizontal="true"
                     android:text="身体状态"
+
                     android:textColor="@color/white"
                     android:textSize="12sp" />
 
@@ -69,18 +70,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:text="70"
+                    android:text="0"
                     android:textColor="@color/white"
                     android:textSize="50sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/home_num_tv"
-                    android:layout_centerHorizontal="true"
-                    android:text="点击刷新"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
             </RelativeLayout>
         </RelativeLayout>
 
@@ -97,14 +90,14 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="10dp"
-                android:src="@drawable/movie_1" />
+                android:src="@drawable/movie_2" />
 
             <TextView
                 android:id="@+id/home_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Liz"
+                android:text="昵称"
                 android:textColor="@color/black"
                 android:textSize="19sp" />
 
@@ -114,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:layout_marginLeft="5dp"
-                android:src="@drawable/lady" />
+                android:src="@drawable/man" />
         </LinearLayout>
 
         <ImageView
@@ -125,7 +118,6 @@
         <RelativeLayout
             android:id="@+id/home_step_rl"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content">
 
             <ImageView
@@ -164,7 +156,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingRight="5dp"
-                        android:text="388" />
+                        android:text="0" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -226,7 +218,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingRight="5dp"
-                        android:text="79" />
+                        android:text="0" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -288,7 +280,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingRight="5dp"
-                        android:text="5" />
+                        android:text="0" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -351,7 +343,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingRight="5dp"
-                        android:text="388" />
+                        android:text="0" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -373,7 +365,6 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/gray_90" />
-<!--
         <RelativeLayout
             android:id="@+id/home_calorie_rl"
             android:layout_width="match_parent"
@@ -413,7 +404,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingRight="5dp"
-                        android:text="388" />
+                        android:text="0" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -429,7 +420,7 @@
                 android:layout_centerVertical="true"
                 android:padding="10dp"
                 android:src="@drawable/butn_next" />
-        </RelativeLayout>-->
+        </RelativeLayout>
 
         <ImageView
             android:layout_width="match_parent"

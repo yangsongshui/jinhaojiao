@@ -8,6 +8,7 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = -256678834854180321L;
     private String username;
+    private String userID;
     private String password;
     private String address;
     private String head_pic;
@@ -22,6 +23,24 @@ public class User implements Serializable {
     private String club;
     private String height;
     private String weight;
+    private String equipmentID;
+    private String equipment ;
+
+    public String getEquipmentID() {
+        return equipmentID;
+    }
+
+    public void setEquipmentID(String equipmentID) {
+        this.equipmentID = equipmentID;
+    }
+
+    public String getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(String equipment) {
+        this.equipment = equipment;
+    }
 
     public String getHeight() {
         return height;
@@ -46,7 +65,13 @@ public class User implements Serializable {
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
+    public String getUserID() {
+        return userID;
+    }
 
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
     private Bitmap bitmap;
     public String getClub() {
         return club;
@@ -68,6 +93,11 @@ public class User implements Serializable {
         this.password = password;
         this.phone = phone;
         this.type = type;
+    }
+
+    public User(String phone, String password) {
+        this.phone = phone;
+        this.password = password;
     }
 
     public User(String username, String identity, String banji, String school, int type, String sex, String nikename, String phone, String head_pic, String address, String password) {

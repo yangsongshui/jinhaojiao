@@ -12,7 +12,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 /**
  * Created by Administrator on 2016/5/26.
  */
-public class LoginFrag extends BaseFragment {
+public class LoginFrag extends BaseFragment  {
 
     @Override
     protected void initData(View layout) {
@@ -28,4 +28,6 @@ public class LoginFrag extends BaseFragment {
     private void ClickLogin(View view) {
         startActivityForResult(new Intent(getActivity(), LoginActivity.class),1);
     }
+
+
 }

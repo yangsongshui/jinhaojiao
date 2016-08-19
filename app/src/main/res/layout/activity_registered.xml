@@ -104,7 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/iv"
-            android:layout_toStartOf="@+id/registered_getcoed_et"
+            android:layout_toStartOf="@+id/registered_getcoed_tv"
             android:background="@null"
             android:maxLines="1"
             android:hint="请输入验证码"
@@ -113,7 +113,7 @@
             android:textColorHint="@color/darkorange" />
 
         <TextView
-            android:id="@+id/registered_getcoed_et"
+            android:id="@+id/registered_getcoed_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

@@ -59,14 +59,18 @@ public class MassiveData extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        user = MyApplication.newInstance().getUser();
+        User user = MyApplication.newInstance().getUser();
         if (user != null) {
+            if (user.getBitmap() != null){
+                massive_pic_iv.setImageBitmap(user.getBitmap());
+            }else {
+                massive_pic_iv.setImageDrawable(getResources().getDrawable(R.drawable.movie_2));
+            }
             massive_name_tv.setText(user.getNikename());
-            massive_pic_iv.setImageBitmap(user.getBitmap());
-      /*      if(user.getSex().equals("男")){
+            if (user.getSex().equals("男")) {
                 massive_sex_iv.setImageResource(R.drawable.man);
-            }else if (user.getSex().equals("女"))
-                massive_sex_iv.setImageResource(R.drawable.lady);*/
+            } else if (user.getSex().equals("女"))
+                massive_sex_iv.setImageResource(R.drawable.lady);
 
         }
     }

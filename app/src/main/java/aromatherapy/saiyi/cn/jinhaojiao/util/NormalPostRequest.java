@@ -27,6 +27,8 @@ public class NormalPostRequest extends Request<JSONObject> {
         mMap = map;
     }
 
+
+
     //mMap是已经按照前面的方式,设置了参数的实例
     @Override
     protected Map<String, String> getParams() throws AuthFailureError {

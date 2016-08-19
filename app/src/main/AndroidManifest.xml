@@ -27,6 +27,13 @@
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 
+    <!-- 以下是使用wifi访问网络所需的权限 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+
     <application
         android:name=".app.MyApplication"
         android:allowBackup="true"
@@ -83,7 +90,9 @@
         <activity android:name=".activity.AddEquipment" />
         <activity android:name=".activity.CardiacRate" />
         <activity android:name=".activity.DistanceActivity" />
-        <activity android:name=".activity.VolocityActivity"></activity>
+        <activity android:name=".activity.VolocityActivity" />
+        <activity android:name=".activity.ResetPwdActivity" />
+        <activity android:name=".activity.AddDevice"></activity>
     </application>
 
 </manifest>

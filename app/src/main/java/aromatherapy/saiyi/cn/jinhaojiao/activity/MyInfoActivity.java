@@ -14,20 +14,31 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import org.json.JSONObject;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
+import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MyRadioGroup;
 
-public class MyInfoActivity extends BaseActivity {
+public class MyInfoActivity extends BaseActivity implements Response.ErrorListener {
+    private final String TAG = "MyInfoActivity";
     private int TYPE;
     private int COACH = 0;
     private int MEMBER = 1;
@@ -58,7 +69,10 @@ public class MyInfoActivity extends BaseActivity {
     RelativeLayout my_identity_rl;
     @ViewInject(R.id.my_weight_tv)
     TextView my_weight_tv;
-    List<TextView> text;
+    private Map<String, String> map = new HashMap<String, String>();
+    private LoadingDialog dialog;
+    private Toastor toastor;
+    private RequestQueue mQueue;
 
     @Override
     protected int getContentView() {
@@ -67,7 +81,11 @@ public class MyInfoActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        text = new ArrayList<>();
+        mQueue = MyApplication.newInstance().getmQueue();
+        toastor = new Toastor(this);
+        dialog = new LoadingDialog(this);
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
         user = (User) getIntent().getSerializableExtra("user");
         TYPE = user.getType();
         if (TYPE == COACH) {
@@ -77,7 +95,6 @@ public class MyInfoActivity extends BaseActivity {
             coach_identity_rl.setVisibility(View.GONE);
             my_identity_rl.setVisibility(View.VISIBLE);
         }
-        text.add(my_name_tv);
     }
 
     @Event(value = {R.id.my_definite_tv, R.id.my_back_iv,
@@ -135,8 +152,8 @@ public class MyInfoActivity extends BaseActivity {
             case R.id.my_class_rl:
                 //点击班级
                 showDialog(my_class_tv);
+                break;
             case R.id.my_weight_rl:
-                //点击班级
                 showDialog(my_weight_tv);
                 break;
         }
@@ -308,37 +325,81 @@ public class MyInfoActivity extends BaseActivity {
         }
         if (name.length() > 0 && !name.equals("")) {
             user.setUsername(name);
-        }
-        if (birthday.length() > 0 && !birthday.equals("")) {
-            user.setBirthday(birthday);
-        }
-        if (height.length() > 0 && !height.equals("")) {
-            user.setHeight(height);
-        }
-        if (weight.length() > 0 && !weight.equals("")) {
-            user.setWeight(weight);
-        }
-        if (sex.length() > 0 && !sex.equals("")) {
-            user.setSex(sex);
+            if (birthday.length() > 0 && !birthday.equals("")) {
+                user.setBirthday(birthday);
+                if (height.length() > 0 && !height.equals("")) {
+                    user.setHeight(height);
+                    if (weight.length() > 0 && !weight.equals("")) {
+                        user.setWeight(weight);
+                        if (sex.length() > 0 && !sex.equals("")) {
+                            user.setSex(sex);
+                            if (address.length() > 0 && !address.equals("")) {
+                                user.setAddress(address);
+                                if (school.length() > 0 && !school.equals("")) {
+                                    user.setSchool(school);
+                                    if (banji.length() > 0 && !banji.equals("")) {
+                                        user.setBanji(banji);
+                                        if (club.length() > 0 && !club.equals("")) {
+                                            user.setClub(club);
+                                            if (identity.length() > 0 && !identity.equals("")) {
+                                                map.clear();
+                                                user.setIdentity(identity);
+                                                map.put("userID", user.getUserID());
+                                                map.put("name", user.getUsername());
+                                                map.put("sex", user.getSex());
+                                                map.put("height", user.getHeight());
+                                                map.put("weight", user.getWeight());
+                                                map.put("birthday", user.getBirthday());
+                                                map.put("address", user.getAddress());
+                                                map.put("school", user.getSchool());
+                                                map.put("uclass", user.getBanji());
+                                                map.put("identity", user.getIdentity());
+                                                map.put("clubname", user.getClub());
+                                                mQueue.add(normalPostRequest);
+
+                                            } else
+                                                toastor.showToast("身份或位置不能为空");
+                                        } else
+                                            toastor.showToast("俱乐部不能为空");
+                                    } else
+                                        toastor.showToast("班级不能为空");
+                                } else
+                                    toastor.showToast("学校不能为空");
+                            } else
+                                toastor.showToast("地址不能为空");
+                        } else
+                            toastor.showToast("性别不能为空");
+                    } else
+                        toastor.showToast("体重不能为空");
+                } else
+                    toastor.showToast("身高不能为空");
+
+            } else
+                toastor.showToast("生日不能为空");
+
         } else
-            user.setSex("男");
-        if (address.length() > 0 && !address.equals("")) {
-            user.setAddress(address);
-        }
-        if (school.length() > 0 && !school.equals("")) {
-            user.setSchool(school);
-        }
-        if (banji.length() > 0 && !banji.equals("")) {
-            user.setBanji(banji);
-        }
-        if (club.length() > 0 && !club.equals("")) {
-            user.setClub(club);
-        }
-        if (identity.length() > 0 && !identity.equals("")) {
-            user.setIdentity(identity);
-        }
-        MyApplication.newInstance().setUser(user);
-        finish();
+            toastor.showToast("真实姓名不能为空");
     }
 
+    NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.ADDTDETAILEDUSER, new Response.Listener<JSONObject>() {
+        @Override
+        public void onResponse(JSONObject jsonObject) {
+            Log.e(TAG, jsonObject.toString());
+            dialog.dismiss();
+            if (jsonObject.optInt("resCode") == 1) {
+                toastor.showToast(jsonObject.optString("resMessage"));
+            } else if (jsonObject.optInt("resCode") == 0) {
+                MyApplication.newInstance().setUser(user);
+                toastor.showToast("资料填写成功");
+                finish();
+
+            }
+
+        }
+    }, this, map);
+
+    @Override
+    public void onErrorResponse(VolleyError volleyError) {
+        toastor.showToast("服务器异常");
+    }
 }

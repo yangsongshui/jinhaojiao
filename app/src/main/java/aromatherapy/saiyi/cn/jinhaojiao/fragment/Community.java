@@ -10,10 +10,11 @@ import android.widget.ImageView;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
+import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MyViewPager;
 
 
-public class Community extends BaseFragment {
+public class Community extends BaseFragment  {
     private static final String TAG = "RecommendFrag2";
     /**
      * UI
@@ -150,4 +151,6 @@ public class Community extends BaseFragment {
         handler.removeCallbacks(tempRun);
         super.onDestroyView();
     }
+
+
 }

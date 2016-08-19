@@ -2,12 +2,17 @@ package aromatherapy.saiyi.cn.jinhaojiao.app;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.umeng.socialize.PlatformConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 
 public class MyApplication extends Application {
@@ -15,8 +20,18 @@ public class MyApplication extends Application {
 
     private static MyApplication instance;
     public static List<Activity> activitiesList = new ArrayList<Activity>();    //活动管理集合
+    private static DeviceInfo deviceInfo=new DeviceInfo();
+
+    public  DeviceInfo getDeviceInfo() {
+        return deviceInfo;
+    }
+
+    public  void setDeviceInfo(DeviceInfo deviceInfo) {
+        MyApplication.deviceInfo = deviceInfo;
+    }
+
     //保存登录用户信息
-    private User user;
+    private User user= new User();
 
     {
         PlatformConfig.setWeixin("wx9b8ccd08509634e2", "69101961f470240bae0997616143fda1");
@@ -26,11 +41,41 @@ public class MyApplication extends Application {
 
 
     public User getUser() {
-        return user;
+        SharedPreferences sharedPre = this.getSharedPreferences("user", this.MODE_PRIVATE);
+        String phone = sharedPre.getString("phone", "");
+        String password = sharedPre.getString("password", "");
+        Log.e(TAG, password + " " + phone);
+        if (password.equals("") || password.equals("")) {
+            return null;
+        } else {
+            user.setPhone(phone);
+            user.setPassword(password);
+            return user;
+        }
     }
-
+    public void outLogin() {
+        user = null;
+        SharedPreferences sharedPre = this.getSharedPreferences("user", this.MODE_PRIVATE);
+        //获取Editor对象
+        SharedPreferences.Editor editor = sharedPre.edit();
+        //设置参数
+        editor.putString("phone", "");
+        editor.putString("password", "");
+        //提交
+        editor.commit();
+    }
     public void setUser(User user) {
         this.user = user;
+        //获取SharedPreferences对象
+        SharedPreferences sharedPre = this.getSharedPreferences("user", this.MODE_PRIVATE);
+        //获取Editor对象
+        SharedPreferences.Editor editor = sharedPre.edit();
+        //设置参数
+        editor.putString("phone", user.getPhone());
+        editor.putString("password", user.getPassword());
+        Log.e(TAG, user.getPassword() + " " + user.getPhone());
+        //提交
+        editor.commit();
     }
 
     /**
@@ -45,10 +90,15 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        mQueue = Volley.newRequestQueue(this);
         instance = this;
 
     }
+    private RequestQueue mQueue;
 
+    public RequestQueue getmQueue() {
+        return mQueue;
+    }
     /**
      * 把活动添加到活动管理集合
      *

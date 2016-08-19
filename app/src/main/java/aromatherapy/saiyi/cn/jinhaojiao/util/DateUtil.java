@@ -23,6 +23,8 @@ public class DateUtil {
 
     // 格式：年－月－日
     public static final String LONG_DATE_FORMAT = "yyyy-MM-dd";
+    // 格式：年－月－日
+    public static final String LONG_DATE_FORMAT2 = "yyyyMMdd";
 
     // 格式：月－日
     public static final String SHORT_DATE_FORMAT = "MM-dd";
