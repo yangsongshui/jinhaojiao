@@ -10,7 +10,9 @@ import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
+import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Day;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Month;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Time;
@@ -20,12 +22,15 @@ import aromatherapy.saiyi.cn.jinhaojiao.fragment.Year;
 public class LineDataActivity extends BaseActivity {
     @ViewInject(R.id.line_rgrpNavigation)
     RadioGroup rgrpNavigation;
-
+    @ViewInject(R.id.line_stpe_tv)
+    TextView line_stpe_tv;
+    @ViewInject(R.id.line_calorie_tv)
+    TextView line_calorie_tv;
     @ViewInject(R.id.line_title_tv)
     TextView line_title_tv;
     private Fragment[] frags = new Fragment[5];
     private int currentFragIndex = -1;
-
+    DeviceInfo deviceInfo;
     @Override
     protected int getContentView() {
         return R.layout.activity_line_data;
@@ -37,6 +42,13 @@ public class LineDataActivity extends BaseActivity {
             line_title_tv.setText("卡路里");
         } else if (getIntent().getIntExtra("type", -1) == 0) {
             line_title_tv.setText("步数");
+        }
+        deviceInfo=MyApplication.newInstance().getDeviceInfo();
+        if (deviceInfo.getCalorie()!=null){
+            line_calorie_tv.setText(deviceInfo.getCalorie());
+        }
+        if (deviceInfo.getSteps()!=null){
+            line_stpe_tv.setText(deviceInfo.getSteps());
         }
         initNavigation();
         showFrag(0);

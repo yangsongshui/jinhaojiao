@@ -44,12 +44,14 @@ public class MyApplication extends Application {
         SharedPreferences sharedPre = this.getSharedPreferences("user", this.MODE_PRIVATE);
         String phone = sharedPre.getString("phone", "");
         String password = sharedPre.getString("password", "");
+        String equipmentID = sharedPre.getString("equipmentID", "");
         Log.e(TAG, password + " " + phone);
         if (password.equals("") || password.equals("")) {
             return null;
         } else {
             user.setPhone(phone);
             user.setPassword(password);
+            user.setEquipmentID(equipmentID);
             return user;
         }
     }
@@ -73,6 +75,7 @@ public class MyApplication extends Application {
         //设置参数
         editor.putString("phone", user.getPhone());
         editor.putString("password", user.getPassword());
+        editor.putString("equipmentID", user.getEquipmentID());
         Log.e(TAG, user.getPassword() + " " + user.getPhone());
         //提交
         editor.commit();

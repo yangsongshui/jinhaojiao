@@ -10,16 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
-import org.json.JSONObject;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.activity.CardiacRate;
@@ -30,15 +22,11 @@ import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
-import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.view.RoundProgressBar;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Home extends BaseFragment implements Response.ErrorListener {
+public class Home extends BaseFragment  {
     private final static String TAG = Home.class.getSimpleName();
     User user;
     private static double STEPNUM=3000.0;
@@ -66,24 +54,18 @@ public class Home extends BaseFragment implements Response.ErrorListener {
     @ViewInject(R.id.home_num_tv)
     TextView home_num_tv;
     MyBroadcastReciver reciver;
-    private Map<String, String> map = new HashMap<String, String>();
-    private LoadingDialog dialog;
-    private Toastor toastor;
-    private RequestQueue mQueue;
+
     @Override
     protected void initData(View layout) {
-        IntentFilter intentFilter = new IntentFilter("DATA_RECEIVE_BROADCAST");
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("DATA_RECEIVE_BROADCAST");
+        intentFilter.addAction("CN_ABEL_ACTION_BROADCAST");
         reciver = new MyBroadcastReciver();
         getActivity().registerReceiver(reciver, intentFilter);
-        Log.e("Home", "initData");
         if (MyApplication.newInstance().getDeviceInfo().getSteps()!=null){
             transferMessage(MyApplication.newInstance().getDeviceInfo());
         }
-        toastor = new Toastor(getActivity());
-        dialog = new LoadingDialog(getActivity(), "获取数据中...");
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
-        mQueue = MyApplication.newInstance().getmQueue();
+
     }
 
     @Override
@@ -141,35 +123,9 @@ public class Home extends BaseFragment implements Response.ErrorListener {
                 } else if (user.getSex().equals("女"))
                     home_sex_iv.setImageResource(R.drawable.lady);
             }
-            if (user.getEquipmentID() != null) {
-                map.clear();
-                map.put("equipmentID", user.getEquipmentID());
-                map.put("time", textClock.getText().toString());
-                mQueue.add(normalPostRequest);
-            }
+
         }
     }
-
-    NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.FINDHEARTRATEMOTION, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                MyApplication.newInstance().outLogin();
-                toastor.showToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                JSONObject object=jsonObject.optJSONObject("resBody");
-                home_distance_tv.setText(object.optString("distance"));
-                home_heartthrob_tv.setText(object.optString("Heartrate"));
-                home_step_tv.setText(object.optString("steps"));
-                home_volocity_tv.setText(object.optString("speed"));
-                home_calorie_tv.setText(object.optString("Calorie"));
-            }
-
-        }
-    }, this, map);
-
     public void transferMessage(DeviceInfo deviceInfo) {
         double num=Integer.parseInt(deviceInfo.getSteps())/STEPNUM;
         home_num_tv.setText((int)(num*10)+"");
@@ -187,12 +143,10 @@ public class Home extends BaseFragment implements Response.ErrorListener {
             String action = intent.getAction();
             if (action.equals("DATA_RECEIVE_BROADCAST")) {
                 transferMessage((DeviceInfo) intent.getSerializableExtra("device"));
+            }else if (action.equals("CN_ABEL_ACTION_BROADCAST")){
+                initUser();
             }
         }
     }
-    @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        dialog.dismiss();
-        toastor.showToast("服务器异常");
-    }
+
 }

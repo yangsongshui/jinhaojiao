@@ -4,6 +4,9 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -11,22 +14,29 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import org.json.JSONObject;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
+import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MyMarkerView;
 
 /**
  * Created by Administrator on 2016/5/28.
  */
-public class Day extends BaseFragment implements OnChartValueSelectedListener {
+public class Day extends BaseFragment implements OnChartValueSelectedListener, Response.ErrorListener {
     @ViewInject(R.id.line_chart)
     LineChart mChart;
     @ViewInject(R.id.textClock)
@@ -44,9 +54,19 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener {
     @ViewInject(R.id.day_kaluli)
     TextView day_kaluli;
     private int TYPE = 0;
-
+    private String time="";
+    NormalPostRequest normalPostRequest;
+    private Map<String, String> map = new HashMap<String, String>();
+    private LoadingDialog dialog;
+    private Toastor toastor;
+    private RequestQueue mQueue;
     @Override
     protected void initData(View layout) {
+        toastor = new Toastor(getActivity());
+        dialog = new LoadingDialog(getActivity());
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        mQueue = MyApplication.newInstance().getmQueue();
         TYPE = getActivity().getIntent().getIntExtra("type", -1);
         if (TYPE == 1 || TYPE == 0) {
             day_data_tv.setText("步");
@@ -167,11 +187,15 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener {
         }
     }
 
+    private void QueueRequest(final String URL,Response.Listener<JSONObject> listener) {
+        normalPostRequest = new NormalPostRequest(URL, listener, this, map);
 
+    }
     List<String> times = new ArrayList<>();
 
     private void init() {
         times.clear();
+        time="";
         times.add("02:00");
         times.add("04:00");
         times.add("06:00");
@@ -184,5 +208,11 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener {
         times.add("20:00");
         times.add("22:00");
         times.add("24:00");
+        time= DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2)+"0000,0200,0400,0600,0800,1000,1200,1400,1600,1800,2000,2200,2400";
+    }
+    @Override
+    public void onErrorResponse(VolleyError volleyError) {
+        dialog.dismiss();
+        toastor.showToast("服务器异常");
     }
 }

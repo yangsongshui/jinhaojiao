@@ -87,7 +87,6 @@
             android:name="UMENG_APPKEY"
             android:value="574e864167e58e4bf0001cf7" />
 
-        <activity android:name=".activity.AddEquipment" />
         <activity android:name=".activity.CardiacRate" />
         <activity android:name=".activity.DistanceActivity" />
         <activity android:name=".activity.VolocityActivity" />

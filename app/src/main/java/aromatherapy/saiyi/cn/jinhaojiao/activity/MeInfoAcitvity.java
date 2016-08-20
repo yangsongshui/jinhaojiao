@@ -367,24 +367,28 @@ public class MeInfoAcitvity extends BaseActivity implements Response.ErrorListen
                                         if (club.length() > 0 && !club.equals("")) {
                                             user.setClub(club);
                                             if (identity.length() > 0 && !identity.equals("")) {
-                                                map.clear();
                                                 user.setIdentity(identity);
-                                                map.put("userID", user.getUserID());
-                                                map.put("name", user.getUsername());
-                                                map.put("sex", user.getSex());
-                                                map.put("height", user.getHeight());
-                                                map.put("weight", user.getWeight());
-                                                map.put("birthday", user.getBirthday());
-                                                map.put("address", user.getAddress());
-                                                map.put("school", user.getSchool());
-                                                map.put("uclass", user.getBanji());
-                                                map.put("identity", user.getIdentity());
-                                                map.put("clubname", user.getClub());
-                                                if (photo.trim().length() > 0) {
-                                                    map.put("headPicByte", photo);
-                                                }
-                                                mQueue.add(normalPostRequest2);
-
+                                                if (nickname.length() > 0 && !nickname.equals("")) {
+                                                    user.setNikename(nickname);
+                                                    map.clear();
+                                                    map.put("userID", user.getUserID());
+                                                    map.put("nickName", user.getNikename());
+                                                    map.put("name", user.getUsername());
+                                                    map.put("sex", user.getSex());
+                                                    map.put("height", user.getHeight());
+                                                    map.put("weight", user.getWeight());
+                                                    map.put("birthday", user.getBirthday());
+                                                    map.put("address", user.getAddress());
+                                                    map.put("school", user.getSchool());
+                                                    map.put("uclass", user.getBanji());
+                                                    map.put("identity", user.getIdentity());
+                                                    map.put("clubname", user.getClub());
+                                                    if (photo.trim().length() > 0) {
+                                                        map.put("headPicByte", photo);
+                                                    }
+                                                    mQueue.add(normalPostRequest2);
+                                                } else
+                                                    toastor.showToast("昵称不能为空");
                                             } else
                                                 toastor.showToast("身份或位置不能为空");
                                         } else

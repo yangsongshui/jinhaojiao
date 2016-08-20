@@ -3,6 +3,9 @@ package aromatherapy.saiyi.cn.jinhaojiao.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -131,12 +134,16 @@ public class LoginActivity extends BaseActivity implements Response.ErrorListene
                     user.setType(1);
                 } else
                     user.setType(0);
-                user.setNikename(json.optString("nickname"));
+                user.setNikename(json.optString("nickName"));
                 if (json.optString("equipmentID").length() > 0) {
                     user.setEquipmentID(json.optString("equipmentID"));
                 }
                 if (json.optString("equipment").length() > 0) {
                     user.setEquipment(json.optString("equipment"));
+                }
+                if (json.optString("headPicByte").length()>0){
+                user.setBitmap(stringtoBitmap(json.optString("headPicByte")));
+
                 }
                 MyApplication.newInstance().setUser(user);
                 toastor.showToast("登陆成功");
@@ -147,7 +154,19 @@ public class LoginActivity extends BaseActivity implements Response.ErrorListene
 
         }
     }, this, map);
+    public Bitmap stringtoBitmap(String string) {
+        //将字符串转换成Bitmap类型
+        Bitmap bitmap = null;
+        try {
+            byte[] bitmapArray;
+            bitmapArray = Base64.decode(string, Base64.DEFAULT);
+            bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        return bitmap;
+    }
     private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
         builder.setTitle("选择身份");
@@ -179,7 +198,8 @@ public class LoginActivity extends BaseActivity implements Response.ErrorListene
         @Override
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
             Toast.makeText(getApplicationContext(), "Authorize succeed", Toast.LENGTH_SHORT).show();
-
+            data.get("openid");
+            Log.e("-----", data.get("openid"));
         }
 
         @Override

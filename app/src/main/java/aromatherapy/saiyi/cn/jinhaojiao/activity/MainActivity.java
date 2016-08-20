@@ -49,7 +49,7 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
     private RequestQueue mQueue;
     private Handler handler;
     private Runnable myRunnable;
-
+    private User user;
     @Override
     protected int getContentView() {
         return R.layout.activity_main;
@@ -57,12 +57,13 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
 
     @Override
     protected void init() {
+        user=MyApplication.newInstance().getUser();
         mQueue = MyApplication.newInstance().getmQueue();
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        if (MyApplication.newInstance().getUser() != null) {
+        if (user != null) {
             dialog.show();
             map.clear();
             map.put("phoneNumber", MyApplication.newInstance().getUser().getPhone());
@@ -78,10 +79,13 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
             public void run() {
                 Log.e(TAG, "更新数据");
                 map.clear();
-                map.put("equipmentID", MyApplication.newInstance().getUser().getEquipmentID());
-                map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
-                mQueue.add(normalPostRequest2);
-                handler.postDelayed(this, 10000);
+                if (user.getEquipmentID()!=null){
+                    map.put("equipmentID", user.getEquipmentID());
+                    map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
+                    mQueue.add(normalPostRequest2);
+                    handler.postDelayed(this, 10000);
+                }
+
 
             }
         };
@@ -168,7 +172,6 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
                 MyApplication.newInstance().outLogin();
                 toastor.showToast(jsonObject.optString("resMessage"));
             } else if (jsonObject.optInt("resCode") == 0) {
-
                 JSONObject json = jsonObject.optJSONObject("resBody");
                 User user = MyApplication.newInstance().getUser();
                 user.setUserID(json.optString("userID"));
@@ -190,7 +193,11 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
                     user.setEquipmentID(json.optString("equipmentID"));
                     handler.postDelayed(myRunnable, 10);
                 }
-
+                toastor.showToast("登陆成功");
+                Intent intent2 = new Intent();
+                intent2.setAction("CN_ABEL_ACTION_BROADCAST");
+                //发送 一个无序广播
+                sendBroadcast(intent2);
             }
         }
     }, this, map);

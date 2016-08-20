@@ -53,6 +53,18 @@ public class Constant {
      **/
     public static final String FINDMOTIONBYTIME = BASE_URL + "/findmotionbytime";
     /**
+     * 按时间查询距离
+     **/
+    public static final String FINDJULIBYTIME = BASE_URL + "/findjulibytime";
+    /**
+     * 按时间查询速度
+     **/
+    public static final String FINDSHUDUBYTIME = BASE_URL + "/findshudubytime";
+    /**
+     * 按时间查询心率
+     **/
+    public static final String FINDXINGTIAOBYTIME = BASE_URL + "/findxingtiaobytime";
+    /**
      * QQ 微信登陆
      **/
     public static final String QQLOGIN = BASE_URL + "/qqlogin";
