@@ -1,17 +1,19 @@
 package aromatherapy.saiyi.cn.jinhaojiao.fragment;
 
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
-import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MyViewPager;
+import butterknife.OnClick;
 
 
 public class Community extends BaseFragment  {
@@ -40,7 +42,7 @@ public class Community extends BaseFragment  {
     private boolean isResetTimer = true; // 手动改变viewpager显示页时，要重置自动滚动计时
 
     @Override
-    protected void initData(View layout) {
+    protected void initData(View layout, Bundle savedInstanceState) {
         initVpager(layout);
     }
 
@@ -151,6 +153,10 @@ public class Community extends BaseFragment  {
         handler.removeCallbacks(tempRun);
         super.onDestroyView();
     }
-
+    @OnClick(value = {R.id.shousuo,R.id.news_iv,R.id.saishi,R.id.tuandui,R.id.geren,R.id.qiugoumai,
+            R.id.zhuangbei,R.id.dingpiao,R.id.tiyulvyou,R.id.jingji,R.id.jingrong,R.id.jigou,R.id.shijie})
+    public void ClickView(View view){
+        Toast.makeText(getActivity(),"该功能暂未开放",Toast.LENGTH_SHORT).show();
+    }
 
 }

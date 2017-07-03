@@ -104,7 +104,7 @@ public class DateUtil {
      * @param date
      * @return
      */
-    public static String dateToString(java.util.Date date, String format) {
+        public static String dateToString(java.util.Date date, String format) {
         String result = "";
         SimpleDateFormat formater = new SimpleDateFormat(format);
         try {

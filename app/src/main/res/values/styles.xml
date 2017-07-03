@@ -10,11 +10,18 @@
     <style name="text">
         <item name="android:textSize">17sp</item>
         <item name="android:padding">12dp</item>
+        <item name="android:gravity">center</item>
         <item name="android:textColor">@color/black_c</item>
     </style>
-    <style name="text2">
+    <style name="text3">
+        <item name="android:textSize">14sp</item>
+
+        <item name="android:textColor">@color/darkorange</item>
+    </style>
+    <style name="text2">o
         <item name="android:textSize">17sp</item>
         <item name="android:padding">12dp</item>
+        <item name="android:gravity">center</item>
         <item name="android:textColor">@color/darkorange</item>
     </style>
     <style name="radiobutton">

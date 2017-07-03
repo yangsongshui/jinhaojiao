@@ -20,7 +20,7 @@ public class MyRadioGroup extends LinearLayout {
 	// tracks children radio buttons checked state
 	private CompoundButton.OnCheckedChangeListener mChildOnCheckedChangeListener;
 
-	// when true, mOnCheckedChangeListener discards events
+	// when true, mOnCheckedChangeListener discards OnClicks
 	private boolean mProtectFromCheckedChange = false;
 
 	private OnCheckedChangeListener mOnCheckedChangeListener;
@@ -75,7 +75,6 @@ public class MyRadioGroup extends LinearLayout {
 	@Override
 	public void addView(final View child, int index, ViewGroup.LayoutParams params) {
 		if (child instanceof RadioButton) {
-
 			((RadioButton) child).setOnTouchListener(new OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
@@ -87,6 +86,7 @@ public class MyRadioGroup extends LinearLayout {
 					return true;
 				}
 			});
+
 
 		} else if(child instanceof LinearLayout){
 			int childCount = ((LinearLayout) child).getChildCount();
@@ -206,9 +206,9 @@ public class MyRadioGroup extends LinearLayout {
 	}
 
 	@Override
-	public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
-		super.onInitializeAccessibilityEvent(event);
-		event.setClassName(MyRadioGroup.class.getName());
+	public void onInitializeAccessibilityEvent(AccessibilityEvent Event) {
+		super.onInitializeAccessibilityEvent(Event);
+		Event.setClassName(MyRadioGroup.class.getName());
 	}
 
 	@Override
@@ -271,7 +271,7 @@ public class MyRadioGroup extends LinearLayout {
 
 	private class CheckedStateTracker implements CompoundButton.OnCheckedChangeListener {
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			// prevents from infinite recursion
+			// prOnClicks from infinite recursion
 			if (mProtectFromCheckedChange) {
 				return;
 			}

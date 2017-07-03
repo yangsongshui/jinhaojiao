@@ -1,9 +1,13 @@
 package aromatherapy.saiyi.cn.jinhaojiao.fragment;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -11,47 +15,123 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import org.xutils.view.annotation.Event;
-import org.xutils.view.annotation.ViewInject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
+import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
+import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MyMarkerView;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by Administrator on 2016/5/28.
  */
-public class Week extends BaseFragment implements OnChartValueSelectedListener {
-    @ViewInject(R.id.line_chart)
+public class Week extends BaseFragment implements OnChartValueSelectedListener, Response.ErrorListener {
+    private final static String TAG = Week.class.getSimpleName();
+    @BindView(R.id.line_chart)
     LineChart mChart;
-    @ViewInject(R.id.textClock)
+    @BindView(R.id.textClock)
     TextView textClock;
 
-    @ViewInject(R.id.week_data)
+    @BindView(R.id.week_data)
     TextView week_data;
-
-    @ViewInject(R.id.week_tiem)
+    @BindView(R.id.tweek_kaluli)
+    TextView week_kaluli;
+    @BindView(R.id.week_tiem)
     TextView week_tiem;
     DateUtil util = new DateUtil();
     Date data;
-    SimpleDateFormat format ;
+    SimpleDateFormat format;
+    SimpleDateFormat format2;
+    private Map<String, String> map = new HashMap<String, String>();
+    private LoadingDialog dialog;
+    private Toastor toastor;
+    private RequestQueue mQueue;
+    List<String> Calorie = new ArrayList<>();
+    List<String> steps = new ArrayList<>();
+    NormalPostRequest normalPostRequest;
+    User user;
     @Override
-    protected void initData(View layout) {
+    protected void initData(View layout, Bundle savedInstanceState) {
+        user = MyApplication.newInstance().getUser();
+        toastor = new Toastor(getActivity());
+        dialog = new LoadingDialog(getActivity());
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        mQueue = MyApplication.newInstance().getmQueue();
         initChart();
         data = new Date();
         format = new SimpleDateFormat("MM.dd");
-        data=util.getDateOfMondayInWeek();
-        textClock.setText( format.format(data) + "-" + format.format(util.nextDay(data, 6)));
+        format2 = new SimpleDateFormat("yyyyMMdd,");
+        data = util.getDateOfMondayInWeek();
+        textClock.setText(format.format(data) + "-" + format.format(util.nextDay(data, 6)));
+        if (MyApplication.newInstance().getEquipmentID() != null) {
+            gettiem();
+            map.put("equipmentID",MyApplication.newInstance().getEquipmentID());
+            //map.put("time", string);
+            map.put("time", string);
+            map.put("type", "3");
+            if (user.getType() == 1)
+                map.put("userID", user.getUserID());
+            else {
+                user= (User) getActivity().getIntent().getSerializableExtra("student");
+                map.put("userID", user.getUserID());
+            }
+            QueueRequest(Constant.FINDMOTIONBYTIME, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+                    android.util.Log.e(TAG, jsonObject.toString());
+                    dialog.dismiss();
+                    if (jsonObject.optInt("resCode") == 1) {
+                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                    } else if (jsonObject.optInt("resCode") == 0) {
+                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                        initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+                    }
+                }
+            });
+            mQueue.add(normalPostRequest);
+        }
+    }
+
+    private void QueueRequest(final String URL, Response.Listener<JSONObject> listener) {
+        normalPostRequest = new NormalPostRequest(URL, listener, this, map);
+
     }
 
     @Override
     protected int getContentView() {
         return R.layout.fragment_week;
+    }
+
+    private void initInfo(JSONArray jsonArray) {
+        Calorie.clear();
+        steps.clear();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            Calorie.add(jsonArray.optJSONObject(i).optString("Calorie"));
+            steps.add(jsonArray.optJSONObject(i).optString("steps"));
+            android.util.Log.e("--", steps.get(i) + " " + jsonArray.length() + " " + i);
+        }
+        LineData data = getLineData();
+        data.setDrawValues(false); //隐藏坐标轴数据
+        mChart.setData(data);
+        mChart.invalidate();
     }
 
     private void initChart() {
@@ -85,10 +165,7 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener {
         mChart.getLegend().setEnabled(false);
         MyMarkerView myMarkerView = new MyMarkerView(getActivity(), R.layout.custom_marker_view);
         mChart.setMarkerView(myMarkerView);
-        LineData data = getLineData();
         mChart.setOnChartValueSelectedListener(this);
-        data.setDrawValues(false); //隐藏坐标轴数据
-        mChart.setData(data);
 
     }
 
@@ -104,8 +181,8 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener {
         }
 
         ArrayList<Entry> yVals = new ArrayList<Entry>();
-        for (int i = 0; i < yy.length; i++) {
-            yVals.add(new Entry(Float.parseFloat(yy[i]), i));
+        for (int i = 0; i < steps.size(); i++) {
+            yVals.add(new Entry(Float.parseFloat(steps.get(i)), i));
         }
 
         LineDataSet set1 = new LineDataSet(yVals, "");
@@ -123,8 +200,11 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener {
 
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-        week_data.setText(yy[e.getXIndex()]);
         week_tiem.setText(util.dayNames[e.getXIndex()]);
+        week_data.setText(steps.get(e.getXIndex()));
+        if (Calorie.size() > 0) {
+            week_kaluli.setText(Calorie.get(e.getXIndex()));
+        }
     }
 
     @Override
@@ -133,19 +213,89 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener {
     }
 
 
-    @Event(value = {R.id.week_next, R.id.week_up})
-    private void Click(View view) {
+    @OnClick(value = {R.id.week_next, R.id.week_up})
+    public void Click(View view) {
         switch (view.getId()) {
             case R.id.week_next:
-                textClock.setText( format.format(data) + "-" + format.format(util.nextDay(data,6)));
-                data=util.nextDay(data,7);
+                gettiem();
+                textClock.setText(format.format(data) + "-" + format.format(util.nextDay(data, 6)));
+                data = util.nextDay(data, 7);
                 break;
             case R.id.week_up:
-                data=util.nextDay(data,-7);
-                textClock.setText( format.format(util.nextDay(data,-7)) + "-" + format.format(util.nextDay(data,-1)));
+                data = util.nextDay(data, -7);
+                textClock.setText(format.format(util.nextDay(data, -7)) + "-" + format.format(util.nextDay(data, -1)));
+                gettiem2();
                 break;
             default:
                 break;
         }
+    }
+
+    String string = "";
+
+    private void gettiem() {
+        string = format2.format(data);
+        for (int i = 1; i < 7; i++) {
+            string += format2.format(util.nextDay(data, i));
+            Log.e("----", string);
+        }
+        string = string.substring(0, string.length() - 1);
+        Log.e("----", string);
+        if ( MyApplication.newInstance().getEquipmentID() != null) {
+            map.clear();
+            map.put("equipmentID",  MyApplication.newInstance().getEquipmentID());
+            map.put("time", string);
+            map.put("type", "3");
+            QueueRequest(Constant.FINDMOTIONBYTIME, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+                    android.util.Log.e(TAG, jsonObject.toString());
+                    dialog.dismiss();
+                    if (jsonObject.optInt("resCode") == 1) {
+                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                    } else if (jsonObject.optInt("resCode") == 0) {
+                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                        initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+                    }
+                }
+            });
+            mQueue.add(normalPostRequest);
+        }
+    }
+
+    private void gettiem2() {
+        string = "";
+        for (int i = -7; i < -1; i++) {
+            string += format2.format(util.nextDay(data, i));
+        }
+        string += format2.format(util.nextDay(data, -1));
+        string = string.substring(0, string.length() - 1);
+        Log.e("----", string);
+        if ( MyApplication.newInstance().getEquipmentID() != null) {
+            map.clear();
+            map.put("equipmentID",MyApplication.newInstance().getEquipmentID());
+            map.put("time", string);
+            map.put("type", "3");
+            QueueRequest(Constant.FINDMOTIONBYTIME, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+                    android.util.Log.e(TAG, jsonObject.toString());
+                    dialog.dismiss();
+                    if (jsonObject.optInt("resCode") == 1) {
+                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                    } else if (jsonObject.optInt("resCode") == 0) {
+                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                        initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+                    }
+                }
+            });
+            mQueue.add(normalPostRequest);
+        }
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError volleyError) {
+        dialog.dismiss();
+        toastor.getSingletonToast("服务器异常");
     }
 }

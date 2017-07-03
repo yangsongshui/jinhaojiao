@@ -16,7 +16,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="8dp"
-            android:layout_toStartOf="@+id/imageView7"
+            android:layout_toStartOf="@+id/news_iv"
+            android:id="@+id/shousuo"
             android:background="@drawable/community_title"
             android:orientation="horizontal">
 
@@ -36,7 +37,8 @@
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/imageView7"
+
+            android:id="@+id/news_iv"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
@@ -62,6 +64,7 @@
             android:orientation="horizontal">
 
             <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
+                android:id="@+id/saishi"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="18dp"
@@ -87,6 +90,7 @@
 
                 <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
                     android:layout_width="match_parent"
+                    android:id="@+id/tuandui"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:background="@drawable/community_ll"
@@ -98,6 +102,7 @@
 
 
                 <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
+                    android:id="@+id/geren"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="10dp"
@@ -121,6 +126,7 @@
 
             <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
                 android:layout_width="0dp"
+                android:id="@+id/qiugoumai"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="18dp"
                 android:layout_marginTop="16dp"
@@ -153,6 +159,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
+                        android:id="@+id/zhuangbei"
                         android:background="@drawable/community_ll2"
                         android:gravity="center"
                         android:text="装备"
@@ -160,6 +167,7 @@
 
                     <TextView
                         android:layout_width="0dp"
+                        android:id="@+id/dingpiao"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1"
@@ -174,6 +182,7 @@
                     android:layout_height="0dp"
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
+                    android:id="@+id/tiyulvyou"
                     android:background="@drawable/community_ll2"
                     android:drawableLeft="@drawable/travel"
                     android:drawablePadding="5dp"
@@ -211,6 +220,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/community_ll3"
                         android:gravity="center"
+                        android:id="@+id/jingji"
                         android:text="经济"
                         android:textColor="@color/white" />
 
@@ -219,6 +229,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1"
+                        android:id="@+id/jingrong"
                         android:background="@drawable/community_ll3"
                         android:gravity="center"
                         android:text="金融"
@@ -226,6 +237,7 @@
                 </LinearLayout>
 
                 <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
+                    android:id="@+id/jigou"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="10dp"
@@ -243,6 +255,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="18dp"
                 android:layout_marginRight="18dp"
+                android:id="@+id/shijie"
                 android:layout_marginTop="16dp"
                 android:layout_weight="1"
                 android:background="@drawable/community_ll3"

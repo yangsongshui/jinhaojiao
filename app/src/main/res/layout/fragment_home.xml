@@ -114,8 +114,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/gray_90" />
-
-        <RelativeLayout
+        在<RelativeLayout
             android:id="@+id/home_step_rl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

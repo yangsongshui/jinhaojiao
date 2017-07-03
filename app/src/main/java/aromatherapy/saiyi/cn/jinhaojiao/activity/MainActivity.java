@@ -14,7 +14,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
-import org.xutils.view.annotation.ViewInject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +23,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import aromatherapy.saiyi.cn.jinhaojiao.fragment.Coach;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Community;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Home;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Location;
@@ -36,10 +36,11 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.MD5;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
+import butterknife.BindView;
 
 public class MainActivity extends BaseActivity implements Response.ErrorListener {
     public static final String TAG = "MainActivity";
-    @ViewInject(R.id.main_rgrpNavigation)
+    @BindView(R.id.main_rgrpNavigation)
     RadioGroup rgrpNavigation;
     private Fragment[] frags = new Fragment[4];
     private int currentFragIndex = -1;
@@ -49,7 +50,9 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
     private RequestQueue mQueue;
     private Handler handler;
     private Runnable myRunnable;
+    private Runnable myRunnable2;
     private User user;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_main;
@@ -57,18 +60,26 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
 
     @Override
     protected void init() {
-        user=MyApplication.newInstance().getUser();
+        user = MyApplication.newInstance().getUser();
         mQueue = MyApplication.newInstance().getmQueue();
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         if (user != null) {
-            dialog.show();
-            map.clear();
-            map.put("phoneNumber", MyApplication.newInstance().getUser().getPhone());
-            map.put("passWord", MD5.getMD5(MyApplication.newInstance().getUser().getPassword()));
-            mQueue.add(normalPostRequest);
+            if (user.getPassword() != null && user.getPassword().length() > 0) {
+                dialog.show();
+                map.clear();
+                map.put("phoneNumber", user.getPhone());
+                map.put("passWord", MD5.getMD5(user.getPassword()));
+                mQueue.add(normalPostRequest);
+            } else if (user.getOpenid() != null && user.getOpenid().length() > 0) {
+                dialog.show();
+                map.clear();
+                map.put("account", user.getOpenid());
+                mQueue.add(normalPostRequest3);
+            }
+
         }
         initNavigation();
         showFrag(0);
@@ -79,8 +90,9 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
             public void run() {
                 Log.e(TAG, "更新数据");
                 map.clear();
-                if (user.getEquipmentID()!=null){
+                if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
                     map.put("equipmentID", user.getEquipmentID());
+                    map.put("userID",user.getUserID());
                     map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
                     mQueue.add(normalPostRequest2);
                     handler.postDelayed(this, 10000);
@@ -89,13 +101,35 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
 
             }
         };
+        myRunnable2 = new Runnable() {
+            @Override
+            public void run() {
+                user = MyApplication.newInstance().getUser();
+                if (user != null)
+                    if (user.getType() == 1) {
+                        //学员
+                        FragmentTransaction fragTran = getSupportFragmentManager()
+                                .beginTransaction();
+                        frags[0] = new Home();
+                        fragTran.add(R.id.main_frame,
+                                frags[0]);
+                        fragTran.commit();
+                        rgrpNavigation.check(R.id.rab_purpose);
+                    } else if (user.getType() == 0) {
+                        //教练
+                        FragmentTransaction fragTran = getSupportFragmentManager()
+                                .beginTransaction();
+                        frags[0] = new Coach();
+                        fragTran.add(R.id.main_frame,
+                                frags[0]);
+                        fragTran.commit();
+                        rgrpNavigation.check(R.id.rab_purpose);
+                    }
+            }
+        };
+
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
 
     /**
      * 初始化碎片的viewpager
@@ -133,9 +167,17 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
     private Fragment getFrag(int index) {
         switch (index) {
             case 0:
-                return new Home();
+                if (user != null) {
+                    if (user.getType() == 1)
+                        return new Home();
+                    else if (user.getType() == 0)
+                        return new Coach();
+
+                } else {
+                    return new Home();
+                }
             case 1:
-                return new Location();
+                return Location.newInstance();
             case 2:
                 return new Community();
             case 3:
@@ -157,10 +199,11 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
             frags[3] = new Me();
             fragTran.replace(R.id.main_frame,
                     frags[3]);
-            Log.e(TAG, "Me");
+
             fragTran.commit();
             type = 0;
         }
+
     }
 
     int type = 0;
@@ -168,9 +211,10 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
         @Override
         public void onResponse(JSONObject jsonObject) {
             Log.e(TAG, jsonObject.toString());
+            dialog.dismiss();
             if (jsonObject.optInt("resCode") == 1) {
                 MyApplication.newInstance().outLogin();
-                toastor.showToast(jsonObject.optString("resMessage"));
+                toastor.getSingletonToast(jsonObject.optString("resMessage"));
             } else if (jsonObject.optInt("resCode") == 0) {
                 JSONObject json = jsonObject.optJSONObject("resBody");
                 User user = MyApplication.newInstance().getUser();
@@ -188,26 +232,85 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
                 if (json.optString("equipment").length() > 0) {
                     user.setEquipment(json.optString("equipment"));
                     Log.e(TAG, user.getEquipment());
+
                 }
                 if (json.optString("equipmentID").length() > 0) {
                     user.setEquipmentID(json.optString("equipmentID"));
-                    handler.postDelayed(myRunnable, 10);
+                   handler.postDelayed(myRunnable, 10);
+
                 }
-                toastor.showToast("登陆成功");
+                MyApplication.newInstance().setUser(user);
+                toastor.getSingletonToast("登陆成功");
                 Intent intent2 = new Intent();
                 intent2.setAction("CN_ABEL_ACTION_BROADCAST");
                 //发送 一个无序广播
                 sendBroadcast(intent2);
+                handler.postDelayed(myRunnable2, 2);
             }
         }
-    }, this, map);
+    }, new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            dialog.dismiss();
+            MyApplication.newInstance().outLogin();
+            toastor.getSingletonToast("登陆失败，请重新登陆...");
+        }
+    }, map);
+    NormalPostRequest normalPostRequest3 = new NormalPostRequest(Constant.QQLOGIN, new Response.Listener<JSONObject>() {
+        @Override
+        public void onResponse(JSONObject jsonObject) {
+            Log.e(TAG, jsonObject.toString());
+            dialog.dismiss();
+            if (jsonObject.optInt("resCode") == 1) {
+                toastor.getSingletonToast(jsonObject.optString("resMessage"));
+            } else if (jsonObject.optInt("resCode") == 0) {
+                JSONObject json = jsonObject.optJSONObject("resBody");
+                User user = MyApplication.newInstance().getUser();
+                user.setUserID(json.optString("userID"));
+                user.setSex(json.optString("sex"));
+                if (json.optInt("flag") == 1) {
+                    user.setType(1);
+                } else {
+                    user.setType(0);
+
+                }
+                user.setNikename(json.optString("nickName"));
+                if (json.optString("equipmentID").length() > 0) {
+                    user.setEquipmentID(json.optString("equipmentID"));
+
+                }
+                if (json.optString("equipment").length() > 0) {
+                    user.setEquipment(json.optString("equipment"));
+                }
+                if (json.optString("headPicByte").length() > 0) {
+                    user.setBitmap(stringtoBitmap(json.optString("headPicByte")));
+
+                }
+                MyApplication.newInstance().setUser(user);
+                toastor.getSingletonToast("登陆成功");
+                Intent intent2 = new Intent();
+                intent2.setAction("QQ_ABEL_ACTION_BROADCAST");
+                //发送 一个无序广播
+                sendBroadcast(intent2);
+                handler.postDelayed(myRunnable2, 2);
+            }
+
+        }
+    }, new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            dialog.dismiss();
+            MyApplication.newInstance().outLogin();
+            toastor.getSingletonToast("登陆失败，请重新登陆...");
+        }
+    }, map);
     NormalPostRequest normalPostRequest2 = new NormalPostRequest(Constant.FINDHEARTRATEMOTION, new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject jsonObject) {
             Log.e(TAG, jsonObject.toString());
             dialog.dismiss();
             if (jsonObject.optInt("resCode") == 1) {
-                toastor.showToast(jsonObject.optString("resMessage"));
+                // toastor.getSingletonToast(jsonObject.optString("resMessage"));
             } else if (jsonObject.optInt("resCode") == 0) {
                 JSONObject json = jsonObject.optJSONObject("resBody");
                 DeviceInfo deviceInfo = new DeviceInfo();
@@ -231,6 +334,7 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == 1) {
             type = resultCode;
+            handler.postDelayed(myRunnable2, 2);
         }
         if (resultCode == 2) {
             type = resultCode;
@@ -241,6 +345,7 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
     @Override
     protected void onRestart() {
         super.onRestart();
+        user = MyApplication.newInstance().getUser();
         if (type == 2) {
             FragmentTransaction fragTran = getSupportFragmentManager()
                     .beginTransaction();
@@ -249,20 +354,24 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
                     frags[3]);
             fragTran.commit();
         }
-        if (MyApplication.newInstance().getUser().getEquipmentID() != null) {
-            Log.e("-------", MyApplication.newInstance().getUser().getEquipmentID()+"------");
-            map.clear();
-            map.put("equipmentID", MyApplication.newInstance().getUser().getEquipmentID());
-            map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
-            mQueue.add(normalPostRequest2);
+
+        if (user != null) {
+            if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
+                Log.e("-------", MyApplication.newInstance().getUser().getEquipmentID() + "------");
+                map.clear();
+                map.put("equipmentID", MyApplication.newInstance().getUser().getEquipmentID());
+                map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
+                map.put("userID",user.getUserID());
+                mQueue.add(normalPostRequest2);
+            }
         }
     }
 
     @Override
     public void onErrorResponse(VolleyError volleyError) {
         dialog.dismiss();
-        MyApplication.newInstance().outLogin();
-        toastor.showToast("登陆异常,请重新登陆...   ");
+        //MyApplication.newInstance().outLogin();
+        toastor.getSingletonToast("服务器异常...");
     }
 
     private class CheckedChangeListener implements RadioGroup.OnCheckedChangeListener {

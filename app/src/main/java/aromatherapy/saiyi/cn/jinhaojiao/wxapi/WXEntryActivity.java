@@ -1,7 +1,7 @@
 package aromatherapy.saiyi.cn.jinhaojiao.wxapi;
 
 
-import com.umeng.socialize.weixin.view.WXCallbackActivity;
+import com.umeng.weixin.callback.WXCallbackActivity;
 
 /**
  * Created by ntop on 15/9/4.

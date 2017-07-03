@@ -5,10 +5,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-
-import org.xutils.view.annotation.Event;
-import org.xutils.view.annotation.ViewInject;
-
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
@@ -18,15 +14,17 @@ import aromatherapy.saiyi.cn.jinhaojiao.fragment.Month;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Time;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Week;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Year;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class LineDataActivity extends BaseActivity {
-    @ViewInject(R.id.line_rgrpNavigation)
+    @BindView(R.id.line_rgrpNavigation)
     RadioGroup rgrpNavigation;
-    @ViewInject(R.id.line_stpe_tv)
+    @BindView(R.id.line_stpe_tv)
     TextView line_stpe_tv;
-    @ViewInject(R.id.line_calorie_tv)
+    @BindView(R.id.line_calorie_tv)
     TextView line_calorie_tv;
-    @ViewInject(R.id.line_title_tv)
+    @BindView(R.id.line_title_tv)
     TextView line_title_tv;
     private Fragment[] frags = new Fragment[5];
     private int currentFragIndex = -1;
@@ -101,8 +99,8 @@ public class LineDataActivity extends BaseActivity {
         }
     }
 
-    @Event(R.id.line_back_iv)
-    private void Click(View v) {
+    @OnClick(R.id.line_back_iv)
+    public void onViewClicked(View v) {
         finish();
     }
 

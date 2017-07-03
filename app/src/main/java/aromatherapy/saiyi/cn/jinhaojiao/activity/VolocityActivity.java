@@ -4,25 +4,28 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.RadioGroup;
-
-import org.xutils.view.annotation.Event;
-import org.xutils.view.annotation.ViewInject;
+import android.widget.TextView;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
+import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Day;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Time;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class VolocityActivity extends BaseActivity {
 
 
-
-    @ViewInject(R.id.volocity_rgrpNavigation)
+    @BindView(R.id.volocity_rgrpNavigation)
     RadioGroup rgrpNavigation;
 
     private Fragment[] frags = new Fragment[2];
     private int currentFragIndex = -1;
-
+    @BindView(R.id.volocity_rate_tv)
+    TextView volocity_rate_tv;
+    DeviceInfo deviceInfo;
     @Override
     protected int getContentView() {
         return R.layout.activity_volocity;
@@ -30,6 +33,11 @@ public class VolocityActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        deviceInfo = MyApplication.newInstance().getDeviceInfo();
+        if (deviceInfo.getSpeed() != null) {
+            volocity_rate_tv.setText(deviceInfo.getSpeed());
+        }
+
         initNavigation();
         showFrag(0);
         rgrpNavigation.check(R.id.volocity_tiem_rb);
@@ -76,8 +84,8 @@ public class VolocityActivity extends BaseActivity {
         }
     }
 
-    @Event(R.id.volocity_back_iv)
-    private void Click(View v) {
+    @OnClick(R.id.volocity_back_iv)
+    public void Click(View v) {
         finish();
     }
 

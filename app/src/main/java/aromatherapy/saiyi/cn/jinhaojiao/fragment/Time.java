@@ -1,6 +1,7 @@
 package aromatherapy.saiyi.cn.jinhaojiao.fragment;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -17,7 +18,6 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.xutils.view.annotation.ViewInject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,66 +29,72 @@ import java.util.Map;
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
+import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
-import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MyMarkerView;
+import butterknife.BindView;
 
 /**
  * Created by Administrator on 2016/5/28.
  */
 public class Time extends BaseFragment implements OnChartValueSelectedListener, Response.ErrorListener {
     private final static String TAG = Time.class.getSimpleName();
-    @ViewInject(R.id.line_chart)
+    @BindView(R.id.line_chart)
     LineChart mChart;
-    @ViewInject(R.id.time_data)
+    @BindView(R.id.time_data)
     TextView time_data;
-    @ViewInject(R.id.itme_data_tv)
+    @BindView(R.id.itme_data_tv)
     TextView itme_data_tv;
 
-    @ViewInject(R.id.time_kaluli)
+    @BindView(R.id.time_kaluli)
     TextView time_kaluli;
-    @ViewInject(R.id.time_tiem)
+    @BindView(R.id.time_tiem)
     TextView time_tiem;
     private int TYPE = 0;
     private Map<String, String> map = new HashMap<String, String>();
-    private LoadingDialog dialog;
     private Toastor toastor;
     private RequestQueue mQueue;
     List<String> Calorie = new ArrayList<>();
     List<String> steps = new ArrayList<>();
     NormalPostRequest normalPostRequest;
+
+    User user;
+
     @Override
-    protected void initData(View layout) {
+    protected void initData(View layout, Bundle savedInstanceState) {
+        user = MyApplication.newInstance().getUser();
         TYPE = getActivity().getIntent().getIntExtra("type", -1);
         initChart();
         toastor = new Toastor(getActivity());
-        dialog = new LoadingDialog(getActivity());
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
         mQueue = MyApplication.newInstance().getmQueue();
         init();
+        if ( MyApplication.newInstance().getEquipmentID() != null) {
+            map.put("equipmentID",  MyApplication.newInstance().getEquipmentID());
+            map.put("time", string);
+            map.put("type", "1");
+            if (user.getType() == 1)
+                map.put("userID", user.getUserID());
+            else {
+                user= (User) getActivity().getIntent().getSerializableExtra("student");
+                map.put("userID", user.getUserID());
+            }
+        }
+        Log.e(TAG, string);
         if (TYPE == 1 || TYPE == 0) {
             itme_data_tv.setText("步");
             time_kaluli.setVisibility(View.VISIBLE);
-            if (MyApplication.newInstance().getUser().getEquipmentID() != null) {
-                String time="201608200922,201608200912,201608200902,201608200852,201608200842,201608200832,201608200822,201608200812,201608200802,201608200752,201608200742,201608200732,201608200722";
-                map.put("equipmentID", MyApplication.newInstance().getUser().getEquipmentID());
-                //map.put("time", string);
-                map.put("time", time);
-                map.put("type", "1");
-                Log.e(TAG, string);
+            if ( MyApplication.newInstance().getEquipmentID() != null) {
                 QueueRequest(Constant.FINDMOTIONBYTIME, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         Log.e(TAG, jsonObject.toString());
-                        dialog.dismiss();
                         if (jsonObject.optInt("resCode") == 1) {
-                            toastor.showToast(jsonObject.optString("resMessage"));
+                            toastor.getSingletonToast(jsonObject.optString("resMessage"));
                         } else if (jsonObject.optInt("resCode") == 0) {
-                            toastor.showToast(jsonObject.optString("resMessage"));
-                            initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+                            toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                            initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"), "steps");
                         }
                     }
                 });
@@ -97,21 +103,15 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
         } else if (TYPE == 2) {
             time_kaluli.setVisibility(View.GONE);
             itme_data_tv.setText("bmp");
-            map.put("equipmentID", MyApplication.newInstance().getUser().getEquipmentID());
-            map.put("time", string);
-            //map.put("time", time);
-            map.put("type", "1");
-            Log.e(TAG, string);
             QueueRequest(Constant.FINDXINGTIAOBYTIME, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
                     Log.e(TAG, jsonObject.toString());
-                    dialog.dismiss();
                     if (jsonObject.optInt("resCode") == 1) {
-                        toastor.showToast(jsonObject.optString("resMessage"));
+                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
                     } else if (jsonObject.optInt("resCode") == 0) {
-                        toastor.showToast(jsonObject.optString("resMessage"));
-                      //  initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                        initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"), "heartrate");
                     }
                 }
             });
@@ -119,49 +119,15 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
         } else if (TYPE == 3) {
             time_kaluli.setVisibility(View.GONE);
             itme_data_tv.setText("米/min");
-            time_kaluli.setVisibility(View.GONE);
-            itme_data_tv.setText("bmp");
-            map.put("equipmentID", MyApplication.newInstance().getUser().getEquipmentID());
-            map.put("time", string);
-            //map.put("time", time);
-            map.put("type", "1");
-            Log.e(TAG, string);
             QueueRequest(Constant.FINDSHUDUBYTIME, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject jsonObject) {
                     Log.e(TAG, jsonObject.toString());
-                    dialog.dismiss();
                     if (jsonObject.optInt("resCode") == 1) {
-                        toastor.showToast(jsonObject.optString("resMessage"));
+                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
                     } else if (jsonObject.optInt("resCode") == 0) {
-                        toastor.showToast(jsonObject.optString("resMessage"));
-                      //  initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
-                    }
-                }
-            });
-            mQueue.add(normalPostRequest);
-        } else if (TYPE == 4) {
-            time_kaluli.setVisibility(View.GONE);
-            itme_data_tv.setText("公里");
-            time_kaluli.setVisibility(View.GONE);
-            itme_data_tv.setText("米/min");
-            time_kaluli.setVisibility(View.GONE);
-            itme_data_tv.setText("bmp");
-            map.put("equipmentID", MyApplication.newInstance().getUser().getEquipmentID());
-            map.put("time", string);
-            //map.put("time", time);
-            map.put("type", "1");
-            Log.e(TAG, string);
-            QueueRequest(Constant.FINDJULIBYTIME, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject jsonObject) {
-                    Log.e(TAG, jsonObject.toString());
-                    dialog.dismiss();
-                    if (jsonObject.optInt("resCode") == 1) {
-                        toastor.showToast(jsonObject.optString("resMessage"));
-                    } else if (jsonObject.optInt("resCode") == 0) {
-                        toastor.showToast(jsonObject.optString("resMessage"));
-                       // initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                        initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"), "speed");
                     }
                 }
             });
@@ -208,12 +174,12 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
 
     }
 
-    String[] xx = {"0","1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+    String[] xx = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
     String[] yy = {"43", "80", "10", "60", "30", "120", "55", "22", "40", "55", "22", "12"};
 
     private LineData getLineData() {
         ArrayList<String> xVals = new ArrayList<String>();
-        for (int i = 0; i < xx.length-1; i++) {
+        for (int i = 0; i < xx.length - 1; i++) {
             xVals.add(xx[i]);
         }
         ArrayList<Entry> yVals = new ArrayList<Entry>();
@@ -239,9 +205,9 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         Log.e("---------", (e.getXIndex() + 1) + "");
         time_data.setText(steps.get(e.getXIndex()));
-        time_tiem.setText(times.get(e.getXIndex()) + "");
-        if (Calorie.size()>0){
-            time_kaluli.setText(Calorie.get(e.getXIndex()));
+        time_tiem.setText(times.get(e.getXIndex()+1) + "");
+        if (Calorie.size() > 0) {
+            time_kaluli.setText(Calorie.get(e.getXIndex()) + "千卡");
         }
     }
 
@@ -255,7 +221,7 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
 
     private void init() {
         times.clear();
-        string="";
+        string = "";
         Calendar cal = Calendar.getInstance();//使用默认时区和语言环境获得一个日历。
         for (int i = 1; i <= xx.length; i++) {
             cal.add(Calendar.MINUTE, -10);
@@ -267,29 +233,38 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
 
         }
         string = string.substring(0, string.length() - 1);
-        Log.e("---------",string);
     }
-    private void QueueRequest(final String URL,Response.Listener<JSONObject> listener) {
+
+    private void QueueRequest(final String URL, Response.Listener<JSONObject> listener) {
         normalPostRequest = new NormalPostRequest(URL, listener, this, map);
 
     }
-    private void initInfo(JSONArray jsonArray) {
+
+    private void initInfo(JSONArray jsonArray, String string) {
         Calorie.clear();
         steps.clear();
-        int calorie=0;
-        int step=0;
+        int calorie = 0;
+        int step = 0;
         for (int i = 0; i < jsonArray.length(); i++) {
-            if (i==0){
-                calorie=jsonArray.optJSONObject(i).optInt("Calorie");
-                step=jsonArray.optJSONObject(i).optInt("steps");
-            }else {
-                Calorie.add(0, (calorie - jsonArray.optJSONObject(i).optInt("Calorie"))+ "");
-                steps.add(0, (step - jsonArray.optJSONObject(i).optInt("steps") )+ "");
-                if (jsonArray.optJSONObject(i).optInt("Calorie")==0){
-
-                }
-                calorie=jsonArray.optJSONObject(i).optInt("Calorie");
-                step = jsonArray.optJSONObject(i).optInt("steps");
+            if (i == 0) {
+                if (TYPE == 1 || TYPE == 0)
+                    calorie = jsonArray.optJSONObject(i).optInt("Calorie");
+                step = jsonArray.optJSONObject(i).optInt(string);
+            } else {
+                if (TYPE == 1 || TYPE == 0){
+                    Calorie.add(0, (calorie - jsonArray.optJSONObject(i).optInt("Calorie")) + "");
+                    calorie = jsonArray.optJSONObject(i).optInt("Calorie");
+                    steps.add(0, (step - jsonArray.optJSONObject(i).optInt(string)) + "");
+                    step = jsonArray.optJSONObject(i).optInt(string);
+                }else if (TYPE==2){
+                    steps.add(0, (jsonArray.optJSONObject(i).optInt(string)) + "");
+                }else if (TYPE == 3){
+                    steps.add(0, (step - jsonArray.optJSONObject(i).optInt(string)) + "");
+                    step = jsonArray.optJSONObject(i).optInt(string);
+                }/*else if (TYPE == 4){
+                    steps.add(0, (step - jsonArray.optJSONObject(i).optInt(string)) + "");
+                    step = jsonArray.optJSONObject(i).optInt(string);
+                }*/
             }
             Log.e("--", steps.size() + " " + jsonArray.length() + " " + i);
         }
@@ -301,7 +276,6 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
 
     @Override
     public void onErrorResponse(VolleyError volleyError) {
-        dialog.dismiss();
-        toastor.showToast("服务器异常");
+        toastor.getSingletonToast("服务器异常");
     }
 }

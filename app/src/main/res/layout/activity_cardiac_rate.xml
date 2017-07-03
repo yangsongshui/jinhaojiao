@@ -35,7 +35,7 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <LinearLayout
+     <!--   <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="bpm" />
-        </LinearLayout>
+        </LinearLayout>-->
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -80,7 +80,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="98"
+                android:text="0"
                 android:textSize="25sp"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"

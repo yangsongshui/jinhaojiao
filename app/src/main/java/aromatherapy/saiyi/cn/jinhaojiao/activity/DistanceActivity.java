@@ -4,22 +4,27 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.RadioGroup;
-
-import org.xutils.view.annotation.Event;
-import org.xutils.view.annotation.ViewInject;
+import android.widget.TextView;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
+import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Day;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Month;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Year;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class DistanceActivity extends BaseActivity {
-    @ViewInject(R.id.distance_rgrpNavigation)
+    @BindView(R.id.distance_rgrpNavigation)
     RadioGroup distance_rgrpNavigation;
 
     private Fragment[] frags = new Fragment[3];
     private int currentFragIndex = -1;
+    DeviceInfo deviceInfo;
+    @BindView(R.id.distance_stpe_tv)
+    TextView distance_stpe_tv;
     @Override
     protected int getContentView() {
         return R.layout.activity_distance;
@@ -27,9 +32,14 @@ public class DistanceActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        deviceInfo = MyApplication.newInstance().getDeviceInfo();
+        if (deviceInfo.getDistance() != null) {
+            distance_stpe_tv.setText(deviceInfo.getDistance());
+        }
         initNavigation();
         showFrag(0);
         distance_rgrpNavigation.check(R.id.distance_day_rb);
+
     }
     /**
      * 初始化碎片的viewpager
@@ -73,8 +83,8 @@ public class DistanceActivity extends BaseActivity {
         }
     }
 
-    @Event(R.id.distance_back_iv)
-    private void Click(View v) {
+    @OnClick(R.id.distance_back_iv)
+    public void onViewClicked(View v) {
         finish();
     }
 

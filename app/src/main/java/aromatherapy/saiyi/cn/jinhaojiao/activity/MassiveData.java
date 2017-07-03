@@ -5,22 +5,21 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.xutils.view.annotation.Event;
-import org.xutils.view.annotation.ViewInject;
-
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import butterknife.BindView;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MassiveData extends BaseActivity {
     User user;
-    @ViewInject(R.id.massive_name_tv)
+    @BindView(R.id.massive_name_tv)
     TextView massive_name_tv;
-    @ViewInject(R.id.massive_pic_iv)
+    @BindView(R.id.massive_pic_iv)
     CircleImageView massive_pic_iv;
-    @ViewInject(R.id.massive_sex_iv)
+    @BindView(R.id.massive_sex_iv)
     ImageView massive_sex_iv;
 
     @Override
@@ -33,9 +32,9 @@ public class MassiveData extends BaseActivity {
 
     }
 
-    @Event(value = {R.id.massive_back_iv, R.id.massive_my_ll, R.id.massive_video_rl,
+    @OnClick(value = {R.id.massive_back_iv, R.id.massive_my_ll, R.id.massive_video_rl,
             R.id.massive_zhibo1_rl, R.id.massive_zhibo2_rl, R.id.massive_zhibo3_rl, R.id.massive_process_rl})
-    private void ClickView(View view) {
+    public void ClickView(View view) {
         switch (view.getId()) {
             case R.id.massive_back_iv:
                 finish();

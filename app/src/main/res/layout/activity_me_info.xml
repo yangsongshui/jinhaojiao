@@ -105,7 +105,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="张三" />
+                    android:text="未填写"
+                   />
             </RelativeLayout>
 
             <ImageView
@@ -130,6 +131,7 @@
                     style="@style/text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="未填写"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
@@ -149,13 +151,14 @@
                     style="@style/text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="出生日期" />
+                    android:text="年龄" />
 
                 <TextView
                     android:id="@+id/me_birthday_tv"
                     style="@style/text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="未填写"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
@@ -174,12 +177,13 @@
                     style="@style/text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="身高 " />
+                    android:text="身高(cm)" />
 
                 <TextView
                     android:id="@+id/me_height_tv"
                     style="@style/text2"
                     android:layout_width="wrap_content"
+                    android:text="未填写"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
@@ -193,19 +197,21 @@
                 android:id="@+id/me_weight_rl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:background="@color/white">
 
                 <TextView
                     style="@style/text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="体重 " />
+                    android:text="体重(kg)" />
 
                 <TextView
                     android:id="@+id/me_weight_tv"
                     style="@style/text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="未填写"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
@@ -237,6 +243,7 @@
                     style="@style/text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="未填写"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
@@ -264,6 +271,7 @@
                     style="@style/text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="未填写"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
@@ -289,6 +297,7 @@
                     style="@style/text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="未填写"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
@@ -314,6 +323,7 @@
                     style="@style/text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="未填写"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
@@ -339,6 +349,7 @@
                     style="@style/text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="未填写"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
@@ -365,6 +376,7 @@
                     style="@style/text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="未填写"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
@@ -384,7 +396,7 @@
                     android:id="@+id/me_identity2_tv"
                     style="@style/text2"
                     android:layout_width="wrap_content"
-
+                    android:text="未填写"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
@@ -410,6 +422,7 @@
                     style="@style/text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="未填写"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 

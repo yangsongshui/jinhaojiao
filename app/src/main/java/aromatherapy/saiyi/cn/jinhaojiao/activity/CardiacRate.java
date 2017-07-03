@@ -4,22 +4,26 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.RadioGroup;
-
-import org.xutils.view.annotation.Event;
-import org.xutils.view.annotation.ViewInject;
+import android.widget.TextView;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
+import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Day;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Time;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class CardiacRate extends BaseActivity {
 
-    @ViewInject(R.id.cardiac_rgrpNavigation)
+    @BindView(R.id.cardiac_rgrpNavigation)
     RadioGroup rgrpNavigation;
-
+    @BindView(R.id.cardiac_rate_tv)
+    TextView cardiac_rate_tv;
     private Fragment[] frags = new Fragment[2];
     private int currentFragIndex = -1;
+    DeviceInfo deviceInfo;
 
     @Override
     protected int getContentView() {
@@ -28,6 +32,11 @@ public class CardiacRate extends BaseActivity {
 
     @Override
     protected void init() {
+        deviceInfo = MyApplication.newInstance().getDeviceInfo();
+        if (deviceInfo.getHeartrate() != null) {
+            cardiac_rate_tv.setText(deviceInfo.getHeartrate());
+        }
+
         initNavigation();
         showFrag(0);
         rgrpNavigation.check(R.id.cardiac_tiem_rb);
@@ -74,8 +83,8 @@ public class CardiacRate extends BaseActivity {
         }
     }
 
-    @Event(R.id.cardiac_back_iv)
-    private void Click(View v) {
+    @OnClick(R.id.cardiac_back_iv)
+    public void onViewClicked(View v) {
         finish();
     }
 

@@ -24,7 +24,25 @@ public class User implements Serializable {
     private String height;
     private String weight;
     private String equipmentID;
-    private String equipment ;
+    private String equipment;
+    private String openid;
+    private boolean isLine;
+
+    public boolean isLine() {
+        return isLine;
+    }
+
+    public void setIsLine(boolean isLine) {
+        this.isLine = isLine;
+    }
+
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
+    }
 
     public String getEquipmentID() {
         return equipmentID;
@@ -65,6 +83,7 @@ public class User implements Serializable {
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
+
     public String getUserID() {
         return userID;
     }
@@ -72,7 +91,9 @@ public class User implements Serializable {
     public void setUserID(String userID) {
         this.userID = userID;
     }
+
     private Bitmap bitmap;
+
     public String getClub() {
         return club;
     }
@@ -89,7 +110,7 @@ public class User implements Serializable {
         this.birthday = birthday;
     }
 
-    public User(String password, String phone,int type) {
+    public User(String password, String phone, int type) {
         this.password = password;
         this.phone = phone;
         this.type = type;

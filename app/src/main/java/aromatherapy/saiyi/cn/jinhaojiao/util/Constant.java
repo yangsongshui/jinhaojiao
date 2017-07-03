@@ -2,8 +2,7 @@ package aromatherapy.saiyi.cn.jinhaojiao.util;
 
 public class Constant {
 
-    //public static final String BASE_URL = "http://172.16.5.100:8080/insu-web/t_user_app";
-    public static final String BASE_URL = "http://120.25.193.215:8080/insu-web/t_user_app";
+    public static final String BASE_URL = "http://120.76.99.18:8080/insu-web/t_user_app";
     /**
      * 获取验证码
      **/
@@ -47,7 +46,7 @@ public class Constant {
     /**
      * 查询总步数和卡路里，运动时间
      **/
-    public static final String FINDMOTIONSUM = BASE_URL + "/findmotionsum";
+    public static final String FINDMOTIONSUM = BASE_URL + "/findheartratemotion";
     /**
      * 按时间查询步数数据
      **/
@@ -80,6 +79,26 @@ public class Constant {
      * 通过用户ID查询设备
      **/
     public static final String FIND_SHEBEI = BASE_URL + "/find_shebei";
+   /**
+    * 获取地理位置
+    * **/
+    public static final String FINDPOSITION = BASE_URL + "/findposition";
+   /**
+    *教练首页
+    **/
+    public static final String FIND_STUDENT = BASE_URL + "/find_student";
+   /**
+    * 教练添加学员
+    * **/
+    public static final String ADD_STUDENT = BASE_URL + "/add_Student";
+   /**
+    * 教练删除学员
+    * **/
+    public static final String DELETESTUDENT = BASE_URL + "/deletestudent";
+   /**
+    * 教练备注学员
+    * **/
+   public static final String UPDATEBEIZHU = BASE_URL + "/updatebeizhu";
 
 
 }

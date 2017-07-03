@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.text.method.DigitsKeyListener;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,8 +20,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
-import org.xutils.view.annotation.Event;
-import org.xutils.view.annotation.ViewInject;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -36,6 +35,8 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MyRadioGroup;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class MyInfoActivity extends BaseActivity implements Response.ErrorListener {
     private final String TAG = "MyInfoActivity";
@@ -43,31 +44,31 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
     private int COACH = 0;
     private int MEMBER = 1;
     private User user;
-    @ViewInject(R.id.my_name_tv)
+    @BindView(R.id.my_name_tv)
     TextView my_name_tv;
-    @ViewInject(R.id.my_sex_tv)
+    @BindView(R.id.my_sex_tv)
     TextView my_sex_tv;
-    @ViewInject(R.id.my_birthday_tv)
+    @BindView(R.id.my_birthday_tv)
     TextView my_birthday_tv;
-    @ViewInject(R.id.my_height_tv)
+    @BindView(R.id.my_height_tv)
     TextView my_height_tv;
-    @ViewInject(R.id.my_address_tv)
+    @BindView(R.id.my_address_tv)
     TextView my_address_tv;
-    @ViewInject(R.id.my_school_tv)
+    @BindView(R.id.my_school_tv)
     TextView my_school_tv;
-    @ViewInject(R.id.my_class_tv)
+    @BindView(R.id.my_class_tv)
     TextView my_class_tv;
-    @ViewInject(R.id.my_club_tv)
+    @BindView(R.id.my_club_tv)
     TextView my_club_tv;
-    @ViewInject(R.id.my_identity_tv)
+    @BindView(R.id.my_identity_tv)
     TextView my_identity_tv;
-    @ViewInject(R.id.coach_identity_tv)
+    @BindView(R.id.coach_identity_tv)
     TextView coach_identity_tv;
-    @ViewInject(R.id.coach_identity_rl)
+    @BindView(R.id.coach_identity_rl)
     RelativeLayout coach_identity_rl;
-    @ViewInject(R.id.my_identity_rl)
+    @BindView(R.id.my_identity_rl)
     RelativeLayout my_identity_rl;
-    @ViewInject(R.id.my_weight_tv)
+    @BindView(R.id.my_weight_tv)
     TextView my_weight_tv;
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
@@ -97,14 +98,14 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
         }
     }
 
-    @Event(value = {R.id.my_definite_tv, R.id.my_back_iv,
+    @OnClick(value = {R.id.my_definite_tv, R.id.my_back_iv,
             R.id.my_name_rl, R.id.my_sex_rl,
             R.id.my_birthday_rl, R.id.my_height_rl,
             R.id.my_address_rl, R.id.my_school_rl,
             R.id.my_class_rl, R.id.my_club_rl,
             R.id.my_identity_rl, R.id.coach_identity_rl
             , R.id.my_weight_rl})
-    private void ClickView(View view) {
+    public void ClickView(View view) {
         switch (view.getId()) {
             case R.id.my_definite_tv:
                 //点击确定
@@ -123,11 +124,12 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
                 break;
             case R.id.my_birthday_rl:
                 //点击生日
-                showDate();
+               // showDate();
+                showDialog2(my_birthday_tv);
                 break;
             case R.id.my_height_rl:
-                //点击昵称
-                showDialog(my_height_tv);
+                //点击身高
+                showDialog2(my_height_tv);
                 break;
             case R.id.my_address_rl:
                 //点击地址
@@ -154,14 +156,49 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
                 showDialog(my_class_tv);
                 break;
             case R.id.my_weight_rl:
-                showDialog(my_weight_tv);
+                showDialog2(my_weight_tv);
                 break;
         }
     }
 
     private void showDialog(final TextView textView) {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MyInfoActivity.this);
+        DigitsKeyListener numericOnlyListener = new DigitsKeyListener(false, true);
         final EditText editText = new EditText(this);
+        if (textView.getId() == R.id.my_weight_rl || textView.getId() == R.id.my_height_rl) {
+            editText.setKeyListener(numericOnlyListener);
+        }
+        editText.setMaxLines(1);
+        alertDialog.setTitle("请输入").setView(editText).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (editText.getText().toString().equals("") || editText.getText().toString().length() == 0)
+                    return;
+                textView.setText(editText.getText().toString());
+
+            }
+        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog tempDialog = alertDialog.create();
+        tempDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            public void onShow(DialogInterface dialog) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+        tempDialog.show();
+    }
+
+    private void showDialog2(final TextView textView) {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MyInfoActivity.this);
+        DigitsKeyListener numericOnlyListener = new DigitsKeyListener(false, true);
+        final EditText editText = new EditText(this);
+        editText.setKeyListener(numericOnlyListener);
+
         editText.setMaxLines(1);
         alertDialog.setTitle("请输入").setView(editText).setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
@@ -323,62 +360,45 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
         } else if (TYPE == MEMBER) {
             identity = my_identity_tv.getText().toString();
         }
-        if (name.length() > 0 && !name.equals("")) {
-            user.setUsername(name);
-            if (birthday.length() > 0 && !birthday.equals("")) {
-                user.setBirthday(birthday);
-                if (height.length() > 0 && !height.equals("")) {
-                    user.setHeight(height);
-                    if (weight.length() > 0 && !weight.equals("")) {
-                        user.setWeight(weight);
-                        if (sex.length() > 0 && !sex.equals("")) {
+        if (name.length() > 0 && !name.equals("未填写")) {
+            if (height.length() > 0 && !height.equals("0")) {
+                if (weight.length() > 0 && !weight.equals("0")) {
+                    if (sex.length() > 0 && !sex.equals("未填写")) {
+                        if (birthday.length() > 0 && !birthday.equals("未填写")) {
+                            map.clear();
+                            user.setWeight(weight);
+                            user.setAddress(address);
+                            user.setSchool(school);
+                            user.setBanji(banji);
+                            user.setClub(club);
                             user.setSex(sex);
-                            if (address.length() > 0 && !address.equals("")) {
-                                user.setAddress(address);
-                                if (school.length() > 0 && !school.equals("")) {
-                                    user.setSchool(school);
-                                    if (banji.length() > 0 && !banji.equals("")) {
-                                        user.setBanji(banji);
-                                        if (club.length() > 0 && !club.equals("")) {
-                                            user.setClub(club);
-                                            if (identity.length() > 0 && !identity.equals("")) {
-                                                map.clear();
-                                                user.setIdentity(identity);
-                                                map.put("userID", user.getUserID());
-                                                map.put("name", user.getUsername());
-                                                map.put("sex", user.getSex());
-                                                map.put("height", user.getHeight());
-                                                map.put("weight", user.getWeight());
-                                                map.put("birthday", user.getBirthday());
-                                                map.put("address", user.getAddress());
-                                                map.put("school", user.getSchool());
-                                                map.put("uclass", user.getBanji());
-                                                map.put("identity", user.getIdentity());
-                                                map.put("clubname", user.getClub());
-                                                mQueue.add(normalPostRequest);
-
-                                            } else
-                                                toastor.showToast("身份或位置不能为空");
-                                        } else
-                                            toastor.showToast("俱乐部不能为空");
-                                    } else
-                                        toastor.showToast("班级不能为空");
-                                } else
-                                    toastor.showToast("学校不能为空");
-                            } else
-                                toastor.showToast("地址不能为空");
+                            user.setUsername(name);
+                            user.setIdentity(identity);
+                            user.setHeight(height);
+                            user.setBirthday(birthday);
+                            map.put("userID", user.getUserID());
+                            map.put("name", user.getUsername());
+                            map.put("sex", user.getSex());
+                            map.put("height", user.getHeight());
+                            map.put("weight", user.getWeight());
+                            map.put("birthday", user.getBirthday());
+                            map.put("address", user.getAddress());
+                            map.put("school", user.getSchool());
+                            map.put("uclass", user.getBanji());
+                            map.put("identity", user.getIdentity());
+                            map.put("clubname", user.getClub());
+                            mQueue.add(normalPostRequest);
                         } else
-                            toastor.showToast("性别不能为空");
+                            toastor.getSingletonToast("年龄不能为空");
                     } else
-                        toastor.showToast("体重不能为空");
+                        toastor.getSingletonToast("性别不能为空");
                 } else
-                    toastor.showToast("身高不能为空");
+                    toastor.getSingletonToast("体重不能为0");
 
             } else
-                toastor.showToast("生日不能为空");
-
+                toastor.getSingletonToast("身高不能为0");
         } else
-            toastor.showToast("真实姓名不能为空");
+            toastor.getSingletonToast("真实姓名不能为空");
     }
 
     NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.ADDTDETAILEDUSER, new Response.Listener<JSONObject>() {
@@ -387,10 +407,10 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
             Log.e(TAG, jsonObject.toString());
             dialog.dismiss();
             if (jsonObject.optInt("resCode") == 1) {
-                toastor.showToast(jsonObject.optString("resMessage"));
+                toastor.getSingletonToast(jsonObject.optString("resMessage"));
             } else if (jsonObject.optInt("resCode") == 0) {
                 MyApplication.newInstance().setUser(user);
-                toastor.showToast("资料填写成功");
+                toastor.getSingletonToast("资料填写成功");
                 finish();
 
             }
@@ -400,6 +420,6 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
 
     @Override
     public void onErrorResponse(VolleyError volleyError) {
-        toastor.showToast("服务器异常");
+        toastor.getSingletonToast("服务器异常");
     }
 }

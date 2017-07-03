@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="运动员登陆"
+            android:text="登陆"
             android:textColor="@color/white"
             android:textSize="15sp" />
     </RelativeLayout>
@@ -47,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@null"
+            android:phoneNumber="true"
             android:hint="请输入手机号"
             android:textColorHint="@color/darkorange" />
     </LinearLayout>
@@ -73,7 +74,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@null"
+            android:password="true"
             android:hint="请输入密码"
+
             android:textColorHint="@color/darkorange" />
     </LinearLayout>
 
@@ -123,7 +126,6 @@
             android:id="@+id/relativeLayout4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:layout_centerVertical="true">
 
             <RelativeLayout

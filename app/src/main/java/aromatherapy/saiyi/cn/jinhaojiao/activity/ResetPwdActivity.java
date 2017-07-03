@@ -10,8 +10,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
-import org.xutils.view.annotation.Event;
-import org.xutils.view.annotation.ViewInject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,18 +23,20 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.MD5;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class ResetPwdActivity extends BaseActivity implements Response.ErrorListener {
     private final String TAG = "ResetPwdActivity";
-    @ViewInject(R.id.pwd_phone_et)
+    @BindView(R.id.pwd_phone_et)
     EditText pwd_phone_et;
-    @ViewInject(R.id.pwd_coed_et)
+    @BindView(R.id.pwd_coed_et)
     EditText pwd_coed_et;
-    @ViewInject(R.id.pwd_psw_et)
+    @BindView(R.id.pwd_psw_et)
     EditText pwd_psw_et;
-    @ViewInject(R.id.pwd_psw2_et)
+    @BindView(R.id.pwd_psw2_et)
     EditText pwd_psw2_et;
-    @ViewInject(R.id.pwd_getcoed_tv)
+    @BindView(R.id.pwd_getcoed_tv)
     TextView pwd_getcoed_tv;
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
@@ -72,8 +72,8 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
         };
     }
 
-    @Event(R.id.pwd_getcoed_tv)
-    private void getcoed(View view) {
+    @OnClick(R.id.pwd_getcoed_tv)
+    public void getcoed(View view) {
         String phone = pwd_phone_et.getText().toString();
         if (phone.length() == 11) {
             map.clear();
@@ -83,17 +83,17 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
             pwd_getcoed_tv.setEnabled(false);
             timer.start();// 开始计时
         } else {
-            toastor.showToast("手机号输入错误");
+            toastor.getSingletonToast("手机号输入错误");
         }
     }
 
-    @Event(R.id.registered_back_iv)
-    private void ClickBack(View view) {
+    @OnClick(R.id.registered_back_iv)
+    public void ClickBack(View view) {
         finish();
     }
 
-    @Event(R.id.pwd_definite_tv)
-    private void ClickDefinite(View view) {
+    @OnClick(R.id.pwd_definite_tv)
+    public void ClickDefinite(View view) {
 
         String phone = pwd_phone_et.getText().toString();
         String code = pwd_coed_et.getText().toString();
@@ -109,13 +109,13 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
                         mQueue.add(normalPostRequest);
                     } else
 
-                        toastor.showToast("两次密码输入不一致");
+                        toastor.getSingletonToast("两次密码输入不一致");
                 } else
-                    toastor.showToast("密码长度必须6~16位之间");
+                    toastor.getSingletonToast("密码长度必须6~16位之间");
             } else
-                toastor.showToast("验证码填写不正确");
+                toastor.getSingletonToast("验证码填写不正确");
         } else
-            toastor.showToast("手机号填写不正确");
+            toastor.getSingletonToast("手机号填写不正确");
     }
 
     NormalPostRequest normalPostRequest2 = new NormalPostRequest(Constant.GETIDENTIFY, new Response.Listener<JSONObject>() {
@@ -124,7 +124,7 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
             Log.e(TAG, jsonObject.toString());
             dialog.dismiss();
             if (jsonObject.optInt("resCode") == 1) {
-                toastor.showToast(jsonObject.optString("resMessage"));
+                toastor.getSingletonToast(jsonObject.optString("resMessage"));
             } else if (jsonObject.optInt("resCode") == 0) {
                 CODE = jsonObject.optJSONObject("resBody").optString("identify");
             }
@@ -136,9 +136,9 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
             Log.e(TAG, jsonObject.toString());
             dialog.dismiss();
             if (jsonObject.optInt("resCode") == 1) {
-                toastor.showToast(jsonObject.optString("resMessage"));
+                toastor.getSingletonToast(jsonObject.optString("resMessage"));
             } else if (jsonObject.optInt("resCode") == 0) {
-                toastor.showToast(jsonObject.optString("resMessage"));
+                toastor.getSingletonToast(jsonObject.optString("resMessage"));
                 MyApplication.newInstance().outLogin();
                 setResult(2);
                 finish();
@@ -149,6 +149,6 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
     @Override
     public void onErrorResponse(VolleyError volleyError) {
         dialog.dismiss();
-        toastor.showToast("服务器异常");
+        toastor.getSingletonToast("服务器异常");
     }
 }

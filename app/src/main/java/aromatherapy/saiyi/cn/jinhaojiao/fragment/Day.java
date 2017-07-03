@@ -1,6 +1,10 @@
 package aromatherapy.saiyi.cn.jinhaojiao.fragment;
 
 import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,9 +18,8 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
-import org.xutils.view.annotation.Event;
-import org.xutils.view.annotation.ViewInject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,62 +30,116 @@ import java.util.Map;
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
+import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MyMarkerView;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by Administrator on 2016/5/28.
  */
 public class Day extends BaseFragment implements OnChartValueSelectedListener, Response.ErrorListener {
-    @ViewInject(R.id.line_chart)
+    private final static String TAG = Time.class.getSimpleName();
+    @BindView(R.id.line_chart)
     LineChart mChart;
-    @ViewInject(R.id.textClock)
+    @BindView(R.id.textClock)
     TextView textClock;
 
-    @ViewInject(R.id.day_tiem)
+    @BindView(R.id.day_tiem)
     TextView day_tiem;
 
-    @ViewInject(R.id.day_data)
+    @BindView(R.id.day_data)
     TextView day_data;
     DateUtil util = new DateUtil();
     Date data;
-    @ViewInject(R.id.day_data_tv)
+    @BindView(R.id.day_data_tv)
     TextView day_data_tv;
-    @ViewInject(R.id.day_kaluli)
+    @BindView(R.id.day_kaluli)
     TextView day_kaluli;
     private int TYPE = 0;
-    private String time="";
+    private String time = "";
     NormalPostRequest normalPostRequest;
     private Map<String, String> map = new HashMap<String, String>();
-    private LoadingDialog dialog;
     private Toastor toastor;
     private RequestQueue mQueue;
+    List<String> Calorie = new ArrayList<>();
+    List<String> steps = new ArrayList<>();
+    String URL = "";
+    Handler handler;
+    private LoadingDialog dialog;
+    User user;
+
     @Override
-    protected void initData(View layout) {
+    protected void initData(View layout, Bundle savedInstanceState) {
+        user = MyApplication.newInstance().getUser();
+        mQueue = MyApplication.newInstance().getmQueue();
         toastor = new Toastor(getActivity());
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        mQueue = MyApplication.newInstance().getmQueue();
         TYPE = getActivity().getIntent().getIntExtra("type", -1);
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                initChart();
+                map.put("equipmentID", MyApplication.newInstance().getEquipmentID());
+                map.put("time", time);
+                map.put("type", "2");
+                if (user.getType() == 1)
+                    map.put("userID", user.getUserID());
+                else {
+                    user= (User) getActivity().getIntent().getSerializableExtra("student");
+                    map.put("userID", user.getUserID());
+                }
+
+                Log.e(TAG, time);
+                if (MyApplication.newInstance().getEquipmentID() != null) {
+                    QueueRequest(URL, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            Log.e(TAG, jsonObject.toString());
+                            dialog.dismiss();
+                            if (jsonObject.optInt("resCode") == 1) {
+                                toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                            } else if (jsonObject.optInt("resCode") == 0) {
+                                toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                                initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+                            }
+                        }
+                    });
+                    mQueue.add(normalPostRequest);
+                }
+            }
+        };
+        initChart();
         if (TYPE == 1 || TYPE == 0) {
             day_data_tv.setText("步");
             day_kaluli.setVisibility(View.VISIBLE);
+            URL = Constant.FINDMOTIONBYTIME;
         } else if (TYPE == 2) {
             day_kaluli.setVisibility(View.GONE);
             day_data_tv.setText("bmp");
+            URL = Constant.FINDXINGTIAOBYTIME;
         } else if (TYPE == 3) {
             day_kaluli.setVisibility(View.GONE);
             day_data_tv.setText("米/min");
+            URL = Constant.FINDSHUDUBYTIME;
         } else if (TYPE == 4) {
             day_kaluli.setVisibility(View.GONE);
             day_data_tv.setText("公里");
+            URL = Constant.FINDJULIBYTIME;
         }
-        initChart();
+
+
         init();
+
+
         data = new Date();
         textClock.setText(util.dateToString(data, util.LONG_DATE_FORMAT));
     }
@@ -123,10 +180,7 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener, R
         mChart.getLegend().setEnabled(false);
         MyMarkerView myMarkerView = new MyMarkerView(getActivity(), R.layout.custom_marker_view);
         mChart.setMarkerView(myMarkerView);
-        LineData data = getLineData();
         mChart.setOnChartValueSelectedListener(this);
-        data.setDrawValues(false); //隐藏坐标轴数据
-        mChart.setData(data);
 
     }
 
@@ -134,16 +188,13 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener, R
     String[] yy = {"20", "80", "10", "60", "30", "70", "55", "22", "40", "55", "22", "40"};
 
     private LineData getLineData() {
-
-
         ArrayList<String> xVals = new ArrayList<String>();
         for (int i = 0; i < xx.length; i++) {
             xVals.add(xx[i]);
         }
-
         ArrayList<Entry> yVals = new ArrayList<Entry>();
-        for (int i = 0; i < yy.length; i++) {
-            yVals.add(new Entry(Float.parseFloat(yy[i]), i));
+        for (int i = 0; i < steps.size(); i++) {
+            yVals.add(new Entry(Float.parseFloat(steps.get(i)), i));
         }
 
         LineDataSet set1 = new LineDataSet(yVals, "");
@@ -161,8 +212,11 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener, R
 
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-        day_data.setText(yy[e.getXIndex()]+"");
+        day_data.setText(steps.get(e.getXIndex()));
         day_tiem.setText(times.get(e.getXIndex()) + "");
+        if (Calorie.size() > 0) {
+            day_kaluli.setText(Calorie.get(e.getXIndex()) + "千卡");
+        }
     }
 
     @Override
@@ -171,31 +225,35 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener, R
     }
 
 
-    @Event(value = {R.id.day_next, R.id.day_up})
-    private void Click(View view) {
+    @OnClick(value = {R.id.day_next, R.id.day_up})
+    public void Click(View view) {
         switch (view.getId()) {
             case R.id.day_next:
                 data = util.nextDay(data, 1);
                 textClock.setText(util.dateToString(data, util.LONG_DATE_FORMAT));
+                gettime(util.dateToString(data, util.LONG_DATE_FORMAT2));
                 break;
             case R.id.day_up:
                 data = util.nextDay(data, -1);
                 textClock.setText(util.dateToString(data, util.LONG_DATE_FORMAT));
+                gettime(util.dateToString(data, util.LONG_DATE_FORMAT2));
+
                 break;
             default:
                 break;
         }
     }
 
-    private void QueueRequest(final String URL,Response.Listener<JSONObject> listener) {
+    private void QueueRequest(final String URL, Response.Listener<JSONObject> listener) {
         normalPostRequest = new NormalPostRequest(URL, listener, this, map);
 
     }
+
     List<String> times = new ArrayList<>();
 
     private void init() {
         times.clear();
-        time="";
+        time = "";
         times.add("02:00");
         times.add("04:00");
         times.add("06:00");
@@ -208,11 +266,67 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener, R
         times.add("20:00");
         times.add("22:00");
         times.add("24:00");
-        time= DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2)+"0000,0200,0400,0600,0800,1000,1200,1400,1600,1800,2000,2200,2400";
+        gettime(DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
     }
+
+    private void gettime(String string) {
+        time = "";
+        time += string + "00,";
+        time += string + "02,";
+        time += string + "04,";
+        time += string + "06,";
+        time += string + "08,";
+        time += string + "10,";
+        time += string + "12,";
+        time += string + "14,";
+        time += string + "16,";
+        time += string + "18,";
+        time += string + "20,";
+        time += string + "22,";
+        time += string + "24";
+        Message mes = new Message();
+        mes.obj = 1;
+        handler.sendMessage(mes);
+    }
+
     @Override
     public void onErrorResponse(VolleyError volleyError) {
-        dialog.dismiss();
-        toastor.showToast("服务器异常");
+        toastor.getSingletonToast("服务器异常");
     }
+
+    private void initInfo(JSONArray jsonArray) {
+        Calorie.clear();
+        steps.clear();
+        int calorie = 0;
+        int step = 0;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            if (i == 0) {
+                if (TYPE == 1 || TYPE == 0)
+                    calorie = jsonArray.optJSONObject(i).optInt("Calorie");
+                step = jsonArray.optJSONObject(i).optInt("steps");
+            } else {
+                if (TYPE == 1 || TYPE == 0) {
+                    calorie = jsonArray.optJSONObject(i).optInt("Calorie");
+                    Calorie.add((jsonArray.optJSONObject(i).optInt("Calorie")) - calorie + "");
+                    steps.add((jsonArray.optJSONObject(i).optInt("steps") - step + ""));
+                    step = jsonArray.optJSONObject(i).optInt("steps");
+                } else if (TYPE == 2) {
+                    steps.add((jsonArray.optJSONObject(i).optInt("heartrate")) + "");
+                } else if (TYPE == 3) {
+                    steps.add((jsonArray.optJSONObject(i).optInt("speed")) + "");
+                } else if (TYPE == 4) {
+                    steps.add((jsonArray.optJSONObject(i).optInt("distance") - step + ""));
+                    step = jsonArray.optJSONObject(i).optInt("distance");
+                }
+
+
+            }
+            Log.e("--", steps.size() + " " + jsonArray.length() + " " + i);
+        }
+        LineData data = getLineData();
+        data.setDrawValues(false); //隐藏坐标轴数据
+        mChart.setData(data);
+        mChart.invalidate();
+    }
+
 }

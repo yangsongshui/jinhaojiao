@@ -27,6 +27,7 @@ public class MyViewPager extends ViewPager {
 		if (isBroadCast) {
 			if (isDisallowParentInterceptTouchEvent)
 				getParent().requestDisallowInterceptTouchEvent(true);
+
 		} else {
 			if (currentPageIndex == pagesNum - 1) {
 				float x = ev.getX();
