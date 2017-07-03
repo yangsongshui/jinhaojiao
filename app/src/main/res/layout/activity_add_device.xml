@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/crimson"
+    tools:context="aromatherapy.saiyi.cn.jinhaojiao.activity.AddDevice">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/lawngreen">
+
+        <ImageView
+            android:id="@+id/device_back_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="绑定设备"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/device_id_ll"
+            android:layout_width="match_parent"
+            android:padding="15dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="已绑定设备ID:"
+                android:layout_marginRight="5dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/device_id_tv"
+                android:layout_width="wrap_content"
+                android:text="12346"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <EditText
+            android:id="@+id/device_id_et"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp"
+            android:background="@null"
+            android:phoneNumber="true"
+            android:maxLines="1"
+            android:hint="请输入设备号"
+            android:textColorHint="@color/darkorange" />
+
+    </LinearLayout>
+    <TextView
+        android:id="@+id/device_definite_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/frame_rent_button"
+        android:gravity="center"
+        android:padding="13dp"
+        android:text="确定"
+        android:textSize="18sp" />
+</LinearLayout>

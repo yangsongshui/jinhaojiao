@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="borderRadius" format="dimension" />
+    <attr name="type">
+        <enum name="circle" value="0" />
+        <enum name="round" value="1" />
+    </attr>
+
+    <declare-styleable name="RoundImageView">
+        <attr name="borderRadius" />
+        <attr name="type" />
+    </declare-styleable>
+    <declare-styleable name="TopBar">
+        <attr name="middleText" format="string" />                           <!--中间文字，类型字符串-->
+        <attr name="middleTextSize" format="dimension" />                   <!--字体大小，类型为数字-->
+        <attr name="middleTextColor" format="color"/>                       <!--字体颜色，类型为颜色-->
+        <attr name="leftTextColor" format="color"/>                        <!--左侧字体颜色，类型为颜色-->
+        <attr name="leftBackground" format="reference|color" />            <!--左侧背景颜色，类型为图片和颜色-->
+        <attr name="leftText" format="string" />                           <!--左侧文字-->
+        <attr name="leftTextSize" format="dimension" />
+        <attr name="rightTextColor" format="color"/>                       <!--右侧文字颜色-->
+        <attr name="rightBackground" format="reference|color" />           <!--右侧背景-->
+        <attr name="rightText" format="string" />                          <!--右侧文字-->
+        <attr name="rightTextSize" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="ProgressWheel">
+        <attr name="matProg_progressIndeterminate" format="boolean" />
+        <attr name="matProg_barColor" format="color" />
+        <attr name="matProg_rimColor" format="color" />
+        <attr name="matProg_rimWidth" format="dimension" />
+        <attr name="matProg_spinSpeed" format="float" />
+        <attr name="matProg_barSpinCycleTime" format="integer" />
+        <attr name="matProg_circleRadius" format="dimension" />
+        <attr name="matProg_fillRadius" format="boolean" />
+        <attr name="matProg_barWidth" format="dimension" />
+        <attr name="matProg_linearProgress" format="boolean" />
+    </declare-styleable>
+</resources>

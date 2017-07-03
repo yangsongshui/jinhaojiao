@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/crimson"
+    android:orientation="vertical"
+    tools:context="aromatherapy.saiyi.cn.jinhaojiao.activity.Setting">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/lawngreen">
+
+        <ImageView
+            android:id="@+id/set_back_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="设置"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+        <TextView
+            android:id="@+id/set_outlogin_iv"
+            android:layout_width="match_parent"
+            android:text="退出登录"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            android:padding="15dp"
+            android:layout_height="wrap_content" />
+</LinearLayout>
