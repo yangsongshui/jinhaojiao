@@ -25,16 +25,14 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
-import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
-import aromatherapy.saiyi.cn.jinhaojiao.view.RoundProgressBar;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import butterknife.BindView;
 import butterknife.OnClick;
 
 public class StudentActivity extends BaseActivity implements Response.ErrorListener {
     private final static String TAG = Home.class.getSimpleName();
     private static double STEPNUM = 3000.0;
-    @BindView(R.id.roundProgressBar01_id)
-    RoundProgressBar rpBar01;
+
     @BindView(R.id.student_distance_tv)
     TextView student_distance_tv;
     @BindView(R.id.student_heartthrob_tv)
@@ -48,8 +46,7 @@ public class StudentActivity extends BaseActivity implements Response.ErrorListe
 
     @BindView(R.id.student_name_tv)
     TextView student_name_tv;
-    @BindView(R.id.student_num_tv)
-    TextView student_num_tv;
+
 
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
@@ -139,23 +136,13 @@ public class StudentActivity extends BaseActivity implements Response.ErrorListe
                 student_heartthrob_tv.setText(json.optString("heartrate"));
                 student_volocity_tv.setText(json.optString("speed"));
                 student_step_tv.setText(json.optString("steps"));
-                transferMessage(json.optString("steps"));
+
 
             }
         }
     }, this, map);
 
-    public void transferMessage(String steps) {
-        double num = Integer.parseInt(steps) / STEPNUM;
-        if (num >= 10) {
-            num = 10;
-            student_num_tv.setText((int) (num * 10) + "");
-            rpBar01.setProgress((int) (num * 10));
-        } else {
-            student_num_tv.setText((int) (num * 10) + "");
-            rpBar01.setProgress((int) (num * 10));
-        }
-    }
+
 
     @Override
     protected void onResume() {

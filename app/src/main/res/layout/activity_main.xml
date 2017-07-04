@@ -33,10 +33,19 @@
             android:layout_weight="1"
             android:button="@null"
             android:textColor="@color/rent_text_selector"
-            android:text="定位"
+            android:text="云图"
             android:drawableTop="@drawable/main_rab_location"
             android:gravity="center" />
-
+        <RadioButton
+            android:id="@+id/rab_sign"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:textColor="@color/rent_text_selector"
+            android:text="签到"
+            android:drawableTop="@drawable/main_rab_sign"
+            android:gravity="center" />
         <RadioButton
             android:id="@+id/rab_flowdeal"
             android:layout_width="0dp"

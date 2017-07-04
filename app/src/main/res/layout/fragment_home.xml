@@ -42,7 +42,7 @@
                 android:layout_marginTop="50dp"
                 android:background="@drawable/frame_rent_button">
 
-                <aromatherapy.saiyi.cn.jinhaojiao.view.RoundProgressBar
+                <aromatherapy.saiyi.cn.jinhaojiao.widget.RoundProgressBar
                     android:id="@+id/roundProgressBar01_id"
                     android:layout_width="140dp"
                     android:layout_height="140dp"

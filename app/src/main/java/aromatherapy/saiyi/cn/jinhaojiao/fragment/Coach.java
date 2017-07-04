@@ -6,24 +6,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.text.method.DigitsKeyListener;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.baoyz.swipemenulistview.SwipeMenu;
-import com.baoyz.swipemenulistview.SwipeMenuCreator;
-import com.baoyz.swipemenulistview.SwipeMenuItem;
-import com.baoyz.swipemenulistview.SwipeMenuListView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,9 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
-import aromatherapy.saiyi.cn.jinhaojiao.activity.StudentActivity;
-import aromatherapy.saiyi.cn.jinhaojiao.activity.StudentInfoActivity;
-import aromatherapy.saiyi.cn.jinhaojiao.adapter.CoachAdapter;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
@@ -44,16 +34,13 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
-import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
-import butterknife.BindView;
-import butterknife.OnClick;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 
-public class Coach extends BaseFragment implements Response.ErrorListener, AdapterView.OnItemClickListener, SwipeMenuListView.OnMenuItemClickListener {
+
+public class Coach extends BaseFragment implements Response.ErrorListener {
     private final static String TAG = Coach.class.getSimpleName();
     User user;
-    @BindView(R.id.coach_people_lv)
-    SwipeMenuListView coach_people_lv;
-    CoachAdapter adapter;
+
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
@@ -92,21 +79,17 @@ public class Coach extends BaseFragment implements Response.ErrorListener, Adapt
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        adapter = new CoachAdapter(mList, getActivity());
-        coach_people_lv.setMenuCreator(creator);
-        coach_people_lv.setAdapter(adapter);
-        coach_people_lv.setOnItemClickListener(this);
-        coach_people_lv.setOnMenuItemClickListener(this);
+
         handler.postDelayed(myRunnable, 500);
     }
 
-    @OnClick(R.id.coach_add_people_iv)
+    /*@OnClick(R.id.coach_add_people_iv)
     public void click(View view) {
         if (user != null)
             showDialog2();
         else
             toastor.getSingletonToast("未登陆");
-    }
+    }*/
 
     @Override
     protected int getContentView() {
@@ -169,44 +152,7 @@ public class Coach extends BaseFragment implements Response.ErrorListener, Adapt
 
     }
 
-    /*添加侧滑菜单*/
-    SwipeMenuCreator creator = new SwipeMenuCreator() {
 
-        @Override
-        public void create(SwipeMenu menu) {
-            //改名菜单
-            SwipeMenuItem alterItem = new SwipeMenuItem(
-                    getActivity().getApplicationContext());
-            // 设置背景颜色
-            alterItem.setBackground(new ColorDrawable(getResources().getColor(R.color.dimgrey)));
-            // 设置宽度
-            alterItem.setWidth(dp2px(70));
-            // 设置内容
-            alterItem.setTitle("更名");
-            // 设置字体大小
-            alterItem.setTitleSize(18);
-            // 字体颜色
-            alterItem.setTitleColor(getResources().getColor(R.color.white));
-            // 添加菜单
-            menu.addMenuItem(alterItem);
-
-            // 删除菜单
-            SwipeMenuItem deleteItem = new SwipeMenuItem(
-                    getActivity().getApplicationContext());
-            // set item background
-            deleteItem.setBackground(new ColorDrawable(getResources().getColor(R.color.red_f03_98)));
-            // set item width
-            deleteItem.setWidth(dp2px(70));
-            // 设置内容
-            deleteItem.setTitle("删除");
-            // 设置字体大小
-            deleteItem.setTitleSize(18);
-            // 字体颜色
-            deleteItem.setTitleColor(getResources().getColor(R.color.white));
-            // add to menu
-            menu.addMenuItem(deleteItem);
-        }
-    };
     NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.FIND_STUDENT, new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject jsonObject) {
@@ -247,7 +193,7 @@ public class Coach extends BaseFragment implements Response.ErrorListener, Adapt
             }
             mList.add(user);
         }
-        adapter.notifyDataSetChanged();
+
     }
 
     NormalPostRequest normalPostRequest2 = new NormalPostRequest(Constant.ADD_STUDENT, new Response.Listener<JSONObject>() {
@@ -265,6 +211,7 @@ public class Coach extends BaseFragment implements Response.ErrorListener, Adapt
 
         }
     }, this, map);
+    /*删除学员*/
     NormalPostRequest normalPostRequest3 = new NormalPostRequest(Constant.DELETESTUDENT, new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject jsonObject) {
@@ -275,11 +222,12 @@ public class Coach extends BaseFragment implements Response.ErrorListener, Adapt
             } else if (jsonObject.optInt("resCode") == 0) {
                 toastor.getSingletonToast(jsonObject.optString("resMessage"));
                 mList.remove(indext);
-                adapter.notifyDataSetChanged();
+
             }
 
         }
     }, this, map);
+    /*删除修改*/
     NormalPostRequest normalPostRequest4 = new NormalPostRequest(Constant.UPDATEBEIZHU, new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject jsonObject) {
@@ -290,7 +238,7 @@ public class Coach extends BaseFragment implements Response.ErrorListener, Adapt
             } else if (jsonObject.optInt("resCode") == 0) {
                 toastor.getSingletonToast(jsonObject.optString("resMessage"));
                 mList.get(indext).setNikename(Remarks);
-                adapter.notifyDataSetChanged();
+
             }
 
         }
@@ -306,86 +254,6 @@ public class Coach extends BaseFragment implements Response.ErrorListener, Adapt
         map.clear();
         map.put("userID", user.getUserID());
         mQueue.add(normalPostRequest);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        showDialog(position);
-    }
-
-    private void showDialog(final int position) {
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        alertDialog.setTitle("请选择").setMessage("选择查看学员数据").setPositiveButton("查看个人资料", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                startActivity(new Intent(getActivity(), StudentInfoActivity.class).putExtra("student", mList.get(position)));
-
-            }
-        }).setNegativeButton("查看个人数据", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(getActivity(), StudentActivity.class).putExtra("student", mList.get(position)));
-            }
-        }).create().show();
-
-    }
-
-    @Override
-    public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-        switch (index) {
-            case 0:
-                //改名
-                dialog(position);
-                break;
-            case 1:
-                dialog.show();
-                //删除
-                map.clear();
-                map.put("teacherID", user.getUserID());
-                map.put("studentID", mList.get(position).getUserID());
-                mQueue.add(normalPostRequest3);
-                indext = position;
-                break;
-        }
-        return false;
-    }
-
-
-    private void dialog(final int position) {
-        final EditText et = new EditText(getActivity());
-        et.setMaxLines(1);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("更名");
-        builder.setView(et);
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() { //设置确定按钮
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (et.getText().toString().length() > 0) {
-                    map.clear();
-                    map.put("teacherID", user.getUserID());
-                    map.put("studentID", mList.get(position).getUserID());
-                    map.put("Remarks", et.getText().toString());
-                    indext = position;
-                    Remarks = et.getText().toString();
-                    mQueue.add(normalPostRequest4);
-                } else {
-                    toastor.getSingletonToast("备注不可为空");
-                }
-
-                dialog.dismiss(); //关闭dialog
-            }
-        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).create().show();
-    }
-
-    private int dp2px(int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-                getResources().getDisplayMetrics());
     }
 
     private class MyBroadcastReciver extends BroadcastReceiver {
@@ -408,7 +276,8 @@ public class Coach extends BaseFragment implements Response.ErrorListener, Adapt
                         } else {
                             mList.get(i).setIsLine(false);
                         }
-                        adapter.notifyDataSetChanged();
+                        //学员状态更新广播
+                        //adapter.notifyDataSetChanged();
                         break;
                     }
                 }

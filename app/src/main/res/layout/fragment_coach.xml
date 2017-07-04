@@ -3,33 +3,6 @@
     android:layout_height="match_parent"
     android:background="@color/crimson"
     android:orientation="vertical">
-    <RelativeLayout
-        android:id="@+id/relativeLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/lawngreen">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:text="教练"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-        <ImageView
-            android:id="@+id/coach_add_people_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/add_people"
-            android:layout_centerVertical="true"
-            android:padding="10dp"
-            android:layout_alignParentEnd="true" />
-    </RelativeLayout>
-    <com.baoyz.swipemenulistview.SwipeMenuListView
-        android:id="@+id/coach_people_lv"
-        android:layout_width="match_parent"
-        android:layout_marginTop="20dp"
 
-        android:layout_height="match_parent"/>
 </LinearLayout>

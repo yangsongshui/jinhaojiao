@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <aromatherapy.saiyi.cn.jinhaojiao.view.MyRadioGroup
+    <aromatherapy.saiyi.cn.jinhaojiao.widget.MyRadioGroup
         android:id="@+id/my_rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -128,5 +128,5 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/tv_gary" />
-    </aromatherapy.saiyi.cn.jinhaojiao.view.MyRadioGroup>
+    </aromatherapy.saiyi.cn.jinhaojiao.widget.MyRadioGroup>
 </LinearLayout>

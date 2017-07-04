@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
-import aromatherapy.saiyi.cn.jinhaojiao.view.MyViewPager;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.MyViewPager;
 import butterknife.OnClick;
 
 

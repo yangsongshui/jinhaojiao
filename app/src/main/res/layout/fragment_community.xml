@@ -63,7 +63,7 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
+            <aromatherapy.saiyi.cn.jinhaojiao.widget.MyTextView
                 android:id="@+id/saishi"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -88,7 +88,7 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
+                <aromatherapy.saiyi.cn.jinhaojiao.widget.MyTextView
                     android:layout_width="match_parent"
                     android:id="@+id/tuandui"
                     android:layout_height="0dp"
@@ -101,7 +101,7 @@
                     android:textColor="@color/white" />
 
 
-                <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
+                <aromatherapy.saiyi.cn.jinhaojiao.widget.MyTextView
                     android:id="@+id/geren"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -124,7 +124,7 @@
             android:orientation="horizontal">
 
 
-            <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
+            <aromatherapy.saiyi.cn.jinhaojiao.widget.MyTextView
                 android:layout_width="0dp"
                 android:id="@+id/qiugoumai"
                 android:layout_height="match_parent"
@@ -177,7 +177,7 @@
                         android:textColor="@color/white" />
                 </LinearLayout>
 
-                <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
+                <aromatherapy.saiyi.cn.jinhaojiao.widget.MyTextView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="10dp"
@@ -236,7 +236,7 @@
                         android:textColor="@color/white" />
                 </LinearLayout>
 
-                <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
+                <aromatherapy.saiyi.cn.jinhaojiao.widget.MyTextView
                     android:id="@+id/jigou"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -250,7 +250,7 @@
                     android:textColor="@color/white" />
             </LinearLayout>
 
-            <aromatherapy.saiyi.cn.jinhaojiao.view.MyTextView
+            <aromatherapy.saiyi.cn.jinhaojiao.widget.MyTextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="18dp"

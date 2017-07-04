@@ -28,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -40,8 +41,8 @@ import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
-import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
-import aromatherapy.saiyi.cn.jinhaojiao.view.MyRadioGroup;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.MyRadioGroup;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -388,69 +389,6 @@ public class MeInfoAcitvity extends BaseActivity implements Response.ErrorListen
         } else if (TYPE == MEMBER) {
             identity = me_identity2_tv.getText().toString();
         }
-       /* if (name.length() > 0 && !name.equals("")) {
-            user.setUsername(name);
-            if (birthday.length() > 0 && !birthday.equals("")) {
-                user.setBirthday(birthday);
-                if (height.length() > 0 && !height.equals("")) {
-                    user.setHeight(height);
-                    if (weight.length() > 0 && !weight.equals("")) {
-                        user.setWeight(weight);
-                        if (sex.length() > 0 && !sex.equals("")) {
-                            user.setSex(sex);
-                            if (address.length() > 0 && !address.equals("")) {
-                                user.setAddress(address);
-                                if (school.length() > 0 && !school.equals("")) {
-                                    user.setSchool(school);
-                                    if (banji.length() > 0 && !banji.equals("")) {
-                                        user.setBanji(banji);
-                                        if (club.length() > 0 && !club.equals("")) {
-                                            user.setClub(club);
-                                            if (identity.length() > 0 && !identity.equals("")) {
-                                                user.setIdentity(identity);
-                                                if (nickname.length() > 0 && !nickname.equals("")) {
-                                                    user.setNikename(nickname);
-                                                    map.clear();
-                                                    map.put("userID", user.getUserID());
-                                                    map.put("nickName", user.getNikename());
-                                                    map.put("name", user.getUsername());
-                                                    map.put("sex", user.getSex());
-                                                    map.put("height", user.getHeight());
-                                                    map.put("weight", user.getWeight());
-                                                    map.put("birthday", user.getBirthday());
-                                                    map.put("address", user.getAddress());
-                                                    map.put("school", user.getSchool());
-                                                    map.put("uclass", user.getBanji());
-                                                    map.put("identity", user.getIdentity());
-                                                    map.put("clubname", user.getClub());
-                                                    if (photo.trim().length() > 0) {
-                                                        map.put("headPicByte", photo);
-                                                    }
-                                                    mQueue.add(normalPostRequest2);
-                                                } else
-                                                    toastor.getSingletonToast("昵称不能为空");
-                                            } else
-                                                toastor.getSingletonToast("身份或位置不能为空");
-                                        } else
-                                            toastor.getSingletonToast("俱乐部不能为空");
-                                    } else
-                                        toastor.getSingletonToast("班级不能为空");
-                                } else
-                                    toastor.getSingletonToast("学校不能为空");
-                            } else
-                                toastor.getSingletonToast("地址不能为空");
-                        } else
-                            toastor.getSingletonToast("性别不能为空");
-                    } else
-                        toastor.getSingletonToast("体重不能为空");
-                } else
-                    toastor.getSingletonToast("身高不能为空");
-
-            } else
-                toastor.getSingletonToast("生日不能为空");
-
-        } else
-            toastor.getSingletonToast("真实姓名不能为空");*/
         if (name.length() > 0 && !name.equals("")) {
             if (height.length() > 0 && !height.equals("0")) {
                 if (weight.length() > 0 && !weight.equals("0")) {

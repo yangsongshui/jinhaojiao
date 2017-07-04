@@ -35,8 +35,8 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
-import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
-import aromatherapy.saiyi.cn.jinhaojiao.view.MyMarkerView;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.MyMarkerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 

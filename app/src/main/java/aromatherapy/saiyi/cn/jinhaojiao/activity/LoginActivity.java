@@ -26,29 +26,32 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.LoginPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.MD5;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
-import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class LoginActivity extends BaseActivity implements Response.ErrorListener {
+public class LoginActivity extends BaseActivity implements Response.ErrorListener, MsgView {
     private final static String TAG = LoginActivity.class.getSimpleName();
     @BindView(R.id.login_pasw_et)
     EditText login_pasw_et;
     @BindView(R.id.login_phone_et)
     EditText login_phone_et;
     private UMShareAPI mShareAPI;
-    private Map<String, String> map = new HashMap<String, String>();
+
     private LoadingDialog dialog;
     private Toastor toastor;
     private RequestQueue mQueue;
     String name = "";
     String openid = "";
-
+    LoginPresenterImp loginPresenterImp;
+    Map<String, String> map = new HashMap<>();
     @Override
     protected int getContentView() {
         return R.layout.activity_login;
@@ -61,7 +64,7 @@ public class LoginActivity extends BaseActivity implements Response.ErrorListene
         dialog = new LoadingDialog(this, "登陆中...");
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        mQueue = MyApplication.newInstance().getmQueue();
+        loginPresenterImp = new LoginPresenterImp(this, this);
     }
 
 
@@ -106,11 +109,12 @@ public class LoginActivity extends BaseActivity implements Response.ErrorListene
         if (login_phone_et.getText().toString().length() == 11) {
             if (login_pasw_et.getText().toString().trim().length() >= 6 && login_pasw_et.getText().toString().trim().length() <= 16) {
                 Log.e(TAG, "登陆");
-                dialog.show();
+
                 map.clear();
                 map.put("phoneNumber", login_phone_et.getText().toString());
                 map.put("passWord", MD5.getMD5(login_pasw_et.getText().toString()));
-                mQueue.add(normalPostRequest);
+
+               loginPresenterImp.loadMsg(map);
             } else {
                 toastor.getSingletonToast("密码长度不正确");
             }
@@ -215,9 +219,10 @@ public class LoginActivity extends BaseActivity implements Response.ErrorListene
         public void onStart(SHARE_MEDIA platform) {
             //授权开始的回调
         }
+
         @Override
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
-           // Toast.makeText(getApplicationContext(), "Authorize succeed", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getApplicationContext(), "Authorize succeed", Toast.LENGTH_SHORT).show();
             for (String key : data.keySet()) {
                 Log.e("-----", "QQ" + "key= " + key + " and value= " + data.get(key));
             }
@@ -241,7 +246,7 @@ public class LoginActivity extends BaseActivity implements Response.ErrorListene
                 if (data.get("nickname") != null) {
                     name = data.get("nickname");
                     openid = data.get("openid");
-                    map.clear();
+
                     map.put("account", data.get("openid"));
                     mQueue.add(normalPostRequest2);
                     dialog.show();
@@ -257,7 +262,7 @@ public class LoginActivity extends BaseActivity implements Response.ErrorListene
         public void onError(SHARE_MEDIA platform, int action, Throwable t) {
             if (platform.equals(SHARE_MEDIA.QQ)) {
                 Toast.makeText(getApplicationContext(), "QQ登陆失败", Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
                 Toast.makeText(getApplicationContext(), "微信登陆失败", Toast.LENGTH_SHORT).show();
             }
         }
@@ -266,59 +271,18 @@ public class LoginActivity extends BaseActivity implements Response.ErrorListene
         public void onCancel(SHARE_MEDIA platform, int action) {
             if (platform.equals(SHARE_MEDIA.QQ)) {
                 Toast.makeText(getApplicationContext(), "QQ登陆取消", Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
                 Toast.makeText(getApplicationContext(), "微信登陆取消", Toast.LENGTH_SHORT).show();
             }
 
         }
     };
 
-    NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.LOGIN, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                MyApplication.newInstance().outLogin();
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                JSONObject json = jsonObject.optJSONObject("resBody");
-                User user = new User(login_phone_et.getText().toString(), login_pasw_et.getText().toString());
-                user.setUserID(json.optString("userID"));
-                user.setSex(json.optString("sex"));
-                if (json.optInt("flag") == 1) {
-                    user.setType(1);
-                } else
-                    user.setType(0);
-                user.setNikename(json.optString("nickName"));
-                if (json.optString("equipmentID").length() > 0) {
-                    user.setEquipmentID(json.optString("equipmentID"));
-                }
-                if (json.optString("equipment").length() > 0) {
-                    user.setEquipment(json.optString("equipment"));
-                }
-                if (json.optString("headPicByte").length() > 0) {
-                    user.setBitmap(stringtoBitmap(json.optString("headPicByte")));
-                    Log.e("--------2", jsonObject.optString("headPicByte"));
-
-                }
-                MyApplication.newInstance().setUser(user);
-                toastor.getSingletonToast("登陆成功");
-                setResult(1);
-                finish();
-
-            }
-
-        }
-    }, this, map);
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("auth", "on activity re 2");
         mShareAPI.onActivityResult(requestCode, resultCode, data);
-        Log.d("auth", "on activity re 3");
     }
 
     @Override
@@ -327,4 +291,59 @@ public class LoginActivity extends BaseActivity implements Response.ErrorListene
         toastor.getSingletonToast("服务器异常");
         Log.e(TAG, "服务器异常");
     }
+
+    @Override
+    public void showProgress() {
+        if (dialog != null && !dialog.isShowing()) {
+            dialog.show();
+        }
+
+    }
+
+    @Override
+    public void disimissProgress() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    @Override
+    public void loadDataSuccess(JSONObject jsonObject) {
+        Log.e(TAG, jsonObject.toString());
+        toastor.showSingletonToast(jsonObject.optString("resMessage"));
+      if (jsonObject.optInt("resCode") == 0) {
+            JSONObject json = jsonObject.optJSONObject("resBody");
+            User user = new User(login_phone_et.getText().toString(), login_pasw_et.getText().toString());
+            user.setUserID(json.optString("userID"));
+            user.setSex(json.optString("sex"));
+            if (json.optInt("flag") == 1) {
+                user.setType(1);
+            } else
+                user.setType(0);
+            user.setNikename(json.optString("nickName"));
+            if (json.optString("equipmentID").length() > 0) {
+                user.setEquipmentID(json.optString("equipmentID"));
+            }
+            if (json.optString("equipment").length() > 0) {
+                user.setEquipment(json.optString("equipment"));
+            }
+            if (json.optString("headPicByte").length() > 0) {
+                user.setBitmap(stringtoBitmap(json.optString("headPicByte")));
+                Log.e("--------2", jsonObject.optString("headPicByte"));
+
+            }
+            MyApplication.newInstance().setUser(user);
+           // toastor.getSingletonToast("登陆成功");
+            setResult(1);
+            finish();
+
+        }
+    }
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+        Log.e(TAG, throwable.getLocalizedMessage());
+        toastor.showSingletonToast("服务器连接失败");
+    }
+
 }

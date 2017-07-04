@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical" >
-        <aromatherapy.saiyi.cn.jinhaojiao.view.ProgressWheel
+        <aromatherapy.saiyi.cn.jinhaojiao.widget.ProgressWheel
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center"

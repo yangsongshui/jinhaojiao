@@ -17,6 +17,7 @@ import java.util.Set;
 
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import aromatherapy.saiyi.cn.jinhaojiao.util.AppContextUtil;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
@@ -197,6 +198,7 @@ public class MyApplication extends Application {
         super.onCreate();
         mQueue = Volley.newRequestQueue(this);
         instance = this;
+        AppContextUtil.init(this);
         JPushInterface.setDebugMode(true);
         JPushInterface.init(this);
 

@@ -35,7 +35,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.MD5;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
-import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import butterknife.BindView;
 
 public class MainActivity extends BaseActivity implements Response.ErrorListener {
@@ -92,7 +92,7 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
                 map.clear();
                 if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
                     map.put("equipmentID", user.getEquipmentID());
-                    map.put("userID",user.getUserID());
+                    map.put("userID", user.getUserID());
                     map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
                     mQueue.add(normalPostRequest2);
                     handler.postDelayed(this, 10000);
@@ -236,7 +236,7 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
                 }
                 if (json.optString("equipmentID").length() > 0) {
                     user.setEquipmentID(json.optString("equipmentID"));
-                   handler.postDelayed(myRunnable, 10);
+                    handler.postDelayed(myRunnable, 10);
 
                 }
                 MyApplication.newInstance().setUser(user);
@@ -361,7 +361,7 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
                 map.clear();
                 map.put("equipmentID", MyApplication.newInstance().getUser().getEquipmentID());
                 map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
-                map.put("userID",user.getUserID());
+                map.put("userID", user.getUserID());
                 mQueue.add(normalPostRequest2);
             }
         }
@@ -383,6 +383,9 @@ public class MainActivity extends BaseActivity implements Response.ErrorListener
                     break;
                 case R.id.rab_rent:
                     showFrag(1);
+                    break;
+                case R.id.rab_sign:
+                    toastor.showSingletonToast("签到暂未开放");
                     break;
                 case R.id.rab_flowdeal:
                     showFrag(2);

@@ -37,7 +37,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.CoordinateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
-import aromatherapy.saiyi.cn.jinhaojiao.view.LoadingDialog;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import butterknife.BindView;
 
 ;
@@ -46,7 +46,7 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
     @BindView(R.id.map)
     MapView mMapView;
     private final static String TAG = Location.class.getSimpleName();
-    private static Location fragment=null;
+    private static Location fragment = null;
     private AMap mMap;
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
@@ -59,11 +59,11 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
     private Handler handler;
     private Runnable myRunnable;
 
-    public static Location newInstance(){
-        if(fragment==null){
-            synchronized(MapFragment.class){
-                if(fragment==null){
-                    fragment=new Location();
+    public static Location newInstance() {
+        if (fragment == null) {
+            synchronized (MapFragment.class) {
+                if (fragment == null) {
+                    fragment = new Location();
                 }
             }
         }
@@ -123,12 +123,7 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        //在activity执行onPause时执行mMapView.onPause ()，实现地图生命周期管理
-        mMapView.onPause();
-    }
+
 
 /*    @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -257,17 +252,6 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
 
 
     /**
-     * 方法必须重写
-     */
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mMapView.onDestroy();
-
-        handler.removeCallbacks(myRunnable);
-    }
-
-    /**
      * 定位成功后回调函数
      */
     @Override
@@ -320,9 +304,34 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
         mlocationClient = null;
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mMapView != null)
+            mMapView.onDestroy();
+
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mMap=null;
+
+        map = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mMapView.onPause();
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，保存地图当前的状态
+        if (mMapView != null)
+            mMapView.onSaveInstanceState(outState);
     }
 }

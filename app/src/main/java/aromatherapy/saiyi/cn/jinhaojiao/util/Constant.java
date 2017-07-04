@@ -2,7 +2,7 @@ package aromatherapy.saiyi.cn.jinhaojiao.util;
 
 public class Constant {
 
-    public static final String BASE_URL = "http://120.76.99.18:8080/insu-web/t_user_app";
+    public static final String BASE_URL = "http://120.76.99.18:8080/insu-web/t_user_app/";
     /**
      * 获取验证码
      **/
@@ -15,10 +15,6 @@ public class Constant {
      * 注册
      **/
     public static final String REGISTER = BASE_URL + "/register";
-    /**
-     * 修改密码
-     **/
-    public static final String UPDATEPWD = BASE_URL + "/findPwd";
     /**
      * 注册之后填写资料
      **/
@@ -43,10 +39,7 @@ public class Constant {
      * 查询首页的心率和计步等数据
      **/
     public static final String FINDHEARTRATEMOTION = BASE_URL + "/findheartratemotion";
-    /**
-     * 查询总步数和卡路里，运动时间
-     **/
-    public static final String FINDMOTIONSUM = BASE_URL + "/findheartratemotion";
+
     /**
      * 按时间查询步数数据
      **/
@@ -75,30 +68,27 @@ public class Constant {
      * 解绑设备
      **/
     public static final String JIEBANG = BASE_URL + "/jiebang";
+
     /**
-     * 通过用户ID查询设备
+     * 获取地理位置
      **/
-    public static final String FIND_SHEBEI = BASE_URL + "/find_shebei";
-   /**
-    * 获取地理位置
-    * **/
     public static final String FINDPOSITION = BASE_URL + "/findposition";
-   /**
-    *教练首页
-    **/
+    /**
+     * 教练首页
+     **/
     public static final String FIND_STUDENT = BASE_URL + "/find_student";
-   /**
-    * 教练添加学员
-    * **/
+    /**
+     * 教练添加学员
+     **/
     public static final String ADD_STUDENT = BASE_URL + "/add_Student";
-   /**
-    * 教练删除学员
-    * **/
+    /**
+     * 教练删除学员
+     **/
     public static final String DELETESTUDENT = BASE_URL + "/deletestudent";
-   /**
-    * 教练备注学员
-    * **/
-   public static final String UPDATEBEIZHU = BASE_URL + "/updatebeizhu";
+    /**
+     * 教练备注学员
+     **/
+    public static final String UPDATEBEIZHU = BASE_URL + "/updatebeizhu";
 
 
 }

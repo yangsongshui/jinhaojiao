@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,19 +20,16 @@ import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
-import aromatherapy.saiyi.cn.jinhaojiao.view.RoundProgressBar;
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 ;
 
 public class Home extends BaseFragment {
     private final static String TAG = Home.class.getSimpleName();
     User user;
-    private static double STEPNUM = 3000.0;
-    @BindView(R.id.roundProgressBar01_id)
-    RoundProgressBar rpBar01;
+
+
     @BindView(R.id.home_distance_tv)
     TextView home_distance_tv;
     @BindView(R.id.home_heartthrob_tv)
@@ -46,14 +42,8 @@ public class Home extends BaseFragment {
     TextView home_calorie_tv;
 
 
-    @BindView(R.id.home_name_tv)
-    TextView home_name_tv;
-    @BindView(R.id.home_sex_iv)
-    ImageView home_sex_iv;
-    @BindView(R.id.home_pic_iv)
-    CircleImageView home_pic_iv;
-    @BindView(R.id.home_num_tv)
-    TextView home_num_tv;
+
+
     MyBroadcastReciver reciver;
 
 
@@ -122,7 +112,7 @@ public class Home extends BaseFragment {
 
     private void initUser() {
         user = MyApplication.newInstance().getUser();
-        if (user != null) {
+     /*   if (user != null) {
             home_name_tv.setText(user.getNikename());
             if (user.getBitmap() != null) {
                 home_pic_iv.setImageBitmap(user.getBitmap());
@@ -136,26 +126,16 @@ public class Home extends BaseFragment {
                     home_sex_iv.setImageResource(R.drawable.lady);
             }
 
-        }
+        }*/
     }
 
     public void transferMessage(DeviceInfo deviceInfo) {
-        double num = Integer.parseInt(deviceInfo.getSteps()) / STEPNUM;
-        if (num>=100){
-            num=100;
-            home_num_tv.setText((int) (num * 10) + "");
-            rpBar01.setProgress((int) (num * 10));
-        }else {
-            home_num_tv.setText((int) (num * 10) + "");
-            rpBar01.setProgress((int) (num * 10));
-        }
-
         home_distance_tv.setText(deviceInfo.getDistance());
         home_heartthrob_tv.setText(deviceInfo.getHeartrate());
         home_step_tv.setText(deviceInfo.getSteps());
         home_volocity_tv.setText(deviceInfo.getSpeed());
         home_calorie_tv.setText(deviceInfo.getCalorie());
-        Log.e("home", "由Activity传输过来的信息");
+
     }
 
     private class MyBroadcastReciver extends BroadcastReceiver {
@@ -164,6 +144,7 @@ public class Home extends BaseFragment {
             String action = intent.getAction();
             if (action.equals("DATA_RECEIVE_BROADCAST")) {
                 transferMessage((DeviceInfo) intent.getSerializableExtra("device"));
+                Log.e("home", "广播消息");
             } else if (action.equals("CN_ABEL_ACTION_BROADCAST")) {
                 initUser();
             }

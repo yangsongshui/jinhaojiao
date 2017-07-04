@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
-    <aromatherapy.saiyi.cn.jinhaojiao.view.MyViewPager
+    <aromatherapy.saiyi.cn.jinhaojiao.widget.MyViewPager
         android:id="@+id/recommendFrag_myVpager"
         android:layout_width="match_parent"
         android:layout_height="180dp" />
