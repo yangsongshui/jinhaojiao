@@ -1,27 +1,21 @@
 package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.method.DigitsKeyListener;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
 import org.json.JSONObject;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,16 +23,16 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.AddDeteileduserPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.MyRadioGroup;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class MyInfoActivity extends BaseActivity implements Response.ErrorListener {
+public class MyInfoActivity extends BaseActivity implements  MsgView {
     private final String TAG = "MyInfoActivity";
     private int TYPE;
     private int COACH = 0;
@@ -73,7 +67,7 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    private RequestQueue mQueue;
+    private AddDeteileduserPresenterImp addDeteileduserPresenterImp;
 
     @Override
     protected int getContentView() {
@@ -81,8 +75,8 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
     }
 
     @Override
-    protected void init() {
-        mQueue = MyApplication.newInstance().getmQueue();
+    protected void init(Bundle savedInstanceState) {
+        addDeteileduserPresenterImp = new AddDeteileduserPresenterImp(this, this);
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this);
         dialog.setCancelable(false);
@@ -124,7 +118,7 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
                 break;
             case R.id.my_birthday_rl:
                 //点击生日
-               // showDate();
+                // showDate();
                 showDialog2(my_birthday_tv);
                 break;
             case R.id.my_height_rl:
@@ -224,20 +218,6 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
         tempDialog.show();
     }
 
-    private void showDate() {
-        Calendar c = Calendar.getInstance();
-        DatePickerDialog pickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                my_birthday_tv.setText(year + "/" + (monthOfYear + 1) + "/" + dayOfMonth);
-            }
-        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_YEAR));
-        DatePicker datePicker = pickerDialog.getDatePicker();
-        datePicker.setCalendarViewShown(false);
-
-        pickerDialog.show();
-    }
 
     private void showDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MyInfoActivity.this);
@@ -387,39 +367,52 @@ public class MyInfoActivity extends BaseActivity implements Response.ErrorListen
                             map.put("uclass", user.getBanji());
                             map.put("identity", user.getIdentity());
                             map.put("clubname", user.getClub());
-                            mQueue.add(normalPostRequest);
+                            addDeteileduserPresenterImp.loadMsg(map);
                         } else
-                            toastor.getSingletonToast("年龄不能为空");
+                            toastor.showSingletonToast("年龄不能为空");
                     } else
-                        toastor.getSingletonToast("性别不能为空");
+                        toastor.showSingletonToast("性别不能为空");
                 } else
-                    toastor.getSingletonToast("体重不能为0");
+                    toastor.showSingletonToast("体重不能为0");
 
             } else
-                toastor.getSingletonToast("身高不能为0");
+                toastor.showSingletonToast("身高不能为0");
         } else
-            toastor.getSingletonToast("真实姓名不能为空");
+            toastor.showSingletonToast("真实姓名不能为空");
     }
 
-    NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.ADDTDETAILEDUSER, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                MyApplication.newInstance().setUser(user);
-                toastor.getSingletonToast("资料填写成功");
-                finish();
 
-            }
 
-        }
-    }, this, map);
 
     @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        toastor.getSingletonToast("服务器异常");
+    public void showProgress() {
+        if (dialog != null && !dialog.isShowing()) {
+            dialog.show();
+        }
+
+    }
+
+    @Override
+    public void disimissProgress() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    @Override
+    public void loadDataSuccess(JSONObject jsonObject) {
+        toastor.showSingletonToast(jsonObject.optString("resMessage"));
+        if (jsonObject.optInt("resCode") == 0) {
+            MyApplication.newInstance().setUser(user);
+            toastor.showSingletonToast("资料填写成功");
+            finish();
+
+        }
+    }
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+        Log.e(TAG, throwable.getLocalizedMessage());
+        toastor.showSingletonToast("服务器连接失败");
     }
 }

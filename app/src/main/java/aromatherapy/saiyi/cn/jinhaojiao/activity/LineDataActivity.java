@@ -1,10 +1,12 @@
 package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
@@ -35,7 +37,7 @@ public class LineDataActivity extends BaseActivity {
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
         if (getIntent().getIntExtra("type", -1) == 1) {
             line_title_tv.setText("卡路里");
         } else if (getIntent().getIntExtra("type", -1) == 0) {

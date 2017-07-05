@@ -13,8 +13,8 @@ import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 
 /**
  * 描述：MVP中的P实现类
- * 作者：dc on 2017/2/16 15:17
- * 邮箱：597210600@qq.com
+ * 作者：ys on 2017/2/16 15:17
+ * 邮箱：yang3384046@126.com
  */
 public class LoginPresenterImp extends BasePresenterImp<MsgView,JSONObject> implements MsgPresenter {
     //传入泛型V和T分别为WeatherView、WeatherInfoBean表示建立这两者之间的桥梁
@@ -24,8 +24,7 @@ public class LoginPresenterImp extends BasePresenterImp<MsgView,JSONObject> impl
     /**
      * @param view 具体业务的视图接口对象
      * @descriptoin 构造方法
-     * @author dc
-     * @date 2017/2/16 15:12
+
      */
     public LoginPresenterImp(MsgView view, Context context) {
         super(view);

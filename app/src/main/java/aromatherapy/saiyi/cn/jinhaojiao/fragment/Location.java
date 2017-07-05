@@ -137,10 +137,10 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
         public void onResponse(JSONObject jsonObject) {
             Log.e(TAG, jsonObject.toString());
             if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
                 init();
             } else if (jsonObject.optInt("resCode") == 0) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
                 JSONObject object = jsonObject.optJSONObject("resBody");
                 if (jsonObject.optInt("type") == 1) {
                     //GPS坐标
@@ -203,7 +203,7 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
                                 Log.e("-------", e.getMessage());
                             }
                         } else {
-                            toastor.getSingletonToast("服务器异常");
+                            toastor.showSingletonToast("服务器异常");
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -217,7 +217,7 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
 
     @Override
     public void onErrorResponse(VolleyError volleyError) {
-        toastor.getSingletonToast("服务器异常");
+        toastor.showSingletonToast("服务器异常");
 
     }
 

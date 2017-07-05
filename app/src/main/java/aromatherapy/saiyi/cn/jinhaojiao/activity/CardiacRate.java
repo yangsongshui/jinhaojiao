@@ -1,5 +1,6 @@
 package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -31,7 +32,7 @@ public class CardiacRate extends BaseActivity {
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
         deviceInfo = MyApplication.newInstance().getDeviceInfo();
         if (deviceInfo.getHeartrate() != null) {
             cardiac_rate_tv.setText(deviceInfo.getHeartrate());

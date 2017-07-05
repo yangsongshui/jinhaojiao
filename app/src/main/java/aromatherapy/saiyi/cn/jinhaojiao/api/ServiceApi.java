@@ -100,11 +100,6 @@ public interface ServiceApi {
     @POST("jiebang?")
     Observable<JSONObject> jiebang(@QueryMap Map<String, String> map);
     /**
-     * 通过用户ID查询设备
-     **/
-    @POST("find_shebei?")
-    Observable<JSONObject> find_shebei(@QueryMap Map<String, String> map);
-    /**
      * 获取地理位置
      * **/
     @POST("findposition?")

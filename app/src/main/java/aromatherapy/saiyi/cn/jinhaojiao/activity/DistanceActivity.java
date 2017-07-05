@@ -1,5 +1,6 @@
 package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -31,7 +32,7 @@ public class DistanceActivity extends BaseActivity {
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
         deviceInfo = MyApplication.newInstance().getDeviceInfo();
         if (deviceInfo.getDistance() != null) {
             distance_stpe_tv.setText(deviceInfo.getDistance());

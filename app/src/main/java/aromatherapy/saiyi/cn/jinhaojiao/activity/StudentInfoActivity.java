@@ -2,6 +2,7 @@ package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -64,7 +65,7 @@ public class StudentInfoActivity extends BaseActivity implements Response.ErrorL
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
         user = (User) getIntent().getSerializableExtra("student");
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this);
@@ -82,7 +83,7 @@ public class StudentInfoActivity extends BaseActivity implements Response.ErrorL
             Log.e(TAG, jsonObject.toString());
             dialog.dismiss();
             if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
             } else if (jsonObject.optInt("resCode") == 0) {
                 JSONObject object = jsonObject.optJSONObject("resBody");
                 student_sex_tv.setText(object.optString("sex"));
@@ -124,6 +125,6 @@ public class StudentInfoActivity extends BaseActivity implements Response.ErrorL
     @Override
     public void onErrorResponse(VolleyError volleyError) {
         dialog.dismiss();
-        toastor.getSingletonToast("服务器异常");
+        toastor.showSingletonToast("服务器异常");
     }
 }

@@ -1,5 +1,6 @@
 package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -18,16 +19,17 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.JieBangPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.UpdateEquipmentPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import butterknife.BindView;
 import butterknife.OnClick;
 
 
-public class AddDevice extends BaseActivity implements Response.ErrorListener {
+public class AddDevice extends BaseActivity implements Response.ErrorListener, MsgView {
     private final static String TAG = AddDevice.class.getSimpleName();
     @BindView(R.id.device_id_et)
     EditText device_id_et;
@@ -42,20 +44,21 @@ public class AddDevice extends BaseActivity implements Response.ErrorListener {
     private Toastor toastor;
     private RequestQueue mQueue;
     private User user;
-
+    private UpdateEquipmentPresenterImp updateEquipmentPresenterImp;
+    private JieBangPresenterImp jieBangPresenterImp;
     @Override
     protected int getContentView() {
         return R.layout.activity_add_device;
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
         user = MyApplication.newInstance().getUser();
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        mQueue = MyApplication.newInstance().getmQueue();
+        updateEquipmentPresenterImp = new UpdateEquipmentPresenterImp(this, this);
         Log.e(TAG, user.getEquipment());
         if (user.getEquipment() != null && user.getEquipment().length() > 0) {
             device_definite_tv.setText("解绑");
@@ -66,26 +69,61 @@ public class AddDevice extends BaseActivity implements Response.ErrorListener {
             device_id_ll.setVisibility(View.GONE);
             device_id_et.setVisibility(View.VISIBLE);
         }
+        jieBangPresenterImp = new JieBangPresenterImp(new MsgView() {
+            @Override
+            public void showProgress() {
+                if (dialog != null && !dialog.isShowing()) {
+                    dialog.show();
+                }
+
+            }
+
+            @Override
+            public void disimissProgress() {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void loadDataSuccess(JSONObject jsonObject) {
+                Log.e(TAG, jsonObject.toString());
+
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
+                if (jsonObject.optInt("resCode") == 1) {
+                } else if (jsonObject.optInt("resCode") == 0) {
+                    MyApplication.newInstance().getUser().setEquipment("");
+                    MyApplication.newInstance().getUser().setEquipmentID("");
+                    MyApplication.newInstance().jiebang();
+                    finish();
+                }
+            }
+
+
+            @Override
+            public void loadDataError(Throwable throwable) {
+                Log.e(TAG, throwable.getLocalizedMessage());
+                toastor.showSingletonToast("服务器连接失败");
+            }
+        }, this);
     }
 
-    @OnClick({R.id.device_definite_tv,R.id.device_back_iv})
+    @OnClick({R.id.device_definite_tv, R.id.device_back_iv})
     public void onViewClicked(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.device_back_iv:
                 finish();
                 break;
             case R.id.device_definite_tv:
                 if (user.getEquipment() != null && user.getEquipment().length() > 0) {
-                    dialog.show();
                     map.clear();
                     map.put("userID", user.getUserID());
-                    mQueue.add(normalPostRequest2);
+                    jieBangPresenterImp.loadMsg(map);
                 } else if (device_id_et.getText().toString().length() > 0) {
-                    dialog.show();
                     map.clear();
                     map.put("userID", user.getUserID());
                     map.put("equipment", device_id_et.getText().toString());
-                    mQueue.add(normalPostRequest);
+                    updateEquipmentPresenterImp.loadMsg(map);
                 } else {
                     toastor.showSingletonToast("设备ID不能为空");
                 }
@@ -93,45 +131,43 @@ public class AddDevice extends BaseActivity implements Response.ErrorListener {
         }
 
     }
-
-
-    NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.UPDATEEQUIPMENT, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            toastor.showSingletonToast(jsonObject.optString("resMessage"));
-            dialog.dismiss();
-
-            if (jsonObject.optInt("resCode") == 0) {
-                user.setEquipment(device_id_et.getText().toString());
-                user.setEquipmentID(jsonObject.optJSONObject("resBody").optString("equipmentID"));
-                MyApplication.newInstance().setUser(user);
-                finish();
-            }
-
-        }
-    }, this, map);
-    NormalPostRequest normalPostRequest2 = new NormalPostRequest(Constant.JIEBANG, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            toastor.showSingletonToast(jsonObject.optString("resMessage"));
-            if (jsonObject.optInt("resCode") == 1) {
-            } else if (jsonObject.optInt("resCode") == 0) {
-                MyApplication.newInstance().getUser().setEquipment("");
-                MyApplication.newInstance().getUser().setEquipmentID("");
-                MyApplication.newInstance().jiebang();
-                finish();
-            }
-
-        }
-    }, this, map);
-
     @Override
     public void onErrorResponse(VolleyError volleyError) {
         dialog.dismiss();
         toastor.showSingletonToast("服务器异常");
         Log.e(TAG, "服务器异常");
+    }
+
+    @Override
+    public void showProgress() {
+        if (dialog != null && !dialog.isShowing()) {
+            dialog.show();
+        }
+
+    }
+
+    @Override
+    public void disimissProgress() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    @Override
+    public void loadDataSuccess(JSONObject jsonObject) {
+        Log.e(TAG, jsonObject.toString());
+        toastor.showSingletonToast(jsonObject.optString("resMessage"));
+        if (jsonObject.optInt("resCode") == 0) {
+            user.setEquipment(device_id_et.getText().toString());
+            user.setEquipmentID(jsonObject.optJSONObject("resBody").optString("equipmentID"));
+            MyApplication.newInstance().setUser(user);
+            finish();
+        }
+    }
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+        Log.e(TAG, throwable.getLocalizedMessage());
+        toastor.showSingletonToast("服务器连接失败");
     }
 }

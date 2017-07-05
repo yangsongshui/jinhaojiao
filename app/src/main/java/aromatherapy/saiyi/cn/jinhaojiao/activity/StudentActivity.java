@@ -1,6 +1,7 @@
 package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
@@ -62,7 +63,7 @@ public class StudentActivity extends BaseActivity implements Response.ErrorListe
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
         user = (User) getIntent().getSerializableExtra("student");
         mQueue = MyApplication.newInstance().getmQueue();
         toastor = new Toastor(this);
@@ -128,7 +129,7 @@ public class StudentActivity extends BaseActivity implements Response.ErrorListe
             Log.e(TAG, jsonObject.toString());
             dialog.dismiss();
             if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
             } else if (jsonObject.optInt("resCode") == 0) {
                 JSONObject json = jsonObject.optJSONObject("resBody");
                 student_distance_tv.setText(json.optString("Calorie"));
@@ -153,7 +154,7 @@ public class StudentActivity extends BaseActivity implements Response.ErrorListe
     @Override
     public void onErrorResponse(VolleyError volleyError) {
         dialog.dismiss();
-        toastor.getSingletonToast("服务器异常...");
+        toastor.showSingletonToast("服务器异常...");
     }
 
     @Override

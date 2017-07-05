@@ -1,7 +1,6 @@
 package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,7 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.os.Environment;
 import android.text.method.DigitsKeyListener;
 import android.util.Base64;
 import android.util.Log;
@@ -17,20 +16,26 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
+import com.jph.takephoto.app.TakePhoto;
+import com.jph.takephoto.app.TakePhotoImpl;
+import com.jph.takephoto.compress.CompressConfig;
+import com.jph.takephoto.model.CropOptions;
+import com.jph.takephoto.model.InvokeParam;
+import com.jph.takephoto.model.TContextWrap;
+import com.jph.takephoto.model.TResult;
+import com.jph.takephoto.permission.InvokeListener;
+import com.jph.takephoto.permission.PermissionManager;
+import com.jph.takephoto.permission.TakePhotoInvocationHandler;
 
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Calendar;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,23 +43,30 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindPersonalPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.UpdateUserPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.MyRadioGroup;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MeInfoAcitvity extends BaseActivity implements Response.ErrorListener {
+import static aromatherapy.saiyi.cn.jinhaojiao.util.AppUtil.bitmapToString;
+
+public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.TakeResultListener, InvokeListener {
     private final static String TAG = MeInfoAcitvity.class.getSimpleName();
     private int TYPE;
     private int COACH = 0;
     private int MEMBER = 1;
     private static final int RESULT = 1;
     private static final int PHOTO_REQUEST_CUT = 2;
+    /* 头像文件 */
+    private static final String IMAGE_FILE_NAME = "temp_head_image.jpg";
     private User user;
+    private TakePhoto takePhoto;
+    private InvokeParam invokeParam;
     @BindView(R.id.me_name_tv)
     TextView me_name_tv;
     @BindView(R.id.me_height_tv)
@@ -91,9 +103,10 @@ public class MeInfoAcitvity extends BaseActivity implements Response.ErrorListen
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    private RequestQueue mQueue;
     Bitmap bitmap;
     String photo = "";
+    private UpdateUserPresenterImp updateUserPresenterImp;
+    private FindPersonalPresenterImp findPersonalPresenterImp;
 
     @Override
     protected int getContentView() {
@@ -101,7 +114,8 @@ public class MeInfoAcitvity extends BaseActivity implements Response.ErrorListen
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
+        getTakePhoto().onCreate(savedInstanceState);
         user = MyApplication.newInstance().getUser();
         TYPE = user.getType();
         if (TYPE == COACH) {
@@ -115,11 +129,42 @@ public class MeInfoAcitvity extends BaseActivity implements Response.ErrorListen
         dialog = new LoadingDialog(this);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        mQueue = MyApplication.newInstance().getmQueue();
-        dialog.show();
+        updateUserPresenterImp = new UpdateUserPresenterImp(new MsgView() {
+            @Override
+            public void showProgress() {
+                if (dialog != null && !dialog.isShowing()) {
+                    dialog.show();
+                }
+
+            }
+
+            @Override
+            public void disimissProgress() {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void loadDataSuccess(JSONObject jsonObject) {
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
+                if (jsonObject.optInt("resCode") == 0) {
+                    toastor.showSingletonToast(jsonObject.optString("resMessage"));
+                    MyApplication.newInstance().setUser(user);
+                    finish();
+                }
+            }
+
+            @Override
+            public void loadDataError(Throwable throwable) {
+                Log.e(TAG, throwable.getLocalizedMessage());
+                toastor.showSingletonToast("服务器连接失败");
+            }
+        }, this);
+        findPersonalPresenterImp = new FindPersonalPresenterImp(this, this);
         map.clear();
         map.put("userID", user.getUserID());
-        mQueue.add(normalPostRequest);
+        findPersonalPresenterImp.loadMsg(map);
     }
 
     @OnClick(value = {R.id.me_definite_tv, R.id.me_back_iv,
@@ -250,21 +295,6 @@ public class MeInfoAcitvity extends BaseActivity implements Response.ErrorListen
             }
         });
         tempDialog.show();
-    }
-
-    private void showDate() {
-        Calendar c = Calendar.getInstance();
-        DatePickerDialog pickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                me_birthday_tv.setText(year + "/" + (monthOfYear + 1) + "/" + dayOfMonth);
-            }
-        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_YEAR));
-        DatePicker datePicker = pickerDialog.getDatePicker();
-        datePicker.setCalendarViewShown(false);
-
-        pickerDialog.show();
     }
 
     private void showDialog() {
@@ -421,20 +451,22 @@ public class MeInfoAcitvity extends BaseActivity implements Response.ErrorListen
                                 if (photo.trim().length() > 0) {
                                     map.put("headPicByte", photo);
                                 }
-                                mQueue.add(normalPostRequest2);
+                                //修改用户ixnxi
+                                updateUserPresenterImp.loadMsg(map);
+
                             } else
-                                toastor.getSingletonToast("昵称不能为空");
+                                toastor.showSingletonToast("昵称不能为空");
                         } else
-                            toastor.getSingletonToast("年龄不能为空");
+                            toastor.showSingletonToast("年龄不能为空");
                     } else
-                        toastor.getSingletonToast("性别不能为空");
+                        toastor.showSingletonToast("性别不能为空");
                 } else
-                    toastor.getSingletonToast("体重不能为0");
+                    toastor.showSingletonToast("体重不能为0");
 
             } else
-                toastor.getSingletonToast("身高不能为0");
+                toastor.showSingletonToast("身高不能为0");
         } else
-            toastor.getSingletonToast("真实姓名不能为空");
+            toastor.showSingletonToast("真实姓名不能为空");
         if (bitmap != null)
             user.setBitmap(bitmap);
     }
@@ -466,103 +498,13 @@ public class MeInfoAcitvity extends BaseActivity implements Response.ErrorListen
      * 打开相册
      */
     public void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);// 打开相册
-        intent.setDataAndType(MediaStore.Images.Media.INTERNAL_CONTENT_URI, "image/*");
-        intent.setType("image/*");
-        startActivityForResult(intent, RESULT);
+        File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + System.currentTimeMillis() + ".jpg");
+        if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+        Uri imageUri = Uri.fromFile(file);
+        //相册
+        configCompress(takePhoto, 500, 500);
+        takePhoto.onPickFromGalleryWithCrop(imageUri, getCropOptions());
     }
-
-    private void crop(Uri uri) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 250);
-        intent.putExtra("outputY", 250);
-        intent.putExtra("outputFormat", "JPEG");// 图片格式
-        intent.putExtra("noFaceDetection", true);// 取消人脸识别
-        intent.putExtra("return-data", true);
-        startActivityForResult(intent, PHOTO_REQUEST_CUT);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RESULT) {
-            if (data != null) {
-                Uri uri = data.getData();
-                crop(uri);
-            }
-        } else if (requestCode == PHOTO_REQUEST_CUT) {
-            if (data != null) {
-                setImageToHeadView(data);
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-
-    }
-
-    private void setImageToHeadView(Intent intent) {
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            bitmap = extras.getParcelable("data");
-            me_info_pic_iv.setImageBitmap(bitmap);
-            byte[] bytes = bitmap2Bytes(bitmap);
-            photo = Base64.encodeToString(bytes, 0, bytes.length, Base64.DEFAULT);
-            Log.e("registerUser", photo);
-        }
-    }
-
-    /***
-     * 照片转二进制
-     */
-    public byte[] bitmap2Bytes(Bitmap bm) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        return baos.toByteArray();
-    }
-
-    NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.FINDPERSONAL, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                JSONObject object = jsonObject.optJSONObject("resBody");
-                user.setAddress(object.optString("address"));
-                user.setBirthday(object.optString("birthday"));
-                user.setSex(object.optString("sex"));
-                user.setIdentity(object.optString("identity"));
-                user.setHeight(object.optString("height"));
-                user.setWeight(object.optString("weight"));
-                user.setSchool(object.optString("school"));
-                user.setUsername(object.optString("name"));
-                user.setBanji(object.optString("uclass"));
-                user.setClub(object.optString("clubname"));
-                user.setPhone(object.optString("phoneNumber"));
-                if (object.optString("headPicByte").length() > 0) {
-                    user.setBitmap(stringtoBitmap(object.optString("headPicByte")));
-                }
-                initView(user);
-            }
-        }
-    }, this, map);
-    NormalPostRequest normalPostRequest2 = new NormalPostRequest(Constant.UPDATEUSER, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                MyApplication.newInstance().setUser(user);
-                finish();
-            }
-        }
-    }, this, map);
 
     public Bitmap stringtoBitmap(String string) {
         //将字符串转换成Bitmap类型
@@ -578,9 +520,130 @@ public class MeInfoAcitvity extends BaseActivity implements Response.ErrorListen
         return bitmap;
     }
 
+
     @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        dialog.dismiss();
-        toastor.getSingletonToast("服务器异常");
+    public void showProgress() {
+        if (dialog != null && !dialog.isShowing()) {
+            dialog.show();
+        }
+
+    }
+
+    @Override
+    public void disimissProgress() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+
+    @Override
+    public void loadDataSuccess(JSONObject jsonObject) {
+        toastor.showSingletonToast(jsonObject.optString("resMessage"));
+        if (jsonObject.optInt("resCode") == 0) {
+            JSONObject object = jsonObject.optJSONObject("resBody");
+            user.setAddress(object.optString("address"));
+            user.setBirthday(object.optString("birthday"));
+            user.setSex(object.optString("sex"));
+            user.setIdentity(object.optString("identity"));
+            user.setHeight(object.optString("height"));
+            user.setWeight(object.optString("weight"));
+            user.setSchool(object.optString("school"));
+            user.setUsername(object.optString("name"));
+            user.setBanji(object.optString("uclass"));
+            user.setClub(object.optString("clubname"));
+            user.setPhone(object.optString("phoneNumber"));
+            if (object.optString("headPicByte").length() > 0) {
+                user.setBitmap(stringtoBitmap(object.optString("headPicByte")));
+            }
+            initView(user);
+        }
+
+    }
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+        Log.e(TAG, throwable.getLocalizedMessage());
+        toastor.showSingletonToast("服务器连接失败");
+    }
+
+    private CropOptions getCropOptions() {
+        CropOptions.Builder builder = new CropOptions.Builder();
+        builder.setAspectX(500).setAspectY(500);
+        builder.setOutputX(500).setOutputY(500);
+        builder.setWithOwnCrop(false);
+        return builder.create();
+    }
+
+    private void configCompress(TakePhoto takePhoto, int width, int height) {
+
+        int maxSize = 1024 * 10;
+
+        boolean showProgressBar = false;
+        boolean enableRawFile = false;
+        CompressConfig config;
+        config = new CompressConfig.Builder()
+                .setMaxSize(maxSize)
+                .setMaxPixel(width >= height ? width : height)
+                .enableReserveRaw(enableRawFile)
+                .create();
+        takePhoto.onEnableCompress(config, showProgressBar);
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        //以下代码为处理Android6.0、7.0动态权限所需
+        PermissionManager.TPermissionType type = PermissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionManager.handlePermissionsResult(this, type, invokeParam, this);
+    }
+
+    @Override
+    public PermissionManager.TPermissionType invoke(InvokeParam invokeParam) {
+        PermissionManager.TPermissionType type = PermissionManager.checkPermission(TContextWrap.of(this), invokeParam.getMethod());
+        if (PermissionManager.TPermissionType.WAIT.equals(type)) {
+            this.invokeParam = invokeParam;
+        }
+        return type;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        getTakePhoto().onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        getTakePhoto().onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    public TakePhoto getTakePhoto() {
+        if (takePhoto == null) {
+            takePhoto = (TakePhoto) TakePhotoInvocationHandler.of(this).bind(new TakePhotoImpl(this, this));
+        }
+        return takePhoto;
+    }
+
+    @Override
+    public void takeSuccess(TResult result) {
+        Log.e(MyInfoActivity.class.getName(), "takeSuccess：" + result.getImage().getCompressPath());
+        Glide.with(this).load(new File(result.getImage().getCompressPath())).into(me_info_pic_iv);
+        photo = bitmapToString(result.getImage().getCompressPath());
+    }
+
+    @Override
+    public void takeFail(TResult result, String msg) {
+        Log.e(MyInfoActivity.class.getName(), "takeFail:" + msg);
+
+    }
+
+    @Override
+    public void takeCancel() {
+        Log.i(MyInfoActivity.class.getName(), "操作已取消");
     }
 }

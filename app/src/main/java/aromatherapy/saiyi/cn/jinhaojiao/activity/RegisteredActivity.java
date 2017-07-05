@@ -1,6 +1,7 @@
 package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.EditText;
@@ -57,7 +58,7 @@ public class RegisteredActivity extends BaseActivity implements Response.ErrorLi
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
         mQueue = MyApplication.newInstance().getmQueue();
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this);
@@ -96,7 +97,7 @@ public class RegisteredActivity extends BaseActivity implements Response.ErrorLi
             registered_getcoed_tv.setEnabled(false);
             timer.start();// 开始计时
         } else {
-            toastor.getSingletonToast("手机号输入错误");
+            toastor.showSingletonToast("手机号输入错误");
         }
     }
 
@@ -128,15 +129,15 @@ public class RegisteredActivity extends BaseActivity implements Response.ErrorLi
                             user.setPassword(pasw);
                             user.setType(TYPE);
                         } else
-                            toastor.getSingletonToast("昵称不能为空");
+                            toastor.showSingletonToast("昵称不能为空");
                     } else
-                        toastor.getSingletonToast("两次密码输入不一致");
+                        toastor.showSingletonToast("两次密码输入不一致");
                 } else
-                    toastor.getSingletonToast("密码长度必须6~16位之间");
+                    toastor.showSingletonToast("密码长度必须6~16位之间");
             } else
-                toastor.getSingletonToast("验证码填写不正确");
+                toastor.showSingletonToast("验证码填写不正确");
         } else
-            toastor.getSingletonToast("手机号填写不正确");
+            toastor.showSingletonToast("手机号填写不正确");
     }
 
     NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.REGISTER, new Response.Listener<JSONObject>() {
@@ -145,16 +146,16 @@ public class RegisteredActivity extends BaseActivity implements Response.ErrorLi
             Log.e(TAG, jsonObject.toString());
             dialog.dismiss();
             if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
             } else if (jsonObject.optInt("resCode") == 0) {
                 JSONObject json = jsonObject.optJSONObject("resBody");
                 if (jsonObject.optInt("resCode") == 1) {
-                    toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                    toastor.showSingletonToast(jsonObject.optString("resMessage"));
                 } else if (jsonObject.optInt("resCode") == 0) {
-                    toastor.getSingletonToast("注册成功，请完善个人信息");
+                    toastor.showSingletonToast("注册成功，请完善个人信息");
                     user.setUserID(jsonObject.optString("userID"));
                     MyApplication.newInstance().setUser(user);
-                    toastor.getSingletonToast("注册成功");
+                    toastor.showSingletonToast("注册成功");
                     startActivity(new Intent(RegisteredActivity.this, MyInfoActivity.class).putExtra("user", user));
                     finish();
                 }
@@ -170,7 +171,7 @@ public class RegisteredActivity extends BaseActivity implements Response.ErrorLi
             Log.e(TAG, jsonObject.toString());
             dialog.dismiss();
             if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
             } else if (jsonObject.optInt("resCode") == 0) {
                 CODE = jsonObject.optJSONObject("resBody").optString("identify");
             }
@@ -180,6 +181,6 @@ public class RegisteredActivity extends BaseActivity implements Response.ErrorLi
     @Override
     public void onErrorResponse(VolleyError volleyError) {
         dialog.dismiss();
-        toastor.getSingletonToast("服务器异常");
+        toastor.showSingletonToast("服务器异常");
     }
 }

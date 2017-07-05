@@ -2,6 +2,7 @@ package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.view.View;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
@@ -16,7 +17,7 @@ public class Setting extends BaseActivity {
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
 
     }
     @OnClick(R.id.set_back_iv)

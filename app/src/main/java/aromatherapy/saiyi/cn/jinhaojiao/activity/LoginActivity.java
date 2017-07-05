@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
@@ -56,7 +57,7 @@ public class LoginActivity extends BaseActivity implements MsgView {
     }
 
     @Override
-    protected void init() {
+    protected void init(Bundle savedInstanceState) {
         mShareAPI = UMShareAPI.get(this);
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this, "登陆中...");
@@ -166,14 +167,13 @@ public class LoginActivity extends BaseActivity implements MsgView {
 
                 loginPresenterImp.loadMsg(map);
             } else {
-                toastor.getSingletonToast("密码长度不正确");
+                toastor.showSingletonToast("密码长度不正确");
             }
         } else {
-            toastor.getSingletonToast("手机号码输入错误");
+            toastor.showSingletonToast("手机号码输入错误");
         }
 
     }
-    ;
 
     public Bitmap stringtoBitmap(String string) {
         //将字符串转换成Bitmap类型

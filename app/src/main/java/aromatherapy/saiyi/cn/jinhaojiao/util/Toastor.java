@@ -16,7 +16,7 @@ public class Toastor {
         this.context = context.getApplicationContext();
     }
 
-    public Toast getSingletonToast(int resId) {
+    private Toast getSingletonToast(int resId) {
         if (mToast == null) {
             mToast = Toast.makeText(context, resId, Toast.LENGTH_SHORT);
         }else{
@@ -25,7 +25,7 @@ public class Toastor {
         return mToast;
     }
 
-    public Toast getSingletonToast(String text) {
+    private Toast getSingletonToast(String text) {
         if (mToast == null) {
             mToast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
         }else{
@@ -36,19 +36,19 @@ public class Toastor {
 
 
 
-    public Toast getToast(int resId) {
+    private Toast getToast(int resId) {
         return Toast.makeText(context, resId, Toast.LENGTH_SHORT);
     }
 
-    public Toast getToast(String text) {
+    private Toast getToast(String text) {
         return Toast.makeText(context, text, Toast.LENGTH_SHORT);
     }
 
-    public Toast getLongToast(int resId) {
+    private Toast getLongToast(int resId) {
         return Toast.makeText(context, resId, Toast.LENGTH_LONG);
     }
 
-    public Toast getLongToast(String text) {
+    private Toast getLongToast(String text) {
         return Toast.makeText(context, text, Toast.LENGTH_LONG);
     }
 

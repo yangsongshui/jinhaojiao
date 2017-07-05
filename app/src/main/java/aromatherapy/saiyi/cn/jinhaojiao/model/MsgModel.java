@@ -8,8 +8,8 @@ import aromatherapy.saiyi.cn.jinhaojiao.base.IBaseRequestCallBack;
 
 /**
  * 描述：MVP中的M；处理获取网络天气数据
- * 作者：dc on 2017/2/16 11:03
- * 邮箱：597210600@qq.com
+ * 作者：ys on 2017/2/16 11:03
+ * 邮箱：yang3384046@126.com
  */
 public interface MsgModel<T> {
 
