@@ -6,16 +6,19 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.util.Base64;
 import android.widget.RadioGroup;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.adapter.TestFragmentAdapter;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
@@ -41,7 +44,9 @@ public class MainActivity extends BaseActivity implements MsgView {
     public static final String TAG = "MainActivity";
     @BindView(R.id.main_rgrpNavigation)
     RadioGroup rgrpNavigation;
-    private Fragment[] frags = new Fragment[4];
+    @BindView(R.id.pager)
+    ViewPager pager;
+    private List<Fragment> frags;
     private int currentFragIndex = -1;
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
@@ -54,7 +59,7 @@ public class MainActivity extends BaseActivity implements MsgView {
     LoginPresenterImp loginPresenterImp;
     ThreeLoginPresenterImp threeLoginPresenterImp;
     FindHomePresenterImp findHomePresenterImp;
-
+    TestFragmentAdapter mAdapter;
     @Override
     protected int getContentView() {
         return R.layout.activity_main;
@@ -63,12 +68,20 @@ public class MainActivity extends BaseActivity implements MsgView {
     @Override
     protected void init(Bundle savedInstanceState) {
         user = MyApplication.newInstance().getUser();
-        //   mQueue = MyApplication.newInstance().getmQueue();
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-
+        frags = new ArrayList<>();
+        frags.add(new Home());
+        frags.add(Location.newInstance());
+        frags.add(new Community());
+        if (MyApplication.newInstance().getUser() == null)
+            frags.add(new LoginFrag());
+        else
+            frags.add(new Me());
+        mAdapter = new TestFragmentAdapter(getSupportFragmentManager(), frags);
+        pager.setAdapter(mAdapter);
         initHttp();
         if (user != null) {
             if (user.getPassword() != null && user.getPassword().length() > 0) {
@@ -86,7 +99,7 @@ public class MainActivity extends BaseActivity implements MsgView {
 
         }
         initNavigation();
-        showFrag(0);
+        //showFrag(0);
         rgrpNavigation.check(R.id.rab_purpose);
         handler = new Handler();
         myRunnable = new Runnable() {
@@ -110,23 +123,32 @@ public class MainActivity extends BaseActivity implements MsgView {
             public void run() {
                 user = MyApplication.newInstance().getUser();
                 if (user != null)
+
                     if (user.getType() == 1) {
+                        frags.remove(0);
+                        frags.add(0,  new Home());
+                        mAdapter.setCount(frags);
+                        type = 0;
                         //学员
-                        FragmentTransaction fragTran = getSupportFragmentManager()
+                       /* FragmentTransaction fragTran = getSupportFragmentManager()
                                 .beginTransaction();
                         frags[0] = new Home();
                         fragTran.add(R.id.main_frame,
                                 frags[0]);
-                        fragTran.commit();
+                        fragTran.commit();*/
                         rgrpNavigation.check(R.id.rab_purpose);
                     } else if (user.getType() == 0) {
                         //教练
-                        FragmentTransaction fragTran = getSupportFragmentManager()
+                        frags.remove(0);
+                        frags.add(0,  new Coach());
+                        mAdapter.setCount(frags);
+                        type = 0;
+                      /*  FragmentTransaction fragTran = getSupportFragmentManager()
                                 .beginTransaction();
                         frags[0] = new Coach();
                         fragTran.add(R.id.main_frame,
                                 frags[0]);
-                        fragTran.commit();
+                        fragTran.commit();*/
                         rgrpNavigation.check(R.id.rab_purpose);
                     }
             }
@@ -135,9 +157,9 @@ public class MainActivity extends BaseActivity implements MsgView {
     }
 
 
-    /**
+ /*   *//**
      * 初始化碎片的viewpager
-     */
+     *//*
     private void showFrag(int index) {
         if (index == currentFragIndex)
             return;
@@ -155,7 +177,7 @@ public class MainActivity extends BaseActivity implements MsgView {
             fragTran.attach(frags[index]);
         currentFragIndex = index;
         fragTran.commit();
-    }
+    }*/
 
     /**
      * 初始化底部导航栏
@@ -168,43 +190,14 @@ public class MainActivity extends BaseActivity implements MsgView {
         rgrpNavigation.check(currentFragIndex + 1);
     }
 
-    private Fragment getFrag(int index) {
-        switch (index) {
-            case 0:
-                if (user != null) {
-                    if (user.getType() == 1)
-                        return new Home();
-                    else if (user.getType() == 0)
-                        return new Coach();
-
-                } else {
-                    return new Home();
-                }
-            case 1:
-                return Location.newInstance();
-            case 2:
-                return new Community();
-            case 3:
-                if (MyApplication.newInstance().getUser() == null)
-                    return new LoginFrag();
-                else
-                    return new Me();
-            default:
-                return null;
-        }
-    }
 
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-        if (type == 1) {
-            FragmentTransaction fragTran = getSupportFragmentManager()
-                    .beginTransaction();
-            frags[3] = new Me();
-            fragTran.replace(R.id.main_frame,
-                    frags[3]);
-
-            fragTran.commit();
+       if (type == 1) {
+            frags.remove(3);
+            frags.add(new Me());
+             mAdapter.setCount(frags);
             type = 0;
         }
 
@@ -230,12 +223,10 @@ public class MainActivity extends BaseActivity implements MsgView {
         super.onRestart();
         user = MyApplication.newInstance().getUser();
         if (type == 2) {
-            FragmentTransaction fragTran = getSupportFragmentManager()
-                    .beginTransaction();
-            frags[3] = new LoginFrag();
-            fragTran.replace(R.id.main_frame,
-                    frags[3]);
-            fragTran.commit();
+            frags.add(3, new LoginFrag());
+            mAdapter.setCount(frags);
+            type = 0;
+
         }
 
         if (user != null) {
@@ -317,19 +308,19 @@ public class MainActivity extends BaseActivity implements MsgView {
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
                 case R.id.rab_purpose:
-                    showFrag(0);
+                    //showFrag(0);
                     break;
                 case R.id.rab_rent:
-                    showFrag(1);
+                   // showFrag(1);
                     break;
                 case R.id.rab_sign:
                     toastor.showSingletonToast("签到暂未开放");
                     break;
                 case R.id.rab_flowdeal:
-                    showFrag(2);
+                   // showFrag(2);
                     break;
                 case R.id.rab_me:
-                    showFrag(3);
+                   // showFrag(3);
                     break;
             }
         }
