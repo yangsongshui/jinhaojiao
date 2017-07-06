@@ -18,13 +18,11 @@ import com.amap.api.maps2d.MapFragment;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MarkerOptions;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,17 +30,22 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindPositionPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.CoordinateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import butterknife.BindView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 ;
 
-public class Location extends BaseFragment implements Response.ErrorListener, AMapLocationListener, LocationSource {
+public class Location extends BaseFragment implements AMapLocationListener, LocationSource, MsgView {
     @BindView(R.id.map)
     MapView mMapView;
     private final static String TAG = Location.class.getSimpleName();
@@ -51,13 +54,13 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    private RequestQueue mQueue;
     private User user;
     private LocationSource.OnLocationChangedListener mListener;
     private AMapLocationClient mlocationClient;
     private AMapLocationClientOption mLocationOption;
     private Handler handler;
     private Runnable myRunnable;
+    private FindPositionPresenterImp findPositionPresenterImp;
 
     public static Location newInstance() {
         if (fragment == null) {
@@ -79,12 +82,13 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        mQueue = MyApplication.newInstance().getmQueue();
+        findPositionPresenterImp = new FindPositionPresenterImp(this, getActivity());
         handler = new Handler();
         myRunnable = new Runnable() {
             @Override
             public void run() {
-                mQueue.add(normalPostRequest);
+                findPositionPresenterImp.loadMsg(map);
+
             }
         };
 
@@ -110,7 +114,8 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
                     Log.e("----", user.getEquipmentID() + " ");
                     map.clear();
                     map.put("equipmentID", user.getEquipmentID());
-                    mQueue.add(normalPostRequest);
+                    findPositionPresenterImp.loadMsg(map);
+
                 } else {
                     init();
                 }
@@ -123,102 +128,61 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
         }
     }
 
-
-
-/*    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，实现地图生命周期管理
-        mMapView.onSaveInstanceState(outState);
-    }*/
-
-    NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.FINDPOSITION, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.showSingletonToast(jsonObject.optString("resMessage"));
-                init();
-            } else if (jsonObject.optInt("resCode") == 0) {
-                toastor.showSingletonToast(jsonObject.optString("resMessage"));
-                JSONObject object = jsonObject.optJSONObject("resBody");
-                if (jsonObject.optInt("type") == 1) {
-                    //GPS坐标
-                    //初始化地图变量
-                    CoordinateConverter converter = new CoordinateConverter(getActivity());
-                    // CoordType.GPS 待转换坐标类型
-                    converter.from(CoordinateConverter.CoordType.GPS);
-                    try {
-                        DPoint sourceLatLng = new DPoint();
-                        sourceLatLng.setLatitude(object.optDouble("latitude"));//纬度
-                        sourceLatLng.setLongitude(object.optDouble("longitude"));//经度
-                        // sourceLatLng待转换坐标点 DPoint类型
-                        converter.coord(sourceLatLng);
-                        // 执行转换操作
-                        DPoint desLatLng = converter.convert();
-                        LatLng BEIJING = CoordinateUtil.transformFromWGSToGCJ(new LatLng(desLatLng.getLatitude(), desLatLng.getLongitude()));
-                        mMap.addMarker(new MarkerOptions().
-                                position(BEIJING).
-                                title(object.optString("time")).snippet("用户最后一次所在位置"));
-
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(BEIJING, 14));
-                        mMap.invalidate();// 刷新地图
-                        Log.e("-------", "手环");
-                        handler.postDelayed(myRunnable, 30000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    String url = object.optString("http");
-                    Log.e("--------", url);
-                    //基站
-                    zuobiao(url);
-                }
-            }
-        }
-    }, this, map);
-
     private void zuobiao(String url) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
-                new Response.Listener<JSONObject>() {
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        Log.e("TAG", response.toString());
-                        if (response.optString("status").equals("1")) {
-                            JSONObject object = response.optJSONObject("result");
-                            try {
-                                String location = object.optString("location");
-                                double latitude = Double.valueOf(location.substring(0, location.indexOf(",")));
-                                double longitude = Double.valueOf(location.substring(location.indexOf(",") + 1, location.length()));
+                    public void run() {
+                        toastor.showSingletonToast("服务器连接失败");
+                    }
+                });
+            }
 
-                                LatLng BEIJING = CoordinateUtil.transformFromWGSToGCJ(new LatLng(longitude, latitude));
-                                mMap.addMarker(new MarkerOptions().
-                                        position(BEIJING).
-                                        title("用户最后一次所在位置").snippet(object.optString("desc")));
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(BEIJING, 14));
-                                mMap.invalidate();// 刷新地图
-                                Log.e("-------", "手环位置");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Log.e("-------", e.getMessage());
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String str = response.body().string();
+                Log.i("wangshu", str);
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONObject dataJson = new JSONObject(str);
+                            toastor.showSingletonToast(dataJson.optString("resMessage"));
+                            if (dataJson.optString("resCode").equals("0")) {
+                                JSONObject object = dataJson.optJSONObject("result");
+                                try {
+                                    String location = object.optString("location");
+                                    double latitude = Double.valueOf(location.substring(0, location.indexOf(",")));
+                                    double longitude = Double.valueOf(location.substring(location.indexOf(",") + 1, location.length()));
+
+                                    LatLng BEIJING = CoordinateUtil.transformFromWGSToGCJ(new LatLng(longitude, latitude));
+                                    mMap.addMarker(new MarkerOptions().
+                                            position(BEIJING).
+                                            title("用户最后一次所在位置").snippet(object.optString("desc")));
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(BEIJING, 14));
+                                    mMap.invalidate();// 刷新地图
+                                    Log.e("-------", "手环位置");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Log.e("-------", e.getMessage());
+                                }
                             }
-                        } else {
-                            toastor.showSingletonToast("服务器异常");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("TAG", error.getMessage(), error);
+                });
             }
+
         });
-        mQueue.add(jsonObjectRequest);
-    }
-
-    @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        toastor.showSingletonToast("服务器异常");
-
     }
 
     /**
@@ -333,5 +297,73 @@ public class Location extends BaseFragment implements Response.ErrorListener, AM
         //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，保存地图当前的状态
         if (mMapView != null)
             mMapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void showProgress() {
+        if (dialog != null && !dialog.isShowing()) {
+            dialog.show();
+        }
+
+    }
+
+    @Override
+    public void disimissProgress() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+
+    @Override
+    public void loadDataSuccess(JSONObject jsonObject) {
+        Log.e(TAG, jsonObject.toString());
+        if (jsonObject.optInt("resCode") == 1) {
+            toastor.showSingletonToast(jsonObject.optString("resMessage"));
+            init();
+        } else if (jsonObject.optInt("resCode") == 0) {
+            toastor.showSingletonToast(jsonObject.optString("resMessage"));
+            JSONObject object = jsonObject.optJSONObject("resBody");
+            if (jsonObject.optInt("type") == 1) {
+                //GPS坐标
+                //初始化地图变量
+                CoordinateConverter converter = new CoordinateConverter(getActivity());
+                // CoordType.GPS 待转换坐标类型
+                converter.from(CoordinateConverter.CoordType.GPS);
+                try {
+                    DPoint sourceLatLng = new DPoint();
+                    sourceLatLng.setLatitude(object.optDouble("latitude"));//纬度
+                    sourceLatLng.setLongitude(object.optDouble("longitude"));//经度
+                    // sourceLatLng待转换坐标点 DPoint类型
+                    converter.coord(sourceLatLng);
+                    // 执行转换操作
+                    DPoint desLatLng = converter.convert();
+                    LatLng BEIJING = CoordinateUtil.transformFromWGSToGCJ(new LatLng(desLatLng.getLatitude(), desLatLng.getLongitude()));
+                    mMap.addMarker(new MarkerOptions().
+                            position(BEIJING).
+                            title(object.optString("time")).snippet("用户最后一次所在位置"));
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(BEIJING, 14));
+                    mMap.invalidate();// 刷新地图
+                    Log.e("-------", "手环");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                String url = object.optString("http");
+                Log.e("--------", url);
+                //基站
+                zuobiao(url);
+            }
+            handler.postDelayed(myRunnable, 30000);
+        }
+    }
+
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+        Log.e(TAG, throwable.getLocalizedMessage());
+        toastor.showSingletonToast("服务器连接失败");
     }
 }

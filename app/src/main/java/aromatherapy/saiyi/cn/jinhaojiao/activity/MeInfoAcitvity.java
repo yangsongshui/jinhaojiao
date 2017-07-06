@@ -33,9 +33,11 @@ import com.jph.takephoto.permission.InvokeListener;
 import com.jph.takephoto.permission.PermissionManager;
 import com.jph.takephoto.permission.TakePhotoInvocationHandler;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +46,6 @@ import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindPersonalPresenterImp;
-import aromatherapy.saiyi.cn.jinhaojiao.presenter.UpdateUserPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
@@ -52,6 +53,13 @@ import aromatherapy.saiyi.cn.jinhaojiao.widget.MyRadioGroup;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static aromatherapy.saiyi.cn.jinhaojiao.util.AppUtil.bitmapToString;
 
@@ -105,7 +113,6 @@ public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.
     private Toastor toastor;
     Bitmap bitmap;
     String photo = "";
-    private UpdateUserPresenterImp updateUserPresenterImp;
     private FindPersonalPresenterImp findPersonalPresenterImp;
 
     @Override
@@ -129,38 +136,6 @@ public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.
         dialog = new LoadingDialog(this);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        updateUserPresenterImp = new UpdateUserPresenterImp(new MsgView() {
-            @Override
-            public void showProgress() {
-                if (dialog != null && !dialog.isShowing()) {
-                    dialog.show();
-                }
-
-            }
-
-            @Override
-            public void disimissProgress() {
-                if (dialog != null && dialog.isShowing()) {
-                    dialog.dismiss();
-                }
-            }
-
-            @Override
-            public void loadDataSuccess(JSONObject jsonObject) {
-                toastor.showSingletonToast(jsonObject.optString("resMessage"));
-                if (jsonObject.optInt("resCode") == 0) {
-                    toastor.showSingletonToast(jsonObject.optString("resMessage"));
-                    MyApplication.newInstance().setUser(user);
-                    finish();
-                }
-            }
-
-            @Override
-            public void loadDataError(Throwable throwable) {
-                Log.e(TAG, throwable.getLocalizedMessage());
-                toastor.showSingletonToast("服务器连接失败");
-            }
-        }, this);
         findPersonalPresenterImp = new FindPersonalPresenterImp(this, this);
         map.clear();
         map.put("userID", user.getUserID());
@@ -403,6 +378,7 @@ public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.
     }
 
     private void definite() {
+        FormBody.Builder builder = new FormBody.Builder();
         String identity = "";
         String name = me_name_tv.getText().toString();
         String birthday = me_birthday_tv.getText().toString();
@@ -436,23 +412,64 @@ public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.
                                 user.setSex(sex);
                                 user.setHeight(height);
                                 user.setBirthday(birthday);
-                                map.put("userID", user.getUserID());
-                                map.put("name", user.getUsername());
-                                map.put("sex", user.getSex());
-                                map.put("height", user.getHeight());
-                                map.put("weight", user.getWeight());
-                                map.put("birthday", user.getBirthday());
-                                map.put("address", user.getAddress());
-                                map.put("school", user.getSchool());
-                                map.put("uclass", user.getBanji());
-                                map.put("identity", user.getIdentity());
-                                map.put("clubname", user.getClub());
-                                map.put("phoneNumber", user.getPhone());
+                                builder.add("userID", user.getUserID());
+                                builder.add("name", user.getUsername());
+                                builder.add("sex", user.getSex());
+                                builder.add("height", user.getHeight());
+                                builder.add("weight", user.getWeight());
+                                builder.add("birthday", user.getBirthday());
+                                builder.add("address", user.getAddress());
+                                builder.add("school", user.getSchool());
+                                builder.add("uclass", user.getBanji());
+                                builder.add("identity", user.getIdentity());
+                                builder.add("clubname", user.getClub());
+                                builder.add("phoneNumber", user.getPhone());
                                 if (photo.trim().length() > 0) {
                                     map.put("headPicByte", photo);
                                 }
                                 //修改用户ixnxi
-                                updateUserPresenterImp.loadMsg(map);
+                                RequestBody formBody = builder.build();
+                                OkHttpClient mOkHttpClient = new OkHttpClient();
+
+                                Request request = new Request.Builder()
+                                        .url("http://120.76.99.18:8080/insu-web/t_user_app/updateUser?")
+                                        .post(formBody)
+                                        .build();
+                                Call call = mOkHttpClient.newCall(request);
+                                call.enqueue(new Callback() {
+                                    @Override
+                                    public void onFailure(Call call, IOException e) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                toastor.showSingletonToast("服务器连接失败");
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onResponse(Call call, Response response) throws IOException {
+                                        final String str = response.body().string();
+
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    JSONObject dataJson = new JSONObject(str);
+                                                    toastor.showSingletonToast(dataJson.optString("resMessage"));
+                                                    if (dataJson.optInt("resCode") == 0) {
+                                                        toastor.showSingletonToast(dataJson.optString("resMessage"));
+                                                        MyApplication.newInstance().setUser(user);
+                                                        finish();
+                                                    }
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                            }
+                                        });
+                                    }
+                                });
 
                             } else
                                 toastor.showSingletonToast("昵称不能为空");

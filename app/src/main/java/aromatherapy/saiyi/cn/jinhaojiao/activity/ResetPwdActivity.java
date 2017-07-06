@@ -6,10 +6,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -18,16 +14,17 @@ import java.util.Map;
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindPwdPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetIdentifyPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.MD5;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class ResetPwdActivity extends BaseActivity implements Response.ErrorListener {
+public class ResetPwdActivity extends BaseActivity implements  MsgView {
     private final String TAG = "ResetPwdActivity";
     @BindView(R.id.pwd_phone_et)
     EditText pwd_phone_et;
@@ -42,9 +39,11 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    private RequestQueue mQueue;
+
     private CountDownTimer timer;
     private String CODE = "";
+    private GetIdentifyPresenterImp getIdentifyPresenterImp;
+    private FindPwdPresenterImp findPsdModelImp;
 
     @Override
     protected int getContentView() {
@@ -53,7 +52,7 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
 
     @Override
     protected void init(Bundle savedInstanceState) {
-        mQueue = MyApplication.newInstance().getmQueue();
+
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this);
         dialog.setCancelable(false);
@@ -71,6 +70,38 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
                 pwd_getcoed_tv.setEnabled(true);
             }
         };
+        findPsdModelImp = new FindPwdPresenterImp(this, this);
+        getIdentifyPresenterImp = new GetIdentifyPresenterImp(new MsgView() {
+            @Override
+            public void showProgress() {
+                if (dialog != null && !dialog.isShowing()) {
+                    dialog.show();
+                }
+
+            }
+
+            @Override
+            public void disimissProgress() {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void loadDataSuccess(JSONObject jsonObject) {
+                Log.e(TAG, jsonObject.toString());
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
+                if (jsonObject.optInt("resCode") == 0) {
+                    CODE = jsonObject.optJSONObject("resBody").optString("identify");
+                }
+            }
+
+            @Override
+            public void loadDataError(Throwable throwable) {
+                Log.e(TAG, throwable.getLocalizedMessage());
+                toastor.showSingletonToast("服务器连接失败");
+            }
+        }, this);
     }
 
     @OnClick(R.id.pwd_getcoed_tv)
@@ -80,7 +111,7 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
             map.clear();
             map.put("phoneNumber", phone);
             map.put("type", 1 + "");
-            mQueue.add(normalPostRequest2);
+            getIdentifyPresenterImp.loadMsg(map);
             pwd_getcoed_tv.setEnabled(false);
             timer.start();// 开始计时
         } else {
@@ -107,7 +138,8 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
                         dialog.show();
                         map.put("phoneNumber", phone);
                         map.put("passWord", MD5.getMD5(pasw));
-                        mQueue.add(normalPostRequest);
+                        findPsdModelImp.loadMsg(map);
+
                     } else
 
                         toastor.showSingletonToast("两次密码输入不一致");
@@ -119,37 +151,36 @@ public class ResetPwdActivity extends BaseActivity implements Response.ErrorList
             toastor.showSingletonToast("手机号填写不正确");
     }
 
-    NormalPostRequest normalPostRequest2 = new NormalPostRequest(Constant.GETIDENTIFY, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.showSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                CODE = jsonObject.optJSONObject("resBody").optString("identify");
-            }
+    @Override
+    public void showProgress() {
+        if (dialog != null && !dialog.isShowing()) {
+            dialog.show();
         }
-    }, this, map);
-    NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.FINDPWD, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.showSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                toastor.showSingletonToast(jsonObject.optString("resMessage"));
-                MyApplication.newInstance().outLogin();
-                setResult(2);
-                finish();
-            }
-        }
-    }, this, map);
+
+    }
 
     @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        dialog.dismiss();
-        toastor.showSingletonToast("服务器异常");
+    public void disimissProgress() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    @Override
+    public void loadDataSuccess(JSONObject jsonObject) {
+        Log.e(TAG, jsonObject.toString());
+        toastor.showSingletonToast(jsonObject.optString("resMessage"));
+        if (jsonObject.optInt("resCode") == 0) {
+            toastor.showSingletonToast(jsonObject.optString("resMessage"));
+            MyApplication.newInstance().outLogin();
+            setResult(2);
+            finish();
+        }
+    }
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+        Log.e(TAG, throwable.getLocalizedMessage());
+        toastor.showSingletonToast("服务器连接失败");
     }
 }

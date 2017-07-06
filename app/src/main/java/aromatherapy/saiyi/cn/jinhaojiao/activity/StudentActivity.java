@@ -7,10 +7,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -21,16 +17,16 @@ import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Home;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindHomePresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class StudentActivity extends BaseActivity implements Response.ErrorListener {
+public class StudentActivity extends BaseActivity implements MsgView {
     private final static String TAG = Home.class.getSimpleName();
     private static double STEPNUM = 3000.0;
 
@@ -47,15 +43,14 @@ public class StudentActivity extends BaseActivity implements Response.ErrorListe
 
     @BindView(R.id.student_name_tv)
     TextView student_name_tv;
-
-
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    private RequestQueue mQueue;
     private Handler handler;
     private Runnable myRunnable;
     private User user;
+    private FindHomePresenterImp findHomePresenterImp;
+    private boolean isOne = true;
 
     @Override
     protected int getContentView() {
@@ -65,12 +60,13 @@ public class StudentActivity extends BaseActivity implements Response.ErrorListe
     @Override
     protected void init(Bundle savedInstanceState) {
         user = (User) getIntent().getSerializableExtra("student");
-        mQueue = MyApplication.newInstance().getmQueue();
+
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         handler = new Handler();
+        findHomePresenterImp = new FindHomePresenterImp(this, this);
         myRunnable = new Runnable() {
             @Override
             public void run() {
@@ -79,7 +75,7 @@ public class StudentActivity extends BaseActivity implements Response.ErrorListe
                 if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
                     map.put("equipmentID", user.getEquipmentID());
                     map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
-                    mQueue.add(normalPostRequest2);
+                    findHomePresenterImp.loadMsg(map);
                     handler.postDelayed(this, 10000);
                 }
             }
@@ -123,27 +119,6 @@ public class StudentActivity extends BaseActivity implements Response.ErrorListe
         }
     }
 
-    NormalPostRequest normalPostRequest2 = new NormalPostRequest(Constant.FINDHEARTRATEMOTION, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.showSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                JSONObject json = jsonObject.optJSONObject("resBody");
-                student_distance_tv.setText(json.optString("Calorie"));
-                student_calorie_tv.setText(json.optString("distance"));
-                student_heartthrob_tv.setText(json.optString("heartrate"));
-                student_volocity_tv.setText(json.optString("speed"));
-                student_step_tv.setText(json.optString("steps"));
-
-
-            }
-        }
-    }, this, map);
-
-
 
     @Override
     protected void onResume() {
@@ -151,15 +126,46 @@ public class StudentActivity extends BaseActivity implements Response.ErrorListe
         handler.postDelayed(myRunnable, 0);
     }
 
-    @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        dialog.dismiss();
-        toastor.showSingletonToast("服务器异常...");
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacks(myRunnable);
+    }
+
+    @Override
+    public void showProgress() {
+        if (dialog != null && !dialog.isShowing() && isOne) {
+            dialog.show();
+            isOne = false;
+        }
+
+    }
+
+    @Override
+    public void disimissProgress() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    @Override
+    public void loadDataSuccess(JSONObject jsonObject) {
+        Log.e(TAG, jsonObject.toString());
+        if (isOne)
+            toastor.showSingletonToast(jsonObject.optString("resMessage"));
+        if (jsonObject.optInt("resCode") == 0) {
+            JSONObject json = jsonObject.optJSONObject("resBody");
+            student_distance_tv.setText(json.optString("Calorie"));
+            student_calorie_tv.setText(json.optString("distance"));
+            student_heartthrob_tv.setText(json.optString("heartrate"));
+            student_volocity_tv.setText(json.optString("speed"));
+            student_step_tv.setText(json.optString("steps"));
+        }
+    }
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+        toastor.showSingletonToast("服务器连接失败");
     }
 }

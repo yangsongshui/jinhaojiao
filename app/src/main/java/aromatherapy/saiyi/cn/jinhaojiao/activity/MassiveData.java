@@ -15,7 +15,6 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MassiveData extends BaseActivity {
-    User user;
     @BindView(R.id.massive_name_tv)
     TextView massive_name_tv;
     @BindView(R.id.massive_pic_iv)

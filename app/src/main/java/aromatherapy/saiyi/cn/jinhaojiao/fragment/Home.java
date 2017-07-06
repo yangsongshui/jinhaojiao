@@ -40,14 +40,7 @@ public class Home extends BaseFragment {
     TextView home_step_tv;
     @BindView(R.id.home_calorie_tv)
     TextView home_calorie_tv;
-
-
-
-
     MyBroadcastReciver reciver;
-
-
-
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
         IntentFilter intentFilter = new IntentFilter();

@@ -14,10 +14,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -30,27 +26,31 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.AddStudenPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStudenPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 
 
-public class Coach extends BaseFragment implements Response.ErrorListener {
+public class Coach extends BaseFragment implements MsgView {
     private final static String TAG = Coach.class.getSimpleName();
     User user;
 
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    private RequestQueue mQueue;
+
     private List<User> mList = new ArrayList<>();
     MyBroadcastReciver reciver;
     private int indext = 0;
     private String Remarks = "";
     private Handler handler;
     private Runnable myRunnable;
+    private FindStudenPresenterImp findStudenPresenterImp;
+    private AddStudenPresenterImp addStudenPresenterImp;
+    private boolean isOne = true;
 
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
@@ -64,23 +64,54 @@ public class Coach extends BaseFragment implements Response.ErrorListener {
         myRunnable = new Runnable() {
             @Override
             public void run() {
-
                 user = MyApplication.newInstance().getUser();
                 if (user != null && user.getUserID() != null) {
                     Log.e(TAG, "更新数据");
                     getStudent();
                 }
-
-
             }
         };
-        mQueue = MyApplication.newInstance().getmQueue();
+
         toastor = new Toastor(getActivity());
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-
         handler.postDelayed(myRunnable, 500);
+        findStudenPresenterImp = new FindStudenPresenterImp(this, getActivity());
+        addStudenPresenterImp = new AddStudenPresenterImp(new MsgView() {
+            @Override
+            public void showProgress() {
+                if (dialog != null && !dialog.isShowing()) {
+                    dialog.show();
+                }
+
+            }
+
+            @Override
+            public void disimissProgress() {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void loadDataSuccess(JSONObject jsonObject) {
+                Log.e(TAG, jsonObject.toString());
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
+                if (jsonObject.optInt("resCode") == 0) {
+                    toastor.showSingletonToast(jsonObject.optString("resMessage"));
+                    map.clear();
+                    map.put("userID", user.getUserID());
+                    findStudenPresenterImp.loadMsg(map);
+                }
+            }
+
+            @Override
+            public void loadDataError(Throwable throwable) {
+                Log.e(TAG, throwable.getLocalizedMessage());
+                toastor.showSingletonToast("服务器连接失败");
+            }
+        }, getActivity());
     }
 
     /*@OnClick(R.id.coach_add_people_iv)
@@ -120,7 +151,7 @@ public class Coach extends BaseFragment implements Response.ErrorListener {
                     map.clear();
                     map.put("coachID", user.getUserID());
                     map.put("phoneNumber", editText.getText().toString().trim());
-                    mQueue.add(normalPostRequest2);
+                    addStudenPresenterImp.loadMsg(map);
                 }
 
 
@@ -144,29 +175,13 @@ public class Coach extends BaseFragment implements Response.ErrorListener {
     @Override
     public void onResume() {
         super.onResume();
-     /*   user = MyApplication.newInstance().getUser();
-        if (user != null && user.getUserID() != null && mList.size() == 0){
+        user = MyApplication.newInstance().getUser();
+        if (user != null && user.getUserID() != null && mList.size() == 0) {
             getStudent();
-        }*/
+        }
 
 
     }
-
-
-    NormalPostRequest normalPostRequest = new NormalPostRequest(Constant.FIND_STUDENT, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                //toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                getUser(jsonObject.optJSONObject("resBody").optJSONArray("list"));
-            }
-
-        }
-    }, this, map);
 
     private void getUser(JSONArray jsonArray) {
         mList.clear();
@@ -193,67 +208,49 @@ public class Coach extends BaseFragment implements Response.ErrorListener {
             }
             mList.add(user);
         }
-
+        //处理数据
     }
 
-    NormalPostRequest normalPostRequest2 = new NormalPostRequest(Constant.ADD_STUDENT, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                map.clear();
-                map.put("userID", user.getUserID());
-                mQueue.add(normalPostRequest);
-            }
-
-        }
-    }, this, map);
-    /*删除学员*/
-    NormalPostRequest normalPostRequest3 = new NormalPostRequest(Constant.DELETESTUDENT, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                mList.remove(indext);
-
-            }
-
-        }
-    }, this, map);
-    /*删除修改*/
-    NormalPostRequest normalPostRequest4 = new NormalPostRequest(Constant.UPDATEBEIZHU, new Response.Listener<JSONObject>() {
-        @Override
-        public void onResponse(JSONObject jsonObject) {
-            Log.e(TAG, jsonObject.toString());
-            dialog.dismiss();
-            if (jsonObject.optInt("resCode") == 1) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-            } else if (jsonObject.optInt("resCode") == 0) {
-                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                mList.get(indext).setNikename(Remarks);
-
-            }
-
-        }
-    }, this, map);
-
-    @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        dialog.dismiss();
-        toastor.getSingletonToast("服务器异常");
-    }
 
     private void getStudent() {
         map.clear();
         map.put("userID", user.getUserID());
-        mQueue.add(normalPostRequest);
+        findStudenPresenterImp.loadMsg(map);
+
+    }
+
+    @Override
+    public void showProgress() {
+        if (dialog != null && !dialog.isShowing() && isOne) {
+            dialog.show();
+            isOne = false;
+        }
+
+    }
+
+    @Override
+    public void disimissProgress() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    @Override
+    public void loadDataSuccess(JSONObject jsonObject) {
+        Log.e(TAG, jsonObject.toString());
+        if (isOne)
+            toastor.showSingletonToast(jsonObject.optString("resMessage"));
+        if (jsonObject.optInt("resCode") == 0) {
+            //toastor.getSingletonToast(jsonObject.optString("resMessage"));
+            getUser(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+        }
+    }
+
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+        Log.e(TAG, throwable.getLocalizedMessage());
+        toastor.showSingletonToast("服务器连接失败");
     }
 
     private class MyBroadcastReciver extends BroadcastReceiver {
@@ -268,7 +265,7 @@ public class Coach extends BaseFragment implements Response.ErrorListener {
 
             } else if (action.equals("CN.ABEL.ACTION.BROADCAST")) {
                 String msg = intent.getStringExtra("author");
-                Log.e(TAG, "msg:"+msg+" "+msg.substring(0, msg.length())+" "+msg.substring(msg.length() - 1, msg.length()));
+                Log.e(TAG, "msg:" + msg + " " + msg.substring(0, msg.length()) + " " + msg.substring(msg.length() - 1, msg.length()));
                 for (int i = 0; i < mList.size(); i++) {
                     if (mList.get(i).getUserID().equals(msg.substring(0, msg.length() - 2))) {
                         if (msg.substring(msg.length() - 1, msg.length()).equals("1")) {

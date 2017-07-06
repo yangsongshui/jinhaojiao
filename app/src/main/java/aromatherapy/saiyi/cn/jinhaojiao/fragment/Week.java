@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -29,11 +26,11 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStepPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.MyMarkerView;
 import butterknife.BindView;
@@ -42,7 +39,7 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2016/5/28.
  */
-public class Week extends BaseFragment implements OnChartValueSelectedListener, Response.ErrorListener {
+public class Week extends BaseFragment implements OnChartValueSelectedListener, MsgView{
     private final static String TAG = Week.class.getSimpleName();
     @BindView(R.id.line_chart)
     LineChart mChart;
@@ -62,10 +59,11 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    private RequestQueue mQueue;
+
     List<String> Calorie = new ArrayList<>();
     List<String> steps = new ArrayList<>();
-    NormalPostRequest normalPostRequest;
+    FindStepPresenterImp findStepPresenterImp;
+
     User user;
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
@@ -74,7 +72,7 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        mQueue = MyApplication.newInstance().getmQueue();
+        findStepPresenterImp = new FindStepPresenterImp(this, getActivity());
         initChart();
         data = new Date();
         format = new SimpleDateFormat("MM.dd");
@@ -93,27 +91,12 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
                 user= (User) getActivity().getIntent().getSerializableExtra("student");
                 map.put("userID", user.getUserID());
             }
-            QueueRequest(Constant.FINDMOTIONBYTIME, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject jsonObject) {
-                    android.util.Log.e(TAG, jsonObject.toString());
-                    dialog.dismiss();
-                    if (jsonObject.optInt("resCode") == 1) {
-                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                    } else if (jsonObject.optInt("resCode") == 0) {
-                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                        initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
-                    }
-                }
-            });
-            mQueue.add(normalPostRequest);
+
+            findStepPresenterImp.loadMsg(map);
         }
     }
 
-    private void QueueRequest(final String URL, Response.Listener<JSONObject> listener) {
-        normalPostRequest = new NormalPostRequest(URL, listener, this, map);
 
-    }
 
     @Override
     protected int getContentView() {
@@ -246,20 +229,8 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
             map.put("equipmentID",  MyApplication.newInstance().getEquipmentID());
             map.put("time", string);
             map.put("type", "3");
-            QueueRequest(Constant.FINDMOTIONBYTIME, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject jsonObject) {
-                    android.util.Log.e(TAG, jsonObject.toString());
-                    dialog.dismiss();
-                    if (jsonObject.optInt("resCode") == 1) {
-                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                    } else if (jsonObject.optInt("resCode") == 0) {
-                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                        initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
-                    }
-                }
-            });
-            mQueue.add(normalPostRequest);
+
+            findStepPresenterImp.loadMsg(map);
         }
     }
 
@@ -276,26 +247,41 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
             map.put("equipmentID",MyApplication.newInstance().getEquipmentID());
             map.put("time", string);
             map.put("type", "3");
-            QueueRequest(Constant.FINDMOTIONBYTIME, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject jsonObject) {
-                    android.util.Log.e(TAG, jsonObject.toString());
-                    dialog.dismiss();
-                    if (jsonObject.optInt("resCode") == 1) {
-                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                    } else if (jsonObject.optInt("resCode") == 0) {
-                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                        initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
-                    }
-                }
-            });
-            mQueue.add(normalPostRequest);
+            findStepPresenterImp.loadMsg(map);
+        }
+    }
+
+
+
+    @Override
+    public void showProgress() {
+        if (dialog != null && !dialog.isShowing()) {
+            dialog.show();
+        }
+
+    }
+
+    @Override
+    public void disimissProgress() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
         }
     }
 
     @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        dialog.dismiss();
-        toastor.getSingletonToast("服务器异常");
+    public void loadDataSuccess(JSONObject jsonObject) {
+        Log.e(TAG, jsonObject.toString());
+        toastor.showSingletonToast(jsonObject.optString("resMessage"));
+        if (jsonObject.optInt("resCode") == 0) {
+            toastor.showSingletonToast(jsonObject.optString("resMessage"));
+            initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+        }
+    }
+
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+        Log.e(TAG, throwable.getLocalizedMessage());
+        toastor.showSingletonToast("服务器连接失败");
     }
 }

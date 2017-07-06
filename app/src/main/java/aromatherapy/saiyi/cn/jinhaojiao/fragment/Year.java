@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -29,10 +26,11 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStepPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindjvliPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.MyMarkerView;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -40,7 +38,7 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2016/5/28.
  */
-public class Year extends BaseFragment implements OnChartValueSelectedListener, Response.ErrorListener {
+public class Year extends BaseFragment implements OnChartValueSelectedListener, MsgView {
     private final static String TAG = Year.class.getSimpleName();
     @BindView(R.id.line_chart)
     LineChart mChart;
@@ -58,26 +56,27 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
     @BindView(R.id.year_kaluli)
     TextView year_kaluli;
     private Map<String, String> map = new HashMap<String, String>();
-    private Toastor toastor;
-    private RequestQueue mQueue;
     List<String> Calorie = new ArrayList<>();
     List<String> steps = new ArrayList<>();
-    NormalPostRequest normalPostRequest;
     int index;
     private int TYPE = 0;
-    String URL = "";
     User user;
+    FindStepPresenterImp findStepPresenterImp;
+    FindjvliPresenterImp findjvliPresenterImp;
+    Toastor toastor;
+
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
         initChart();
         toastor = new Toastor(getActivity());
-        mQueue = MyApplication.newInstance().getmQueue();
 
+
+        findStepPresenterImp = new FindStepPresenterImp(this, getActivity());
+        findjvliPresenterImp = new FindjvliPresenterImp(this, getActivity());
         TYPE = getActivity().getIntent().getIntExtra("type", -1);
         if (TYPE == 1 || TYPE == 0) {
             year_data_tv.setText("步");
             year_kaluli.setVisibility(View.VISIBLE);
-            URL=Constant.FINDMOTIONBYTIME;
 
         } else if (TYPE == 2) {
             year_kaluli.setVisibility(View.GONE);
@@ -89,7 +88,6 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
         } else if (TYPE == 4) {
             year_kaluli.setVisibility(View.GONE);
             year_data_tv.setText("公里");
-            URL=Constant.FINDJULIBYTIME;
         }
         MonthNext(0);
         Calendar cal = Calendar.getInstance();
@@ -97,22 +95,18 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
         textClock.setText(format.format(cal.getTime()));
     }
 
-    private void QueueRequest(final String URL, Response.Listener<JSONObject> listener) {
-        normalPostRequest = new NormalPostRequest(URL, listener, this, map);
-
-    }
 
     private void initInfo(JSONArray jsonArray) {
         Calorie.clear();
         steps.clear();
         for (int i = 0; i < jsonArray.length(); i++) {
-            if (TYPE == 1 || TYPE == 0){
+            if (TYPE == 1 || TYPE == 0) {
                 Calorie.add(jsonArray.optJSONObject(i).optString("Calorie"));
-                steps.add( jsonArray.optJSONObject(i).optString("steps"));
-            }else if (TYPE == 4){
-                steps.add( jsonArray.optJSONObject(i).optInt("distance")+ "");
+                steps.add(jsonArray.optJSONObject(i).optString("steps"));
+            } else if (TYPE == 4) {
+                steps.add(jsonArray.optJSONObject(i).optInt("distance") + "");
             }
-           Log.e("--", steps.size() + " " + jsonArray.length() + " " + i);
+            Log.e("--", steps.size() + " " + jsonArray.length() + " " + i);
         }
         LineData data = getLineData();
         data.setDrawValues(false); //隐藏坐标轴数据
@@ -242,38 +236,47 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
 
         }
         string = string.substring(0, string.length() - 1);
-        getstep(URL);
+
+        getstep();
     }
-    @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        toastor.getSingletonToast("服务器异常");
-    }
-    private void getstep(String URL){
+
+    private void getstep() {
         user = MyApplication.newInstance().getUser();
-        if ( MyApplication.newInstance().getEquipmentID() != null) {
-            Log.e(TAG,string);
+        if (MyApplication.newInstance().getEquipmentID() != null) {
+            Log.e(TAG, string);
             map.put("equipmentID", MyApplication.newInstance().getEquipmentID());
             map.put("time", string);
             map.put("type", "4");
             if (user.getType() == 1)
                 map.put("userID", user.getUserID());
             else {
-                user= (User) getActivity().getIntent().getSerializableExtra("student");
+                user = (User) getActivity().getIntent().getSerializableExtra("student");
                 map.put("userID", user.getUserID());
             }
-            QueueRequest(URL, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject jsonObject) {
-                    Log.e(TAG, jsonObject.toString());
-                    if (jsonObject.optInt("resCode") == 1) {
-                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                    } else if (jsonObject.optInt("resCode") == 0) {
-                        toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                        initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
-                    }
-                }
-            });
-            mQueue.add(normalPostRequest);
+            if (TYPE == 1 || TYPE == 0)
+                findStepPresenterImp.loadMsg(map);
+            else if (TYPE == 4)
+                findjvliPresenterImp.loadMsg(map);
         }
+    }
+
+    @Override
+    public void showProgress() {
+
+    }
+
+    @Override
+    public void disimissProgress() {
+
+    }
+
+    @Override
+    public void loadDataSuccess(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+
     }
 }

@@ -8,9 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -32,10 +29,13 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStepPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindjvliPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindsuduPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindxinlvPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
-import aromatherapy.saiyi.cn.jinhaojiao.util.NormalPostRequest;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
+import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.MyMarkerView;
 import butterknife.BindView;
@@ -44,19 +44,17 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2016/5/28.
  */
-public class Month extends BaseFragment implements OnChartValueSelectedListener, Response.ErrorListener {
+public class Month extends BaseFragment implements OnChartValueSelectedListener, MsgView {
     private final static String TAG = Month.class.getSimpleName();
     @BindView(R.id.line_chart)
     LineChart mChart;
     @BindView(R.id.textClock)
     TextView textClock;
-
     @BindView(R.id.month_data)
     TextView month_data;
     @BindView(R.id.month_tiem)
     TextView month_tiem;
     DateUtil util = new DateUtil();
-
     @BindView(R.id.month_data_tv)
     TextView month_data_tv;
     @BindView(R.id.month_kaluli)
@@ -68,16 +66,15 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    private RequestQueue mQueue;
     List<String> Calorie = new ArrayList<>();
     List<String> steps = new ArrayList<>();
-    NormalPostRequest normalPostRequest;
     private int TYPE = 0;
-    String URL = "";
     User user;
-    private void QueueRequest(final String URL, Response.Listener<JSONObject> listener) {
-        normalPostRequest = new NormalPostRequest(URL, listener, this, map);
-    }
+
+    FindxinlvPresenterImp findxinlvPresenterImp;
+    FindsuduPresenterImp findsuduPresenterImp;
+    FindStepPresenterImp findStepPresenterImp;
+    FindjvliPresenterImp findjvliPresenterImp;
 
     @Override
     public void onResume() {
@@ -94,66 +91,66 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         TYPE = getActivity().getIntent().getIntExtra("type", -1);
+        findxinlvPresenterImp = new FindxinlvPresenterImp(this, getActivity());
+        findsuduPresenterImp = new FindsuduPresenterImp(this, getActivity());
+        findStepPresenterImp = new FindStepPresenterImp(this, getActivity());
+        findjvliPresenterImp = new FindjvliPresenterImp(this, getActivity());
         if (TYPE == 1 || TYPE == 0) {
             month_data_tv.setText("步");
             month_kaluli.setVisibility(View.VISIBLE);
-            URL = Constant.FINDMOTIONBYTIME;
+
         } else if (TYPE == 2) {
             month_kaluli.setVisibility(View.GONE);
             month_data_tv.setText("bmp");
-            URL = Constant.FINDXINGTIAOBYTIME;
+
         } else if (TYPE == 3) {
             month_kaluli.setVisibility(View.GONE);
             month_data_tv.setText("米/min");
-            URL = Constant.FINDSHUDUBYTIME;
+
         } else if (TYPE == 4) {
             month_kaluli.setVisibility(View.GONE);
             month_data_tv.setText("公里");
-            URL = Constant.FINDJULIBYTIME;
+
         }
-        mQueue = MyApplication.newInstance().getmQueue();
+
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 initChart();
-                map.put("equipmentID",  MyApplication.newInstance().getEquipmentID());
+                map.put("equipmentID", MyApplication.newInstance().getEquipmentID());
                 //map.put("time", string);
                 map.put("time", string);
                 map.put("type", "3");
                 if (user.getType() == 1)
                     map.put("userID", user.getUserID());
                 else {
-                    user= (User) getActivity().getIntent().getSerializableExtra("student");
+                    user = (User) getActivity().getIntent().getSerializableExtra("student");
                     map.put("userID", user.getUserID());
                 }
-                Log.e(TAG,string);
-                if ( MyApplication.newInstance().getEquipmentID() != null) {
-                    QueueRequest(URL, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            Log.e(TAG, jsonObject.toString());
-                            dialog.dismiss();
-                            if (jsonObject.optInt("resCode") == 1) {
-                                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                            } else if (jsonObject.optInt("resCode") == 0) {
-                                toastor.getSingletonToast(jsonObject.optString("resMessage"));
-                                initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
-                            }
-                        }
-                    });
-                    mQueue.add(normalPostRequest);
+                Log.e(TAG, string);
+                if (MyApplication.newInstance().getEquipmentID() != null) {
+                    if (TYPE == 1 || TYPE == 0) {
+                        findStepPresenterImp.loadMsg(map);
+                    } else if (TYPE == 2) {
+                        findxinlvPresenterImp.loadMsg(map);
+                    } else if (TYPE == 3) {
+                        findsuduPresenterImp.loadMsg(map);
+                    } else if (TYPE == 4) {
+                        findjvliPresenterImp.loadMsg(map);
+
+                    }
                 }
             }
         };
 
 
-     /*   Calendar cal = Calendar.getInstance();
-        YEAY = cal.get(Calendar.YEAR);
-        MONTH = cal.get(Calendar.MONTH)+1;
-        DAY = util.getDaysOfMonth(YEAY, MONTH);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
-        textClock.setText(format.format(cal.getTime()));*/
+            /*   Calendar cal = Calendar.getInstance();
+               YEAY = cal.get(Calendar.YEAR);
+               MONTH = cal.get(Calendar.MONTH)+1;
+               DAY = util.getDaysOfMonth(YEAY, MONTH);
+               SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+               textClock.setText(format.format(cal.getTime()));*/
         MonthNext(0);
     }
 
@@ -229,8 +226,8 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
         month_data.setText(yy[e.getXIndex()]);
         month_tiem.setText((e.getXIndex() + 1) + "日");
         month_data.setText(steps.get(e.getXIndex()));
-        if (Calorie.size()>0){
-            month_kaluli.setText(Calorie.get(e.getXIndex())+"千卡");
+        if (Calorie.size() > 0) {
+            month_kaluli.setText(Calorie.get(e.getXIndex()) + "千卡");
         }
     }
 
@@ -290,28 +287,55 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
         handler.sendMessage(mes);
     }
 
-    @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        dialog.dismiss();
-        toastor.getSingletonToast("服务器异常");
-    }
 
     private void initInfo(JSONArray jsonArray) {
         Calorie.clear();
         steps.clear();
         for (int i = 0; i < jsonArray.length(); i++) {
-            if (TYPE == 1 || TYPE == 0){
+            if (TYPE == 1 || TYPE == 0) {
                 Calorie.add(jsonArray.optJSONObject(i).optString("Calorie"));
-                steps.add( jsonArray.optJSONObject(i).optString("steps"));
-            }else if (TYPE==4){
-                steps.add( jsonArray.optJSONObject(i).optString("distance"));
+                steps.add(jsonArray.optJSONObject(i).optString("steps"));
+            } else if (TYPE == 4) {
+                steps.add(jsonArray.optJSONObject(i).optString("distance"));
             }
 
-            Log.e("--",jsonArray.optJSONObject(i).optString("steps")+i);
+            Log.e("--", jsonArray.optJSONObject(i).optString("steps") + i);
         }
         LineData data = getLineData();
         data.setDrawValues(false); //隐藏坐标轴数据
         mChart.setData(data);
         mChart.invalidate();
+    }
+
+    @Override
+    public void showProgress() {
+        if (dialog != null && !dialog.isShowing()) {
+            dialog.show();
+        }
+
+    }
+
+    @Override
+    public void disimissProgress() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    @Override
+    public void loadDataSuccess(JSONObject jsonObject) {
+        Log.e(TAG, jsonObject.toString());
+        toastor.showSingletonToast(jsonObject.optString("resMessage"));
+        if (jsonObject.optInt("resCode") == 0) {
+            initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+        }
+
+    }
+
+
+    @Override
+    public void loadDataError(Throwable throwable) {
+        Log.e(TAG, throwable.getLocalizedMessage());
+        toastor.showSingletonToast("服务器连接失败");
     }
 }

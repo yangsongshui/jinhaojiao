@@ -6,10 +6,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -29,7 +25,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 
-public class AddDevice extends BaseActivity implements Response.ErrorListener, MsgView {
+public class AddDevice extends BaseActivity implements MsgView {
     private final static String TAG = AddDevice.class.getSimpleName();
     @BindView(R.id.device_id_et)
     EditText device_id_et;
@@ -42,7 +38,7 @@ public class AddDevice extends BaseActivity implements Response.ErrorListener, M
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    private RequestQueue mQueue;
+
     private User user;
     private UpdateEquipmentPresenterImp updateEquipmentPresenterImp;
     private JieBangPresenterImp jieBangPresenterImp;
@@ -131,13 +127,6 @@ public class AddDevice extends BaseActivity implements Response.ErrorListener, M
         }
 
     }
-    @Override
-    public void onErrorResponse(VolleyError volleyError) {
-        dialog.dismiss();
-        toastor.showSingletonToast("服务器异常");
-        Log.e(TAG, "服务器异常");
-    }
-
     @Override
     public void showProgress() {
         if (dialog != null && !dialog.isShowing()) {
