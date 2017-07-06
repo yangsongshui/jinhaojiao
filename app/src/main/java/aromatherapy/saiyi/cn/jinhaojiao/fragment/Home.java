@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 ;
 
@@ -40,7 +42,14 @@ public class Home extends BaseFragment {
     TextView home_step_tv;
     @BindView(R.id.home_calorie_tv)
     TextView home_calorie_tv;
+    @BindView(R.id.home_sex_iv)
+    ImageView home_sex_iv;
+    @BindView(R.id.home_pic_iv)
+    CircleImageView home_pic_iv;
+    @BindView(R.id.home_name_tv)
+    TextView home_name_tv;
     MyBroadcastReciver reciver;
+
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
         IntentFilter intentFilter = new IntentFilter();
@@ -67,8 +76,8 @@ public class Home extends BaseFragment {
     @OnClick(value = {R.id.home_distance_rl, R.id.home_heartthrob_rl, R.id.home_step_rl, R.id.home_volocity_rl, R.id.home_calorie_rl})
     public void ClickView(View v) {
         if (user != null) {
-            Log.e("----","123456"+user.getEquipmentID());
-            if (user.getEquipmentID() != null&&user.getEquipmentID().length()>0) {
+            Log.e("----", "123456" + user.getEquipmentID());
+            if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
                 switch (v.getId()) {
                     case R.id.home_distance_rl:
                         startActivity(new Intent(getActivity(), DistanceActivity.class).putExtra("type", 4));
@@ -105,7 +114,7 @@ public class Home extends BaseFragment {
 
     private void initUser() {
         user = MyApplication.newInstance().getUser();
-     /*   if (user != null) {
+        if (user != null) {
             home_name_tv.setText(user.getNikename());
             if (user.getBitmap() != null) {
                 home_pic_iv.setImageBitmap(user.getBitmap());
@@ -119,7 +128,7 @@ public class Home extends BaseFragment {
                     home_sex_iv.setImageResource(R.drawable.lady);
             }
 
-        }*/
+        }
     }
 
     public void transferMessage(DeviceInfo deviceInfo) {

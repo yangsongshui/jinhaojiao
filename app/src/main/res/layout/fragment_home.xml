@@ -34,47 +34,7 @@
             </RelativeLayout>
 
 
-            <RelativeLayout
-                android:id="@+id/home_renovate_rl"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="50dp"
-                android:background="@drawable/frame_rent_button">
 
-                <aromatherapy.saiyi.cn.jinhaojiao.widget.RoundProgressBar
-                    android:id="@+id/roundProgressBar01_id"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android_custom:roundColor="#50d1d1d1"
-                    android_custom:roundProgressColor="@color/white"
-                    android_custom:roundWidth="10dp"
-                    android_custom:textIsDisplayable="false" />
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@+id/home_num_tv"
-                    android:layout_centerHorizontal="true"
-                    android:text="身体状态"
-
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/home_num_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:text="0"
-                    android:textColor="@color/white"
-                    android:textSize="50sp" />
-
-            </RelativeLayout>
         </RelativeLayout>
 
         <LinearLayout

@@ -22,7 +22,6 @@ import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.util.FastBlur;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -77,7 +76,7 @@ public class Me extends BaseFragment  {
         super.onResume();
         applyBlur();
         User user = MyApplication.newInstance().getUser();
-        Log.e("----------",user.getNikename());
+
         if (user != null) {
             if (user.getBitmap() != null) {
                 me_title_rl.setBackground(new BitmapDrawable(getResources(), user.getBitmap()));

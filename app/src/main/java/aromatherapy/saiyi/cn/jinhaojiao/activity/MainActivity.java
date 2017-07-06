@@ -51,7 +51,6 @@ public class MainActivity extends BaseActivity implements MsgView {
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    //  private RequestQueue mQueue;
     private Handler handler;
     private Runnable myRunnable;
     private Runnable myRunnable2;
@@ -60,6 +59,7 @@ public class MainActivity extends BaseActivity implements MsgView {
     ThreeLoginPresenterImp threeLoginPresenterImp;
     FindHomePresenterImp findHomePresenterImp;
     TestFragmentAdapter mAdapter;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_main;
@@ -118,37 +118,26 @@ public class MainActivity extends BaseActivity implements MsgView {
 
             }
         };
+
         myRunnable2 = new Runnable() {
             @Override
             public void run() {
                 user = MyApplication.newInstance().getUser();
                 if (user != null)
-
                     if (user.getType() == 1) {
                         frags.remove(0);
-                        frags.add(0,  new Home());
+                        frags.add(0, new Home());
                         mAdapter.setCount(frags);
                         type = 0;
                         //学员
-                       /* FragmentTransaction fragTran = getSupportFragmentManager()
-                                .beginTransaction();
-                        frags[0] = new Home();
-                        fragTran.add(R.id.main_frame,
-                                frags[0]);
-                        fragTran.commit();*/
                         rgrpNavigation.check(R.id.rab_purpose);
                     } else if (user.getType() == 0) {
                         //教练
                         frags.remove(0);
-                        frags.add(0,  new Coach());
+                        frags.add(0, new Coach());
                         mAdapter.setCount(frags);
                         type = 0;
-                      /*  FragmentTransaction fragTran = getSupportFragmentManager()
-                                .beginTransaction();
-                        frags[0] = new Coach();
-                        fragTran.add(R.id.main_frame,
-                                frags[0]);
-                        fragTran.commit();*/
+
                         rgrpNavigation.check(R.id.rab_purpose);
                     }
             }
@@ -156,28 +145,6 @@ public class MainActivity extends BaseActivity implements MsgView {
 
     }
 
-
- /*   *//**
-     * 初始化碎片的viewpager
-     *//*
-    private void showFrag(int index) {
-        if (index == currentFragIndex)
-            return;
-        FragmentTransaction fragTran = getSupportFragmentManager()
-                .beginTransaction();
-        if (currentFragIndex != -1) {
-            // 已经创建过frag
-            fragTran.detach(frags[currentFragIndex]);
-        }
-        // 现在选择的碎片没有创建过
-        if (frags[index] == null) {
-            frags[index] = getFrag(index);
-            fragTran.replace(R.id.main_frame, frags[index]);
-        } else
-            fragTran.attach(frags[index]);
-        currentFragIndex = index;
-        fragTran.commit();
-    }*/
 
     /**
      * 初始化底部导航栏
@@ -194,13 +161,14 @@ public class MainActivity extends BaseActivity implements MsgView {
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-       if (type == 1) {
-            frags.remove(3);
-            frags.add(new Me());
-             mAdapter.setCount(frags);
-            type = 0;
-        }
-
+        Log.e("onResumeFragments", type + "");
+        if (user != null)
+            if (type == 1) {
+                frags.remove(3);
+                frags.add(new Me());
+                mAdapter.setCount(frags);
+                type = 0;
+            }
     }
 
     int type = 0;
@@ -213,8 +181,14 @@ public class MainActivity extends BaseActivity implements MsgView {
             handler.postDelayed(myRunnable2, 2);
         }
         if (resultCode == 2) {
+            handler.removeCallbacks(myRunnable);
             type = resultCode;
+            frags.remove(3);
+            frags.add(new LoginFrag());
+            mAdapter.setCount(frags);
+            type = 0;
         }
+        Log.e("type", resultCode + " " + requestCode);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -222,13 +196,6 @@ public class MainActivity extends BaseActivity implements MsgView {
     protected void onRestart() {
         super.onRestart();
         user = MyApplication.newInstance().getUser();
-        if (type == 2) {
-            frags.add(3, new LoginFrag());
-            mAdapter.setCount(frags);
-            type = 0;
-
-        }
-
         if (user != null) {
             if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
                 map.clear();
@@ -311,16 +278,16 @@ public class MainActivity extends BaseActivity implements MsgView {
                     //showFrag(0);
                     break;
                 case R.id.rab_rent:
-                   // showFrag(1);
+                    // showFrag(1);
                     break;
                 case R.id.rab_sign:
                     toastor.showSingletonToast("签到暂未开放");
                     break;
                 case R.id.rab_flowdeal:
-                   // showFrag(2);
+                    // showFrag(2);
                     break;
                 case R.id.rab_me:
-                   // showFrag(3);
+                    // showFrag(3);
                     break;
             }
         }

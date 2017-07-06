@@ -75,6 +75,7 @@ public class Location extends BaseFragment implements AMapLocationListener, Loca
 
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
+        map = new HashMap<>();
         //获取地图控件引用
         mMapView.onCreate(savedInstanceState);
         user = MyApplication.newInstance().getUser();
@@ -128,7 +129,7 @@ public class Location extends BaseFragment implements AMapLocationListener, Loca
         }
     }
 
-    private void zuobiao(String url) {
+    private void zuobiao(String url, final String title){
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
@@ -155,8 +156,8 @@ public class Location extends BaseFragment implements AMapLocationListener, Loca
                     public void run() {
                         try {
                             JSONObject dataJson = new JSONObject(str);
-                            toastor.showSingletonToast(dataJson.optString("resMessage"));
-                            if (dataJson.optString("resCode").equals("0")) {
+                           // toastor.showSingletonToast(dataJson.optString("resMessage"));
+                            if (dataJson.optString("status").equals("1")) {
                                 JSONObject object = dataJson.optJSONObject("result");
                                 try {
                                     String location = object.optString("location");
@@ -166,7 +167,7 @@ public class Location extends BaseFragment implements AMapLocationListener, Loca
                                     LatLng BEIJING = CoordinateUtil.transformFromWGSToGCJ(new LatLng(longitude, latitude));
                                     mMap.addMarker(new MarkerOptions().
                                             position(BEIJING).
-                                            title("用户最后一次所在位置").snippet(object.optString("desc")));
+                                            title(title).snippet("佩戴者的位置"));
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(BEIJING, 14));
                                     mMap.invalidate();// 刷新地图
                                     Log.e("-------", "手环位置");
@@ -302,7 +303,7 @@ public class Location extends BaseFragment implements AMapLocationListener, Loca
     @Override
     public void showProgress() {
         if (dialog != null && !dialog.isShowing()) {
-            dialog.show();
+            //dialog.show();
         }
 
     }
@@ -310,7 +311,7 @@ public class Location extends BaseFragment implements AMapLocationListener, Loca
     @Override
     public void disimissProgress() {
         if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
+           // dialog.dismiss();
         }
     }
 
@@ -354,7 +355,7 @@ public class Location extends BaseFragment implements AMapLocationListener, Loca
                 String url = object.optString("http");
                 Log.e("--------", url);
                 //基站
-                zuobiao(url);
+                zuobiao(url, object.optString("time"));
             }
             handler.postDelayed(myRunnable, 30000);
         }
