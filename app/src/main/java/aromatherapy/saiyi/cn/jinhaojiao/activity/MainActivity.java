@@ -83,6 +83,7 @@ public class MainActivity extends BaseActivity implements MsgView {
             frags.add(new Me());
         mAdapter = new TestFragmentAdapter(getSupportFragmentManager(), frags);
         pager.setAdapter(mAdapter);
+        pager.setOffscreenPageLimit(3);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

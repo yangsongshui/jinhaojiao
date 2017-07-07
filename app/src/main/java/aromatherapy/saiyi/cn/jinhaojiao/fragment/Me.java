@@ -1,9 +1,6 @@
 package aromatherapy.saiyi.cn.jinhaojiao.fragment;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
@@ -21,13 +18,12 @@ import aromatherapy.saiyi.cn.jinhaojiao.activity.Setting;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.util.FastBlur;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class Me extends BaseFragment  {
+public class Me extends BaseFragment {
     @BindView(R.id.me_title_rl)
     RelativeLayout me_title_rl;
     @BindView(R.id.me_pic_iv)
@@ -38,15 +34,13 @@ public class Me extends BaseFragment  {
     ImageView me_sex_iv;
 
 
-
     private void applyBlur() {
         me_title_rl.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 me_title_rl.getViewTreeObserver().removeOnPreDrawListener(this);
                 me_title_rl.buildDrawingCache();
-                Bitmap bmp = me_title_rl.getDrawingCache();
-                blur(bmp, me_title_rl);
+
                 return true;
             }
         });
@@ -62,7 +56,7 @@ public class Me extends BaseFragment  {
                 startActivityForResult(new Intent(getActivity(), ResetPwdActivity.class), 2);
                 break;
             case R.id.me_life_rl:
-                Toast.makeText(getActivity(),"改功能暂未开放....",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "改功能暂未开放....", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.me_add_rl:
                 startActivity(new Intent(getActivity(), AddDevice.class));
@@ -81,15 +75,17 @@ public class Me extends BaseFragment  {
     protected void initData(View layout, Bundle savedInstanceState) {
 
     }
+
     @OnClick(R.id.me_set_iv)
-    public void ClickSet(View v){
+    public void ClickSet(View v) {
         startActivityForResult(new Intent(getActivity(), Setting.class), 2);
     }
+
     @Override
     protected int getContentView() {
         return R.layout.fragment_me;
     }
-
+/*
     private void blur(Bitmap bkg, View view) {
         float scaleFactor = 2;
         float radius = 20;
@@ -103,11 +99,12 @@ public class Me extends BaseFragment  {
         canvas.drawBitmap(bkg, 0, 0, paint);
         overlay = FastBlur.doBlur(overlay, (int) radius, true);
         view.setBackground(new BitmapDrawable(getResources(), overlay));
-    }
+    }*/
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         //判断Fragment中的ListView时候存在，判断该Fragment时候已经正在前台显示  通过这两个判断，就可以知道什么时候去加载数据了
-        if (isVisibleToUser && isVisible() ) {
+        if (isVisibleToUser && isVisible()) {
             applyBlur();
             User user = MyApplication.newInstance().getUser();
 

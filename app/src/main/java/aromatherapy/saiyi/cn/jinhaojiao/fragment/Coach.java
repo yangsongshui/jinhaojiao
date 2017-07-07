@@ -68,12 +68,14 @@ public class Coach extends BaseFragment implements MsgView {
         super.onDestroyView();
         getActivity().unregisterReceiver(reciver);
         handler.removeCallbacks(myRunnable);
+
     }
 
     @Override
     protected int getContentView() {
         return R.layout.fragment_coach;
     }
+
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
         IntentFilter intentFilter = new IntentFilter();
@@ -90,6 +92,7 @@ public class Coach extends BaseFragment implements MsgView {
                 if (user != null && user.getUserID() != null) {
                     Log.e(TAG, "更新数据");
                     getStudent();
+                   // handler.postDelayed(this, 6 * 100);
                 }
             }
         };
@@ -98,7 +101,7 @@ public class Coach extends BaseFragment implements MsgView {
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        handler.postDelayed(myRunnable, 500);
+
         findStudenPresenterImp = new FindStudenPresenterImp(this, getActivity());
         addStudenPresenterImp = new AddStudenPresenterImp(new MsgView() {
             @Override
@@ -135,7 +138,6 @@ public class Coach extends BaseFragment implements MsgView {
             }
         }, getActivity());
     }
-
 
 
     private void showDialog2() {
@@ -178,10 +180,8 @@ public class Coach extends BaseFragment implements MsgView {
     @Override
     public void onResume() {
         super.onResume();
-         user = MyApplication.newInstance().getUser();
-        if (user != null && user.getUserID() != null && mList.size() == 0){
-            getStudent();
-        }
+        user = MyApplication.newInstance().getUser();
+
     }
 
     private void getUser(JSONArray jsonArray) {
@@ -287,7 +287,11 @@ public class Coach extends BaseFragment implements MsgView {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         //判断Fragment中的ListView时候存在，判断该Fragment时候已经正在前台显示  通过这两个判断，就可以知道什么时候去加载数据了
-        if (isVisibleToUser && isVisible()) {
+        if (isVisibleToUser) {
+            if (user != null && user.getUserID() != null && mList.size() == 0) {
+                handler.postDelayed(myRunnable, 500);
+            }
+        } else {
 
         }
         super.setUserVisibleHint(isVisibleToUser);
