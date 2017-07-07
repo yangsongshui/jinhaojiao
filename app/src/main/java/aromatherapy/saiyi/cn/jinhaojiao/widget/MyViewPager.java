@@ -75,4 +75,5 @@ public class MyViewPager extends ViewPager {
 	public void setCurrentPageIndex(int currentPageIndex) {
 		this.currentPageIndex = currentPageIndex;
 	}
+
 }

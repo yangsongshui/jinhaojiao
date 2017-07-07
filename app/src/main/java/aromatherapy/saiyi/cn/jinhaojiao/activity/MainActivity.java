@@ -38,6 +38,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.MD5;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
+import aromatherapy.saiyi.cn.jinhaojiao.widget.MyViewPager;
 import butterknife.BindView;
 
 public class MainActivity extends BaseActivity implements MsgView {
@@ -45,7 +46,7 @@ public class MainActivity extends BaseActivity implements MsgView {
     @BindView(R.id.main_rgrpNavigation)
     RadioGroup rgrpNavigation;
     @BindView(R.id.pager)
-    ViewPager pager;
+    MyViewPager pager;
     private List<Fragment> frags;
     private int currentFragIndex = -1;
     private Map<String, String> map = new HashMap<String, String>();
@@ -74,7 +75,7 @@ public class MainActivity extends BaseActivity implements MsgView {
         dialog.setCanceledOnTouchOutside(false);
         frags = new ArrayList<>();
         frags.add(new Home());
-        frags.add(Location.newInstance());
+        frags.add(new Location());
         frags.add(new Community());
         if (MyApplication.newInstance().getUser() == null)
             frags.add(new LoginFrag());
@@ -82,6 +83,37 @@ public class MainActivity extends BaseActivity implements MsgView {
             frags.add(new Me());
         mAdapter = new TestFragmentAdapter(getSupportFragmentManager(), frags);
         pager.setAdapter(mAdapter);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        rgrpNavigation.check(R.id.rab_purpose);
+                        break;
+                    case 1:
+                        rgrpNavigation.check(R.id.rab_rent);
+                        break;
+                    case 2:
+                        rgrpNavigation.check(R.id.rab_flowdeal);
+                        break;
+                    case 3:
+                        rgrpNavigation.check(R.id.rab_me);
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
         initHttp();
         if (user != null) {
             if (user.getPassword() != null && user.getPassword().length() > 0) {
@@ -123,23 +155,23 @@ public class MainActivity extends BaseActivity implements MsgView {
             @Override
             public void run() {
                 user = MyApplication.newInstance().getUser();
-                if (user != null)
+                if (user != null) {
+                    frags.remove(0);
                     if (user.getType() == 1) {
-                        frags.remove(0);
+
                         frags.add(0, new Home());
-                        mAdapter.setCount(frags);
-                        type = 0;
-                        //学员
-                        rgrpNavigation.check(R.id.rab_purpose);
+
                     } else if (user.getType() == 0) {
                         //教练
-                        frags.remove(0);
-                        frags.add(0, new Coach());
-                        mAdapter.setCount(frags);
-                        type = 0;
 
-                        rgrpNavigation.check(R.id.rab_purpose);
+                        frags.add(0, new Coach());
+
                     }
+                    mAdapter.setCount(frags);
+                    type = 0;
+                    //学员
+                    rgrpNavigation.check(R.id.rab_purpose);
+                }
             }
         };
 
@@ -275,19 +307,19 @@ public class MainActivity extends BaseActivity implements MsgView {
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
                 case R.id.rab_purpose:
-                    //showFrag(0);
+                    pager.setCurrentItem(0);
                     break;
                 case R.id.rab_rent:
-                    // showFrag(1);
+                    pager.setCurrentItem(1);
                     break;
                 case R.id.rab_sign:
                     toastor.showSingletonToast("签到暂未开放");
                     break;
                 case R.id.rab_flowdeal:
-                    // showFrag(2);
+                    pager.setCurrentItem(2);
                     break;
                 case R.id.rab_me:
-                    // showFrag(3);
+                    pager.setCurrentItem(3);
                     break;
             }
         }

@@ -39,9 +39,5 @@ public abstract class BaseFragment extends Fragment {
         Log.e(TAG, "setUserVisibleHint: " + isVisibleToUser);
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-         Log.e(TAG, "hidden:" + hidden);
-    }
+
 }

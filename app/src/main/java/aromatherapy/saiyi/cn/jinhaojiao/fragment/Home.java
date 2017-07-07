@@ -109,7 +109,7 @@ public class Home extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        initUser();
+
     }
 
     private void initUser() {
@@ -152,5 +152,12 @@ public class Home extends BaseFragment {
             }
         }
     }
-
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        //判断Fragment中的ListView时候存在，判断该Fragment时候已经正在前台显示  通过这两个判断，就可以知道什么时候去加载数据了
+        if (isVisibleToUser && isVisible() ) {
+            initUser();
+        }
+        super.setUserVisibleHint(isVisibleToUser);
+    }
 }

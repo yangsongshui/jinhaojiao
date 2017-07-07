@@ -100,9 +100,10 @@
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="574e864167e58e4bf0001cf7" />
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="52606437ffb2dbd7bab0f54237d7350d" />
+        <meta-data android:name="com.amap.api.v2.apikey"
+            android:value="52606437ffb2dbd7bab0f54237d7350d">
+
+        </meta-data>
 
         <activity android:name=".activity.CardiacRate" />
         <activity android:name=".activity.DistanceActivity" />

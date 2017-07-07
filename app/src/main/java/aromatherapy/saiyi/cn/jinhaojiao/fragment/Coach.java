@@ -52,6 +52,28 @@ public class Coach extends BaseFragment implements MsgView {
     private AddStudenPresenterImp addStudenPresenterImp;
     private boolean isOne = true;
 
+
+
+    /*@OnClick(R.id.coach_add_people_iv)
+    public void click(View view) {
+        if (user != null)
+            showDialog2();
+        else
+            toastor.getSingletonToast("未登陆");
+    }*/
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getActivity().unregisterReceiver(reciver);
+        handler.removeCallbacks(myRunnable);
+    }
+
+    @Override
+    protected int getContentView() {
+        return R.layout.fragment_coach;
+    }
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
         IntentFilter intentFilter = new IntentFilter();
@@ -114,25 +136,6 @@ public class Coach extends BaseFragment implements MsgView {
         }, getActivity());
     }
 
-    /*@OnClick(R.id.coach_add_people_iv)
-    public void click(View view) {
-        if (user != null)
-            showDialog2();
-        else
-            toastor.getSingletonToast("未登陆");
-    }*/
-
-    @Override
-    protected int getContentView() {
-        return R.layout.fragment_coach;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        getActivity().unregisterReceiver(reciver);
-        handler.removeCallbacks(myRunnable);
-    }
 
 
     private void showDialog2() {
@@ -175,12 +178,10 @@ public class Coach extends BaseFragment implements MsgView {
     @Override
     public void onResume() {
         super.onResume();
-        user = MyApplication.newInstance().getUser();
-        if (user != null && user.getUserID() != null && mList.size() == 0) {
+         user = MyApplication.newInstance().getUser();
+        if (user != null && user.getUserID() != null && mList.size() == 0){
             getStudent();
         }
-
-
     }
 
     private void getUser(JSONArray jsonArray) {
@@ -281,5 +282,14 @@ public class Coach extends BaseFragment implements MsgView {
             }
 
         }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        //判断Fragment中的ListView时候存在，判断该Fragment时候已经正在前台显示  通过这两个判断，就可以知道什么时候去加载数据了
+        if (isVisibleToUser && isVisible()) {
+
+        }
+        super.setUserVisibleHint(isVisibleToUser);
     }
 }

@@ -74,26 +74,7 @@ public class Me extends BaseFragment  {
     @Override
     public void onResume() {
         super.onResume();
-        applyBlur();
-        User user = MyApplication.newInstance().getUser();
 
-        if (user != null) {
-            if (user.getBitmap() != null) {
-                me_title_rl.setBackground(new BitmapDrawable(getResources(), user.getBitmap()));
-                me_pic_iv.setImageBitmap(user.getBitmap());
-            } else {
-                me_title_rl.setBackground(getResources().getDrawable(R.drawable.movie_2));
-                me_pic_iv.setImageDrawable(getResources().getDrawable(R.drawable.movie_2));
-            }
-            me_name_tv.setText(user.getNikename());
-            if (user.getSex() != null) {
-                if (user.getSex().equals("男")) {
-                    me_sex_iv.setImageResource(R.drawable.man);
-                } else if (user.getSex().equals("女"))
-                    me_sex_iv.setImageResource(R.drawable.lady);
-            }
-
-        }
     }
 
     @Override
@@ -123,6 +104,31 @@ public class Me extends BaseFragment  {
         overlay = FastBlur.doBlur(overlay, (int) radius, true);
         view.setBackground(new BitmapDrawable(getResources(), overlay));
     }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        //判断Fragment中的ListView时候存在，判断该Fragment时候已经正在前台显示  通过这两个判断，就可以知道什么时候去加载数据了
+        if (isVisibleToUser && isVisible() ) {
+            applyBlur();
+            User user = MyApplication.newInstance().getUser();
 
+            if (user != null) {
+                if (user.getBitmap() != null) {
+                    me_title_rl.setBackground(new BitmapDrawable(getResources(), user.getBitmap()));
+                    me_pic_iv.setImageBitmap(user.getBitmap());
+                } else {
+                    me_title_rl.setBackground(getResources().getDrawable(R.drawable.movie_2));
+                    me_pic_iv.setImageDrawable(getResources().getDrawable(R.drawable.movie_2));
+                }
+                me_name_tv.setText(user.getNikename());
+                if (user.getSex() != null) {
+                    if (user.getSex().equals("男")) {
+                        me_sex_iv.setImageResource(R.drawable.man);
+                    } else if (user.getSex().equals("女"))
+                        me_sex_iv.setImageResource(R.drawable.lady);
+                }
 
+            }
+        }
+        super.setUserVisibleHint(isVisibleToUser);
+    }
 }
