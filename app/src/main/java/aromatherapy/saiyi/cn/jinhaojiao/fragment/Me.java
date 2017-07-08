@@ -85,21 +85,7 @@ public class Me extends BaseFragment {
     protected int getContentView() {
         return R.layout.fragment_me;
     }
-/*
-    private void blur(Bitmap bkg, View view) {
-        float scaleFactor = 2;
-        float radius = 20;
-        Bitmap overlay = Bitmap.createBitmap((int) (view.getMeasuredWidth() / scaleFactor),
-                (int) (view.getMeasuredHeight() / scaleFactor), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(overlay);
-        canvas.translate(-view.getLeft() / scaleFactor, -view.getTop() / scaleFactor);
-        canvas.scale(1 / scaleFactor, 1 / scaleFactor);
-        Paint paint = new Paint();
-        paint.setFlags(Paint.FILTER_BITMAP_FLAG);
-        canvas.drawBitmap(bkg, 0, 0, paint);
-        overlay = FastBlur.doBlur(overlay, (int) radius, true);
-        view.setBackground(new BitmapDrawable(getResources(), overlay));
-    }*/
+
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -113,15 +99,15 @@ public class Me extends BaseFragment {
                     me_title_rl.setBackground(new BitmapDrawable(getResources(), user.getBitmap()));
                     me_pic_iv.setImageBitmap(user.getBitmap());
                 } else {
-                    me_title_rl.setBackground(getResources().getDrawable(R.drawable.movie_2));
-                    me_pic_iv.setImageDrawable(getResources().getDrawable(R.drawable.movie_2));
+                    me_title_rl.setBackground(getResources().getDrawable(R.drawable.dakuai));
+                    me_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
                 }
                 me_name_tv.setText(user.getNikename());
                 if (user.getSex() != null) {
                     if (user.getSex().equals("男")) {
-                        me_sex_iv.setImageResource(R.drawable.man);
+                        me_sex_iv.setImageResource(R.drawable.manwhite);
                     } else if (user.getSex().equals("女"))
-                        me_sex_iv.setImageResource(R.drawable.lady);
+                        me_sex_iv.setImageResource(R.drawable.nvxingbai);
                 }
 
             }

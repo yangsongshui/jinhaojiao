@@ -25,7 +25,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-;
 
 public class Home extends BaseFragment {
     private final static String TAG = Home.class.getSimpleName();
@@ -48,13 +47,20 @@ public class Home extends BaseFragment {
     CircleImageView home_pic_iv;
     @BindView(R.id.home_name_tv)
     TextView home_name_tv;
+    @BindView(R.id.speed_tv)
+    TextView speedTv;
+    @BindView(R.id.time_tv)
+    TextView timeTv;
+    @BindView(R.id.load_tv)
+    TextView loadTv;
+    ;
     MyBroadcastReciver reciver;
 
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("DATA_RECEIVE_BROADCAST");
-        intentFilter.addAction("CN_ABEL_ACTION_BROADCAST");
+        intentFilter.addAction("QQ_ABEL_ACTION_BROADCAST");
         reciver = new MyBroadcastReciver();
         getActivity().registerReceiver(reciver, intentFilter);
         if (MyApplication.newInstance().getDeviceInfo().getSteps() != null) {
@@ -76,7 +82,6 @@ public class Home extends BaseFragment {
     @OnClick(value = {R.id.home_distance_rl, R.id.home_heartthrob_rl, R.id.home_step_rl, R.id.home_volocity_rl, R.id.home_calorie_rl})
     public void ClickView(View v) {
         if (user != null) {
-            Log.e("----", "123456" + user.getEquipmentID());
             if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
                 switch (v.getId()) {
                     case R.id.home_distance_rl:
@@ -109,6 +114,7 @@ public class Home extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        initUser();
 
     }
 
@@ -119,13 +125,13 @@ public class Home extends BaseFragment {
             if (user.getBitmap() != null) {
                 home_pic_iv.setImageBitmap(user.getBitmap());
             } else {
-                home_pic_iv.setImageDrawable(getResources().getDrawable(R.drawable.movie_2));
+                home_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
             }
             if (user.getSex() != null) {
                 if (user.getSex().equals("男")) {
-                    home_sex_iv.setImageResource(R.drawable.man);
+                    home_sex_iv.setImageResource(R.drawable.manwhite);
                 } else if (user.getSex().equals("女"))
-                    home_sex_iv.setImageResource(R.drawable.lady);
+                    home_sex_iv.setImageResource(R.drawable.nvxingbai);
             }
 
         }
@@ -140,6 +146,7 @@ public class Home extends BaseFragment {
 
     }
 
+
     private class MyBroadcastReciver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -147,16 +154,19 @@ public class Home extends BaseFragment {
             if (action.equals("DATA_RECEIVE_BROADCAST")) {
                 transferMessage((DeviceInfo) intent.getSerializableExtra("device"));
                 Log.e("home", "广播消息");
-            } else if (action.equals("CN_ABEL_ACTION_BROADCAST")) {
+            } else if (action.equals("QQ_ABEL_ACTION_BROADCAST")) {
                 initUser();
+
             }
         }
     }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         //判断Fragment中的ListView时候存在，判断该Fragment时候已经正在前台显示  通过这两个判断，就可以知道什么时候去加载数据了
-        if (isVisibleToUser && isVisible() ) {
-            initUser();
+        if (isVisibleToUser) {
+            //  initUser();
+
         }
         super.setUserVisibleHint(isVisibleToUser);
     }

@@ -74,10 +74,6 @@
         android:layout_above="@id/main_rgrpNavigation"
         android:layout_height="match_parent"
         />
-      <!--  <FrameLayout
-            android:id="@+id/main_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-          />-->
+
 
 </RelativeLayout>

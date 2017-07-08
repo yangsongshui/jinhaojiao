@@ -142,7 +142,7 @@ public class Location extends BaseFragment implements MsgView {
                     if (dataJson.optString("status").equals("1")) {
                         final JSONObject object = dataJson.optJSONObject("result");
 
-                       getActivity().runOnUiThread(new Runnable() {
+                        getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 setMarker(object, 2);
@@ -164,7 +164,6 @@ public class Location extends BaseFragment implements MsgView {
     private void init() {
         if (mMap == null) {
             mMap = mMapView.getMap();
-
         } else {
             mMap.clear();
             mMap.setMyLocationEnabled(true);
@@ -186,8 +185,8 @@ public class Location extends BaseFragment implements MsgView {
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
         myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));
         myLocationStyle.interval(10000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
-        myLocationStyle.strokeColor(Color.argb(00,255,255,255));//设置定位蓝点精度圆圈的边框颜色的方法。
-        myLocationStyle.radiusFillColor(Color.argb(00,255,255,255));//设置定位蓝点精度圆圈的填充颜色的方法。
+        myLocationStyle.strokeColor(Color.argb(00, 255, 255, 255));//设置定位蓝点精度圆圈的边框颜色的方法。
+        myLocationStyle.radiusFillColor(Color.argb(00, 255, 255, 255));//设置定位蓝点精度圆圈的填充颜色的方法。
         mMap.moveCamera(CameraUpdateFactory.zoomBy(3));
         mMap.setMyLocationStyle(myLocationStyle);//设置定位蓝点的Style。
         mMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
@@ -241,11 +240,10 @@ public class Location extends BaseFragment implements MsgView {
     @Override
     public void loadDataSuccess(JSONObject jsonObject) {
         Log.e(TAG, jsonObject.toString());
+        toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 1) {
-            toastor.showSingletonToast(jsonObject.optString("resMessage"));
             init();
         } else if (jsonObject.optInt("resCode") == 0) {
-            toastor.showSingletonToast(jsonObject.optString("resMessage"));
             JSONObject object = jsonObject.optJSONObject("resBody");
             if (jsonObject.optInt("type") == 1) {
                 //GPS坐标
@@ -256,7 +254,8 @@ public class Location extends BaseFragment implements MsgView {
                 //基站
                 zuobiao(url, object.optString("time"));
             }
-            handler.postDelayed(myRunnable, 30000);
+            //十分钟定位一次
+            //handler.postDelayed(myRunnable, 60*1000);
         }
     }
 
@@ -293,7 +292,7 @@ public class Location extends BaseFragment implements MsgView {
                 String location = object.optString("location");
                 double latitude = Double.valueOf(location.substring(0, location.indexOf(",")));
                 double longitude = Double.valueOf(location.substring(location.indexOf(",") + 1, location.length()));
-                latLng =new LatLng(longitude, latitude);
+                latLng = new LatLng(longitude, latitude);
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e("setMarker", e.getMessage());

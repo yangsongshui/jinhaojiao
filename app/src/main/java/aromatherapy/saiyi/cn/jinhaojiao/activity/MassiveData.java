@@ -63,13 +63,13 @@ public class MassiveData extends BaseActivity {
             if (user.getBitmap() != null){
                 massive_pic_iv.setImageBitmap(user.getBitmap());
             }else {
-                massive_pic_iv.setImageDrawable(getResources().getDrawable(R.drawable.movie_2));
+                massive_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
             }
             massive_name_tv.setText(user.getNikename());
             if (user.getSex().equals("男")) {
-                massive_sex_iv.setImageResource(R.drawable.man);
+                massive_sex_iv.setImageResource(R.drawable.manwhite);
             } else if (user.getSex().equals("女"))
-                massive_sex_iv.setImageResource(R.drawable.lady);
+                massive_sex_iv.setImageResource(R.drawable.nvxingbai);
 
         }
     }

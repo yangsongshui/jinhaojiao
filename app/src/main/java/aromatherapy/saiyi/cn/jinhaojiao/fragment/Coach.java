@@ -8,11 +8,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.IdRes;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,8 +29,10 @@ import java.util.List;
 import java.util.Map;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.adapter.CoachAdapter;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
+import aromatherapy.saiyi.cn.jinhaojiao.bean.Student;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.AddStudenPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStudenPresenterImp;
@@ -32,44 +40,36 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
+import butterknife.BindView;
+import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class Coach extends BaseFragment implements MsgView {
+public class Coach extends BaseFragment implements MsgView, RadioGroup.OnCheckedChangeListener {
     private final static String TAG = Coach.class.getSimpleName();
     User user;
-
+    @BindView(R.id.coach_pic_iv)
+    CircleImageView coachPicIv;
+    @BindView(R.id.coach_name_tv)
+    TextView coachNameTv;
+    @BindView(R.id.coach_sex_iv)
+    ImageView coachSexIv;
+    @BindView(R.id.coach_studen)
+    RecyclerView coachStuden;
+    @BindView(R.id.radio_group)
+    RadioGroup radio_group;
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-
-    private List<User> mList = new ArrayList<>();
+    private List<Student> mList;
     MyBroadcastReciver reciver;
-    private int indext = 0;
-    private String Remarks = "";
     private Handler handler;
     private Runnable myRunnable;
     private FindStudenPresenterImp findStudenPresenterImp;
     private AddStudenPresenterImp addStudenPresenterImp;
     private boolean isOne = true;
-
-
-
-    /*@OnClick(R.id.coach_add_people_iv)
-    public void click(View view) {
-        if (user != null)
-            showDialog2();
-        else
-            toastor.getSingletonToast("未登陆");
-    }*/
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        getActivity().unregisterReceiver(reciver);
-        handler.removeCallbacks(myRunnable);
-
-    }
+    private CoachAdapter adapter;
+    private int listType = 0;
 
     @Override
     protected int getContentView() {
@@ -81,10 +81,16 @@ public class Coach extends BaseFragment implements MsgView {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("QQ_ABEL_ACTION_BROADCAST");
         intentFilter.addAction("CN.ABEL.ACTION.BROADCAST");
+        mList = new ArrayList<>();
         reciver = new MyBroadcastReciver();
         getActivity().registerReceiver(reciver, intentFilter);
         user = MyApplication.newInstance().getUser();
         handler = new Handler();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        coachStuden.setLayoutManager(layoutManager);
+        adapter = new CoachAdapter(mList, getActivity(), listType);
+        coachStuden.setAdapter(adapter);
         myRunnable = new Runnable() {
             @Override
             public void run() {
@@ -92,7 +98,7 @@ public class Coach extends BaseFragment implements MsgView {
                 if (user != null && user.getUserID() != null) {
                     Log.e(TAG, "更新数据");
                     getStudent();
-                   // handler.postDelayed(this, 6 * 100);
+                   // handler.postDelayed(this, 60 * 1000);
                 }
             }
         };
@@ -101,7 +107,7 @@ public class Coach extends BaseFragment implements MsgView {
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-
+        radio_group.setOnCheckedChangeListener(this);
         findStudenPresenterImp = new FindStudenPresenterImp(this, getActivity());
         addStudenPresenterImp = new AddStudenPresenterImp(new MsgView() {
             @Override
@@ -180,7 +186,44 @@ public class Coach extends BaseFragment implements MsgView {
     @Override
     public void onResume() {
         super.onResume();
+        initUser();
+        getStudent();
+    }
+
+    private void initUser() {
         user = MyApplication.newInstance().getUser();
+        if (user != null) {
+            coachNameTv.setText(user.getNikename());
+            if (user.getBitmap() != null) {
+                coachPicIv.setImageBitmap(user.getBitmap());
+            } else {
+                coachPicIv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+            }
+            if (user.getSex() != null) {
+                if (user.getSex().equals("男")) {
+                    coachSexIv.setImageResource(R.drawable.manwhite);
+                } else if (user.getSex().equals("女"))
+                    coachSexIv.setImageResource(R.drawable.nvxingbai);
+            }
+
+        }
+    }
+
+    @OnClick(R.id.coach_add_people_iv)
+    public void click(View view) {
+        if (user != null)
+            showDialog2();
+        else
+            toastor.showSingletonToast("未登陆");
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getActivity().unregisterReceiver(reciver);
+        handler.removeCallbacks(myRunnable);
+
 
     }
 
@@ -188,7 +231,7 @@ public class Coach extends BaseFragment implements MsgView {
         mList.clear();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.optJSONObject(i);
-            User user = new User();
+            Student user = new Student();
             if (jsonObject.optString("Remarks").length() > 0) {
                 user.setNikename(jsonObject.optString("Remarks"));
                 Log.e("-------", jsonObject.optString("Remarks"));
@@ -207,9 +250,18 @@ public class Coach extends BaseFragment implements MsgView {
                 user.setHead_pic(jsonObject.optString("headPicByte"));
                 Log.e("--------1", jsonObject.optString("headPicByte"));
             }
+            user.setLoad("30");
+            user.setSpeed("40");
+            user.setStrength("50");
+            user.setHeartrate("130");
+            user.setDistance("8");
+            user.setTime("30");
+            mList.add(user);
             mList.add(user);
         }
         //处理数据
+
+        adapter.setItems(mList, listType);
     }
 
 
@@ -242,7 +294,7 @@ public class Coach extends BaseFragment implements MsgView {
         if (isOne)
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
-            //toastor.getSingletonToast(jsonObject.optString("resMessage"));
+
             getUser(jsonObject.optJSONObject("resBody").optJSONArray("list"));
         }
     }
@@ -254,13 +306,36 @@ public class Coach extends BaseFragment implements MsgView {
         toastor.showSingletonToast("服务器连接失败");
     }
 
+    @Override
+    public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+        switch (checkedId) {
+            case R.id.rab_student:
+                listType=0;
+                adapter.setItems(mList, listType);
+                break;
+            case R.id.rab_qiangdu:
+                listType=2;
+                adapter.setItems(mList, listType);
+                break;
+            case R.id.rab_sudu:
+                listType=3;
+                adapter.setItems(mList, listType);
+                break;
+            case R.id.rab_fuhe:
+                listType=1;
+                adapter.setItems(mList, listType);
+                break;
+        }
+    }
+
     private class MyBroadcastReciver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals("QQ_ABEL_ACTION_BROADCAST")) {
                 if (user != null && user.getUserID() != null && mList.size() == 0) {
-                    handler.removeCallbacks(myRunnable);
+                    //handler.removeCallbacks(myRunnable);
+                    Log.e("广播","收到广播");
                     getStudent();
                 }
 
@@ -288,9 +363,6 @@ public class Coach extends BaseFragment implements MsgView {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         //判断Fragment中的ListView时候存在，判断该Fragment时候已经正在前台显示  通过这两个判断，就可以知道什么时候去加载数据了
         if (isVisibleToUser) {
-            if (user != null && user.getUserID() != null && mList.size() == 0) {
-                handler.postDelayed(myRunnable, 500);
-            }
         } else {
 
         }

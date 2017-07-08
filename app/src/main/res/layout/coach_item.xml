@@ -1,49 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coach_ll"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
-    android:layout_height="wrap_content">
+    android:orientation="horizontal"
+    android:paddingBottom="10dp"
+    android:paddingTop="5dp">
+
+    <ImageView
+        android:id="@+id/top_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="10dp"
+        android:src="@drawable/huanguanyellow" />
+
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/coach_item_pic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"
-        android:src="@drawable/movie_2" />
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/coach_ONOFF_pic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"
-        android:src="@color/tv_white"
-         />
-    <TextView
-        android:id="@+id/coach_item_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/coach_item_pic"
-        android:padding="10dp"
-        android:text="昵称"
-        android:textColor="@color/black"
-        android:textSize="15sp" />
-
-   <!-- <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/coach_item_name"
-        android:layout_centerVertical="true"
-        android:text="男" />-->
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
+        android:src="@mipmap/logo"
+        app:civ_border_color="@color/lawngreen"
+        app:civ_border_width="2dp" />
 
     <ImageView
+        android:id="@+id/state_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:padding="10dp"
-        android:src="@drawable/butn_next" />
-</RelativeLayout>
+        android:layout_marginStart="-15dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/fastrun" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:gravity="center|left"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/coach_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:text="昵称"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/coach_item_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/coach_item_name"
+                android:src="@drawable/nanrenlvse" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/top_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="50  bpm"
+            android:visibility="gone"
+            android:textColor="@color/chocolate"
+            android:textSize="20sp" />
+
+        <RelativeLayout
+            android:id="@+id/coach_info_rl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:orientation="horizontal"
+           >
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@drawable/run" />
+
+            <TextView
+                android:id="@+id/coach_run_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/imageView"
+                android:text="52km"
+                android:textColor="@color/chocolate"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/coach_run_tv"
+                android:src="@drawable/xinzang" />
+
+            <TextView
+                android:id="@+id/coach_xinlv_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/imageView2"
+                android:text="52bpm"
+                android:textColor="@color/chocolate"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/coach_xinlv_tv"
+                android:src="@drawable/time" />
+
+            <TextView
+                android:id="@+id/coach_time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/imageView3"
+                android:text="52m"
+                android:textColor="@color/chocolate"
+                android:textSize="20sp" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

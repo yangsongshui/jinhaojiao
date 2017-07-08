@@ -132,7 +132,7 @@ public class MainActivity extends BaseActivity implements MsgView {
 
         }
         initNavigation();
-        //showFrag(0);
+
         rgrpNavigation.check(R.id.rab_purpose);
         handler = new Handler();
         myRunnable = new Runnable() {
@@ -145,7 +145,7 @@ public class MainActivity extends BaseActivity implements MsgView {
                     map.put("userID", user.getUserID());
                     map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
                     findHomePresenterImp.loadMsg(map);
-                    handler.postDelayed(this, 10000);
+                   // handler.postDelayed(this, 10000);
                 }
 
 
@@ -259,7 +259,7 @@ public class MainActivity extends BaseActivity implements MsgView {
     @Override
     public void loadDataSuccess(JSONObject jsonObject) {
         Log.e(TAG, jsonObject.toString());
-        dialog.dismiss();
+
         if (jsonObject.optInt("resCode") == 1) {
             MyApplication.newInstance().outLogin();
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
@@ -290,7 +290,7 @@ public class MainActivity extends BaseActivity implements MsgView {
             MyApplication.newInstance().setUser(user);
 
             Intent intent2 = new Intent();
-            intent2.setAction("CN_ABEL_ACTION_BROADCAST");
+            intent2.setAction("QQ_ABEL_ACTION_BROADCAST");
             //发送 一个无序广播
             sendBroadcast(intent2);
             handler.postDelayed(myRunnable2, 2);
@@ -387,6 +387,10 @@ public class MainActivity extends BaseActivity implements MsgView {
                     //发送 一个无序广播
                     sendBroadcast(intent2);
                     handler.postDelayed(myRunnable2, 2);
+                }else {
+                    frags.remove(3);
+                    frags.add(new LoginFrag());
+                    mAdapter.setCount(frags);
                 }
             }
 
@@ -394,6 +398,7 @@ public class MainActivity extends BaseActivity implements MsgView {
             public void loadDataError(Throwable throwable) {
                 Log.e(TAG, throwable.getLocalizedMessage());
                 toastor.showSingletonToast("服务器连接失败");
+              
             }
         }, this);
         //查询首页数据

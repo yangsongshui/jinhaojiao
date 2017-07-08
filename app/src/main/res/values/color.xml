@@ -93,7 +93,7 @@
     <!-- 红色 -->
     <color name="oldlace">#FDF5E6</color>
     <!-- 老花色 -->
-    <color name="lightgoldenrodyellow">#FAFAD2</color>
+    <color name="lightgoldenrodyellow">#F9F9F9</color>
     <!-- 亮金黄色 -->
     <color name="linen">#FAF0E6</color>
     <!-- 亚麻色 -->
@@ -155,7 +155,7 @@
     <!-- 亮灰色 -->
     <color name="tan">#2b2b2b</color>
     <!-- 茶色 -->
-    <color name="chocolate">#D2691E</color>
+    <color name="chocolate">#F08870</color>
     <!-- 巧可力色 -->
     <color name="peru">#CD853F</color>
     <!-- 秘鲁色 -->
@@ -228,11 +228,11 @@
     <!-- 紫色 -->
     <color name="maroon">#800000</color>
     <!-- 粟色 -->
-    <color name="aquamarine">#7FFFD4</color>
+    <color name="aquamarine">#5EBB8F</color>
     <!-- 碧绿色 -->
-    <color name="chartreuse">#7FFF00</color>
+    <color name="chartreuse">#5ED39C</color>
     <!-- 黄绿色 -->
-    <color name="lawngreen">#28B34C</color>
+    <color name="lawngreen">#65CE60</color>
     <!-- 草绿色 -->
     <color name="mediumslateblue">#7B68EE</color>
     <!-- 中暗蓝色 -->

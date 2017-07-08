@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,24 +26,37 @@ import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class StudentActivity extends BaseActivity implements MsgView {
     private final static String TAG = Home.class.getSimpleName();
     private static double STEPNUM = 3000.0;
 
-    @BindView(R.id.student_distance_tv)
-    TextView student_distance_tv;
-    @BindView(R.id.student_heartthrob_tv)
-    TextView student_heartthrob_tv;
-    @BindView(R.id.student_volocity_tv)
-    TextView student_volocity_tv;
-    @BindView(R.id.student_step_tv)
-    TextView student_step_tv;
-    @BindView(R.id.student_calorie_tv)
-    TextView student_calorie_tv;
+    @BindView(R.id.home_distance_tv)
+    TextView home_distance_tv;
+    @BindView(R.id.home_heartthrob_tv)
+    TextView home_heartthrob_tv;
+    @BindView(R.id.home_volocity_tv)
+    TextView home_volocity_tv;
+    @BindView(R.id.home_step_tv)
+    TextView home_step_tv;
+    @BindView(R.id.home_calorie_tv)
+    TextView home_calorie_tv;
+    @BindView(R.id.home_sex_iv)
+    ImageView home_sex_iv;
+    @BindView(R.id.home_pic_iv)
+    CircleImageView home_pic_iv;
 
-    @BindView(R.id.student_name_tv)
-    TextView student_name_tv;
+    @BindView(R.id.home_name_tv)
+    TextView home_name_tv;
+    @BindView(R.id.speed_tv)
+    TextView speedTv;
+    @BindView(R.id.time_tv)
+    TextView timeTv;
+    @BindView(R.id.load_tv)
+    TextView loadTv;
+    @BindView(R.id.home_back)
+    ImageView homeBack;
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
@@ -54,7 +68,7 @@ public class StudentActivity extends BaseActivity implements MsgView {
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_student;
+        return R.layout.fragment_home;
     }
 
     @Override
@@ -80,34 +94,53 @@ public class StudentActivity extends BaseActivity implements MsgView {
                 }
             }
         };
-        student_name_tv.setText(user.getNikename());
+        initUser();
     }
 
-    @OnClick(R.id.student_back_iv)
+    private void initUser() {
+        homeBack.setVisibility(View.VISIBLE);
+        if (user != null) {
+            home_name_tv.setText(user.getNikename());
+            if (user.getBitmap() != null) {
+                home_pic_iv.setImageBitmap(user.getBitmap());
+            } else {
+                home_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+            }
+            if (user.getSex() != null) {
+                if (user.getSex().equals("男")) {
+                    home_sex_iv.setImageResource(R.drawable.manwhite);
+                } else if (user.getSex().equals("女"))
+                    home_sex_iv.setImageResource(R.drawable.nvxingbai);
+            }
+
+        }
+    }
+
+    @OnClick(R.id.home_back)
     public void ClickBack(View v) {
         finish();
     }
 
-    @OnClick(value = {R.id.student_distance_rl, R.id.student_heartthrob_rl, R.id.student_step_rl, R.id.student_volocity_rl, R.id.student_calorie_rl})
+    @OnClick(value = {R.id.home_distance_rl, R.id.home_heartthrob_rl, R.id.home_step_rl, R.id.home_volocity_rl, R.id.home_calorie_rl})
     public void ClickView(View v) {
         if (user != null) {
 
             if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
                 MyApplication.newInstance().setEquipmentID(user.getEquipmentID());
                 switch (v.getId()) {
-                    case R.id.student_distance_rl:
+                    case R.id.home_distance_rl:
                         startActivity(new Intent(this, DistanceActivity.class).putExtra("type", 4).putExtra("student", user));
                         break;
-                    case R.id.student_step_rl:
+                    case R.id.home_step_rl:
                         startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 0).putExtra("student", user));
                         break;
-                    case R.id.student_volocity_rl:
+                    case R.id.home_volocity_rl:
                         startActivity(new Intent(this, VolocityActivity.class).putExtra("type", 3).putExtra("student", user));
                         break;
-                    case R.id.student_heartthrob_rl:
+                    case R.id.home_heartthrob_rl:
                         startActivity(new Intent(this, CardiacRate.class).putExtra("type", 2).putExtra("student", user));
                         break;
-                    case R.id.student_calorie_rl:
+                    case R.id.home_calorie_rl:
                         startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 1).putExtra("student", user));
                         break;
                 }
@@ -156,11 +189,11 @@ public class StudentActivity extends BaseActivity implements MsgView {
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
             JSONObject json = jsonObject.optJSONObject("resBody");
-            student_distance_tv.setText(json.optString("Calorie"));
-            student_calorie_tv.setText(json.optString("distance"));
-            student_heartthrob_tv.setText(json.optString("heartrate"));
-            student_volocity_tv.setText(json.optString("speed"));
-            student_step_tv.setText(json.optString("steps"));
+            home_distance_tv.setText(json.optString("Calorie"));
+            home_calorie_tv.setText(json.optString("distance"));
+            home_heartthrob_tv.setText(json.optString("heartrate"));
+            home_volocity_tv.setText(json.optString("speed"));
+            home_step_tv.setText(json.optString("steps"));
         }
     }
 
@@ -168,4 +201,5 @@ public class StudentActivity extends BaseActivity implements MsgView {
     public void loadDataError(Throwable throwable) {
         toastor.showSingletonToast("服务器连接失败");
     }
+
 }

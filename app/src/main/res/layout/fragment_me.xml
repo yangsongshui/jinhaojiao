@@ -3,71 +3,67 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <RelativeLayout
         android:id="@+id/me_title_rl"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="-2dp"
         android:layout_weight="1"
-        android:background="@drawable/movie_2"
-        android:layout_height="0dp">
+        android:background="@drawable/dakuai">
+
         <ImageView
             android:id="@+id/me_set_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/set"
+            android:layout_alignParentEnd="true"
             android:padding="10dp"
-            android:layout_alignParentEnd="true" />
-    <RelativeLayout
-        android:id="@+id/Rl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/frame_rent_button2">
+            android:src="@drawable/set" />
 
         <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/me_pic_iv"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            app:civ_border_width="4dp"
-            app:civ_border_color="#50d1d1d1"
-            android:src="@drawable/movie_2"
-            android:id="@+id/me_pic_iv" />
-    </RelativeLayout>
-
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/logo"
+            app:civ_border_color="@color/lawngreen"
+            app:civ_border_width="2dp" />
         <TextView
 
+            android:id="@+id/me_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="张三"
-            android:layout_marginTop="8dp"
-            android:textSize="18dp"
-            android:paddingRight="8dp"
-            android:layout_below="@+id/Rl"
+            android:layout_below="@+id/me_pic_iv"
             android:layout_centerHorizontal="true"
-            android:id="@+id/me_name_tv" />
+            android:layout_marginTop="8dp"
+            android:paddingRight="8dp"
+            android:text="张三"
+            android:textColor="@color/white"
+            android:textSize="18dp" />
+
         <ImageView
             android:id="@+id/me_sex_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:layout_alignBottom="@+id/me_name_tv"
+            android:layout_toEndOf="@+id/me_name_tv"
             android:paddingBottom="5dp"
             android:src="@drawable/man"
-            android:layout_alignBottom="@+id/me_name_tv"
-            android:layout_toEndOf="@+id/me_name_tv" />
+            android:textSize="12sp" />
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1.5"
-        android:orientation="vertical"
-        android:layout_height="0dp">
+        android:orientation="vertical">
+
         <RelativeLayout
             android:id="@+id/me_massive_data_rl"
             android:layout_width="match_parent"
-            android:background="@color/white"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/white">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -79,14 +75,14 @@
                 android:src="@drawable/data" />
 
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="大数据"
-                    android:paddingLeft="10dp"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/darkorchid"
-                    android:layout_toEndOf="@+id/imageView" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/imageView"
+                android:paddingLeft="10dp"
+                android:text="大数据"
+                android:textColor="@color/darkorchid" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -101,11 +97,12 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/gray_90" />
+
         <RelativeLayout
             android:id="@+id/me_life_rl"
             android:layout_width="match_parent"
-            android:background="@color/white"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/white">
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -120,11 +117,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="信用生活"
-                android:paddingLeft="10dp"
                 android:layout_centerVertical="true"
-                android:textColor="@color/darkorchid"
-                android:layout_toEndOf="@+id/imageView2" />
+                android:layout_toEndOf="@+id/imageView2"
+                android:paddingLeft="10dp"
+                android:text="信用生活"
+                android:textColor="@color/darkorchid" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -143,8 +140,8 @@
         <RelativeLayout
             android:id="@+id/me_pass_rl"
             android:layout_width="match_parent"
-            android:background="@color/white"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/white">
 
             <ImageView
                 android:id="@+id/imageView4"
@@ -159,11 +156,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="更改密码"
-                android:paddingLeft="10dp"
                 android:layout_centerVertical="true"
-                android:textColor="@color/darkorchid"
-                android:layout_toEndOf="@+id/imageView4" />
+                android:layout_toEndOf="@+id/imageView4"
+                android:paddingLeft="10dp"
+                android:text="更改密码"
+                android:textColor="@color/darkorchid" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -178,11 +175,12 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/gray_90" />
+
         <RelativeLayout
             android:id="@+id/me_add_rl"
             android:layout_width="match_parent"
-            android:background="@color/white"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/white">
 
             <ImageView
                 android:id="@+id/imageView3"
@@ -197,11 +195,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="绑定/解除设备"
-                android:paddingLeft="10dp"
                 android:layout_centerVertical="true"
-                android:textColor="@color/darkorchid"
-                android:layout_toEndOf="@+id/imageView3" />
+                android:layout_toEndOf="@+id/imageView3"
+                android:paddingLeft="10dp"
+                android:text="绑定/解除设备"
+                android:textColor="@color/darkorchid" />
 
             <ImageView
                 android:layout_width="wrap_content"

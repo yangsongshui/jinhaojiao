@@ -507,7 +507,7 @@ public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.
         if (user.getBitmap() != null) {
             me_info_pic_iv.setImageBitmap(user.getBitmap());
         } else {
-            me_info_pic_iv.setImageDrawable(getResources().getDrawable(R.drawable.movie_2));
+            me_info_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
         }
     }
 
