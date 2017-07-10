@@ -20,12 +20,14 @@ import butterknife.OnClick;
 public class DistanceActivity extends BaseActivity {
     @BindView(R.id.distance_rgrpNavigation)
     RadioGroup distance_rgrpNavigation;
+    @BindView(R.id.volocity_time_tv)
+    TextView volocityTimeTv;
 
     private Fragment[] frags = new Fragment[3];
     private int currentFragIndex = -1;
     DeviceInfo deviceInfo;
-    @BindView(R.id.distance_stpe_tv)
-    TextView distance_stpe_tv;
+
+
     @Override
     protected int getContentView() {
         return R.layout.activity_distance;
@@ -34,14 +36,13 @@ public class DistanceActivity extends BaseActivity {
     @Override
     protected void init(Bundle savedInstanceState) {
         deviceInfo = MyApplication.newInstance().getDeviceInfo();
-        if (deviceInfo.getDistance() != null) {
-            distance_stpe_tv.setText(deviceInfo.getDistance());
-        }
+
         initNavigation();
         showFrag(0);
         distance_rgrpNavigation.check(R.id.distance_day_rb);
 
     }
+
     /**
      * 初始化碎片的viewpager
      */
@@ -88,6 +89,8 @@ public class DistanceActivity extends BaseActivity {
     public void onViewClicked(View v) {
         finish();
     }
+
+
 
     private class CheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
         @Override

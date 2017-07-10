@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/crimson"
+    android:orientation="vertical"
     tools:context="aromatherapy.saiyi.cn.jinhaojiao.activity.VolocityActivity">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -29,93 +30,62 @@
             android:textSize="15sp" />
     </RelativeLayout>
 
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_weight="1">
 
-     <!--   <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/bigluopan" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="平均速度 :" />
-
-            <TextView
-                android:id="@+id/volocity_avaerage_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="170" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="米/min" />
-        </LinearLayout>-->
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/circle"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="当前速度"
-                android:textSize="17sp"
-                android:layout_marginBottom="10dp"
-                android:layout_above="@+id/volocity_rate_tv"
-                android:layout_centerHorizontal="true" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="25sp"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:textColor="@color/hotpink"
-                android:id="@+id/volocity_rate_tv" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="米/min"
-                android:textSize="17sp"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/volocity_rate_tv"
-                android:layout_centerHorizontal="true"
-                android:id="@+id/textView5" />
+                android:text="加速度"
+                android:textSize="14sp" />
 
-        </RelativeLayout>
-    </LinearLayout>
+            <TextView
+
+                android:id="@+id/volocity_speed_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="0"
+                android:textColor="@color/hotpink"
+                android:textSize="25sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2">
+
         <FrameLayout
             android:id="@+id/volocity_fl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/volocity_rgrpNavigation" />
+
         <RadioGroup
+            android:id="@+id/volocity_rgrpNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_margin="10dp"
             android:background="@drawable/service_rg_rim"
-            android:orientation="horizontal"
-            android:id="@+id/volocity_rgrpNavigation">
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/volocity_tiem_rb"

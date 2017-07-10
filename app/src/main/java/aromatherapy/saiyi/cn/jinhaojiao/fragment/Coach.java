@@ -29,11 +29,15 @@ import java.util.List;
 import java.util.Map;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.activity.StudentActivity;
+import aromatherapy.saiyi.cn.jinhaojiao.activity.StudentInfoActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.adapter.CoachAdapter;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.Student;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemCheckListener;
+import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemPhotoCheckListener;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.AddStudenPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStudenPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
@@ -45,7 +49,7 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class Coach extends BaseFragment implements MsgView, RadioGroup.OnCheckedChangeListener {
+public class Coach extends BaseFragment implements MsgView, RadioGroup.OnCheckedChangeListener, OnItemCheckListener, OnItemPhotoCheckListener {
     private final static String TAG = Coach.class.getSimpleName();
     User user;
     @BindView(R.id.coach_pic_iv)
@@ -90,7 +94,10 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         coachStuden.setLayoutManager(layoutManager);
         adapter = new CoachAdapter(mList, getActivity(), listType);
+
         coachStuden.setAdapter(adapter);
+        adapter.setOnItemCheckListener(this);
+        adapter.setOnItemPhotoCheckListener(this);
         myRunnable = new Runnable() {
             @Override
             public void run() {
@@ -98,7 +105,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                 if (user != null && user.getUserID() != null) {
                     Log.e(TAG, "更新数据");
                     getStudent();
-                   // handler.postDelayed(this, 60 * 1000);
+                    // handler.postDelayed(this, 60 * 1000);
                 }
             }
         };
@@ -107,6 +114,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
+        radio_group.check(R.id.rab_student);
         radio_group.setOnCheckedChangeListener(this);
         findStudenPresenterImp = new FindStudenPresenterImp(this, getActivity());
         addStudenPresenterImp = new AddStudenPresenterImp(new MsgView() {
@@ -310,22 +318,32 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId) {
             case R.id.rab_student:
-                listType=0;
+                listType = 0;
                 adapter.setItems(mList, listType);
                 break;
             case R.id.rab_qiangdu:
-                listType=2;
+                listType = 2;
                 adapter.setItems(mList, listType);
                 break;
             case R.id.rab_sudu:
-                listType=3;
+                listType = 3;
                 adapter.setItems(mList, listType);
                 break;
             case R.id.rab_fuhe:
-                listType=1;
+                listType = 1;
                 adapter.setItems(mList, listType);
                 break;
         }
+    }
+
+    @Override
+    public void OnItemCheck(RecyclerView.ViewHolder viewHolder, int position) {
+        startActivity(new Intent(getActivity(), StudentActivity.class).putExtra("student", mList.get(position)));
+    }
+
+    @Override
+    public void OnPhotoCheck(RecyclerView.ViewHolder viewHolder, int position) {
+        startActivity(new Intent(getActivity(), StudentInfoActivity.class).putExtra("student", mList.get(position)));
     }
 
     private class MyBroadcastReciver extends BroadcastReceiver {
@@ -335,7 +353,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
             if (action.equals("QQ_ABEL_ACTION_BROADCAST")) {
                 if (user != null && user.getUserID() != null && mList.size() == 0) {
                     //handler.removeCallbacks(myRunnable);
-                    Log.e("广播","收到广播");
+                    Log.e("广播", "收到广播");
                     getStudent();
                 }
 

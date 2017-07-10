@@ -20,8 +20,8 @@ public class CardiacRate extends BaseActivity {
 
     @BindView(R.id.cardiac_rgrpNavigation)
     RadioGroup rgrpNavigation;
-    @BindView(R.id.cardiac_rate_tv)
-    TextView cardiac_rate_tv;
+    @BindView(R.id.volocity_load_tv)
+    TextView volocity_load_tv;
     private Fragment[] frags = new Fragment[2];
     private int currentFragIndex = -1;
     DeviceInfo deviceInfo;
@@ -35,7 +35,7 @@ public class CardiacRate extends BaseActivity {
     protected void init(Bundle savedInstanceState) {
         deviceInfo = MyApplication.newInstance().getDeviceInfo();
         if (deviceInfo.getHeartrate() != null) {
-            cardiac_rate_tv.setText(deviceInfo.getHeartrate());
+            volocity_load_tv.setText(deviceInfo.getHeartrate());
         }
 
         initNavigation();

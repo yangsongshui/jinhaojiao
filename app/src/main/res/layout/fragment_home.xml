@@ -95,7 +95,7 @@
                         android:id="@+id/speed_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="80%"
+                        android:text="0%"
                         android:textColor="@color/chocolate"
                         android:textSize="17sp" />
                 </LinearLayout>
@@ -130,7 +130,7 @@
                         android:id="@+id/time_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="80%"
+                        android:text="0%"
                         android:textColor="@color/chocolate"
                         android:textSize="17sp" />
                 </LinearLayout>
@@ -172,7 +172,7 @@
                         android:id="@+id/load_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="80%"
+                        android:text="0%"
                         android:textColor="@color/chocolate"
                         android:textSize="17sp" />
                 </LinearLayout>
@@ -207,7 +207,7 @@
                         android:id="@+id/strength_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="80%"
+                        android:text="0%"
                         android:textColor="@color/chocolate"
                         android:textSize="17sp" />
                 </LinearLayout>

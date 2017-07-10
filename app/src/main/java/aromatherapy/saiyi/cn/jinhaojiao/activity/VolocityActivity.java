@@ -21,12 +21,14 @@ public class VolocityActivity extends BaseActivity {
 
     @BindView(R.id.volocity_rgrpNavigation)
     RadioGroup rgrpNavigation;
+    @BindView(R.id.volocity_speed_tv)
+    TextView volocitySpeedTv;
 
     private Fragment[] frags = new Fragment[2];
     private int currentFragIndex = -1;
-    @BindView(R.id.volocity_rate_tv)
-    TextView volocity_rate_tv;
+
     DeviceInfo deviceInfo;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_volocity;
@@ -35,9 +37,7 @@ public class VolocityActivity extends BaseActivity {
     @Override
     protected void init(Bundle savedInstanceState) {
         deviceInfo = MyApplication.newInstance().getDeviceInfo();
-        if (deviceInfo.getSpeed() != null) {
-            volocity_rate_tv.setText(deviceInfo.getSpeed());
-        }
+
 
         initNavigation();
         showFrag(0);
@@ -89,6 +89,8 @@ public class VolocityActivity extends BaseActivity {
     public void Click(View v) {
         finish();
     }
+
+
 
     private class CheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
         @Override

@@ -26,6 +26,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Me extends BaseFragment {
     @BindView(R.id.me_title_rl)
     RelativeLayout me_title_rl;
+    @BindView(R.id.me_add_rl)
+    RelativeLayout me_add_rl;
     @BindView(R.id.me_pic_iv)
     CircleImageView me_pic_iv;
     @BindView(R.id.me_name_tv)
@@ -109,7 +111,12 @@ public class Me extends BaseFragment {
                     } else if (user.getSex().equals("女"))
                         me_sex_iv.setImageResource(R.drawable.nvxingbai);
                 }
+                if(user.getType()==0){
+                    me_add_rl.setVisibility(View.GONE);
 
+                }else {
+                    me_add_rl.setVisibility(View.VISIBLE);
+                }
             }
         }
         super.setUserVisibleHint(isVisibleToUser);

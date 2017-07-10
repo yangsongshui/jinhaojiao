@@ -16,7 +16,7 @@ import java.util.Map;
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
-import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import aromatherapy.saiyi.cn.jinhaojiao.bean.Student;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Home;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindHomePresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
@@ -31,7 +31,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class StudentActivity extends BaseActivity implements MsgView {
     private final static String TAG = Home.class.getSimpleName();
     private static double STEPNUM = 3000.0;
-
+    private String percent = "%";
     @BindView(R.id.home_distance_tv)
     TextView home_distance_tv;
     @BindView(R.id.home_heartthrob_tv)
@@ -53,6 +53,8 @@ public class StudentActivity extends BaseActivity implements MsgView {
     TextView speedTv;
     @BindView(R.id.time_tv)
     TextView timeTv;
+    @BindView(R.id.strength_tv)
+    TextView strengthTv;
     @BindView(R.id.load_tv)
     TextView loadTv;
     @BindView(R.id.home_back)
@@ -62,7 +64,7 @@ public class StudentActivity extends BaseActivity implements MsgView {
     private Toastor toastor;
     private Handler handler;
     private Runnable myRunnable;
-    private User user;
+    private Student user;
     private FindHomePresenterImp findHomePresenterImp;
     private boolean isOne = true;
 
@@ -73,7 +75,7 @@ public class StudentActivity extends BaseActivity implements MsgView {
 
     @Override
     protected void init(Bundle savedInstanceState) {
-        user = (User) getIntent().getSerializableExtra("student");
+        user = (Student) getIntent().getSerializableExtra("student");
 
         toastor = new Toastor(this);
         dialog = new LoadingDialog(this);
@@ -112,6 +114,14 @@ public class StudentActivity extends BaseActivity implements MsgView {
                 } else if (user.getSex().equals("女"))
                     home_sex_iv.setImageResource(R.drawable.nvxingbai);
             }
+            String speed = user.getSpeed() + percent;
+            String time = user.getTime() + percent;
+            String load = user.getLoad() + percent;
+            String strength = user.getStrength() + percent;
+            speedTv.setText(speed);
+            timeTv.setText(time);
+            loadTv.setText(load);
+            strengthTv.setText(strength);
 
         }
     }

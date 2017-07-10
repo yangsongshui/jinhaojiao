@@ -6,6 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical"
     tools:context="aromatherapy.saiyi.cn.jinhaojiao.activity.DistanceActivity">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -28,93 +29,60 @@
             android:textSize="15sp" />
     </RelativeLayout>
 
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_weight="1">
 
-      <!--  <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/bigluopan" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="平均配速 :" />
-
-            <TextView
-                android:id="@+id/line_avaerage_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="5" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="分钟/公里" />
-        </LinearLayout>-->
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/circle"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="今日已走"
-                android:textSize="17sp"
-                android:layout_marginBottom="10dp"
-                android:layout_above="@+id/distance_stpe_tv"
-                android:layout_centerHorizontal="true" />
+                android:text="运动时间"
+                android:textSize="14sp" />
+
             <TextView
+                android:id="@+id/volocity_time_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:textSize="25sp"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
                 android:textColor="@color/hotpink"
-                android:id="@+id/distance_stpe_tv" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="公里"
-                android:textSize="17sp"
-                android:layout_marginTop="15dp"
-                android:layout_below="@+id/distance_stpe_tv"
-                android:layout_centerHorizontal="true"
-                android:id="@+id/textView5" />
-
-        </RelativeLayout>
-    </LinearLayout>
+                android:textSize="25sp" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2">
+
         <FrameLayout
             android:id="@+id/distance_fl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/distance_rgrpNavigation" />
+
         <RadioGroup
+            android:id="@+id/distance_rgrpNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_margin="10dp"
             android:background="@drawable/service_rg_rim"
-            android:orientation="horizontal"
-            android:id="@+id/distance_rgrpNavigation">
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/distance_day_rb"

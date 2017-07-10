@@ -22,15 +22,16 @@ import butterknife.OnClick;
 public class LineDataActivity extends BaseActivity {
     @BindView(R.id.line_rgrpNavigation)
     RadioGroup rgrpNavigation;
-    @BindView(R.id.line_stpe_tv)
-    TextView line_stpe_tv;
-    @BindView(R.id.line_calorie_tv)
-    TextView line_calorie_tv;
+
+
     @BindView(R.id.line_title_tv)
     TextView line_title_tv;
+    @BindView(R.id.volocity_strength_tv)
+    TextView volocityStrengthTv;
     private Fragment[] frags = new Fragment[5];
     private int currentFragIndex = -1;
     DeviceInfo deviceInfo;
+
     @Override
     protected int getContentView() {
         return R.layout.activity_line_data;
@@ -43,13 +44,8 @@ public class LineDataActivity extends BaseActivity {
         } else if (getIntent().getIntExtra("type", -1) == 0) {
             line_title_tv.setText("步数");
         }
-        deviceInfo=MyApplication.newInstance().getDeviceInfo();
-        if (deviceInfo.getCalorie()!=null){
-            line_calorie_tv.setText(deviceInfo.getCalorie());
-        }
-        if (deviceInfo.getSteps()!=null){
-            line_stpe_tv.setText(deviceInfo.getSteps());
-        }
+        deviceInfo = MyApplication.newInstance().getDeviceInfo();
+
         initNavigation();
         showFrag(0);
         rgrpNavigation.check(R.id.line_tiem_rb);
@@ -105,6 +101,7 @@ public class LineDataActivity extends BaseActivity {
     public void onViewClicked(View v) {
         finish();
     }
+
 
     private class CheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
         @Override

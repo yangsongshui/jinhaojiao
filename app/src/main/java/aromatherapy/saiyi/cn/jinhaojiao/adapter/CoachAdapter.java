@@ -15,6 +15,7 @@ import java.util.List;
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.Student;
 import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemCheckListener;
+import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemPhotoCheckListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -26,6 +27,9 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
     private int listType;
 
     private OnItemCheckListener onItemCheckListener;
+    private OnItemPhotoCheckListener onItemPhotoCheckListener;
+
+
 
     public CoachAdapter(List<Student> data, Context context, int listType) {
         this.data = data;
@@ -47,6 +51,13 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             public void onClick(View v) {
                 if (onItemCheckListener != null)
                     onItemCheckListener.OnItemCheck(holder, position);
+            }
+        });
+        holder.coach_item_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemPhotoCheckListener != null)
+                    onItemPhotoCheckListener.OnPhotoCheck(holder, position);
             }
         });
         holder.coach_item_name.setText(user.getNikename());
@@ -143,5 +154,8 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
 
     public void setOnItemCheckListener(OnItemCheckListener onItemCheckListener) {
         this.onItemCheckListener = onItemCheckListener;
+    }
+    public void setOnItemPhotoCheckListener(OnItemPhotoCheckListener onItemPhotoCheckListener) {
+        this.onItemPhotoCheckListener = onItemPhotoCheckListener;
     }
 }
