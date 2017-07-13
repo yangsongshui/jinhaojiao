@@ -99,8 +99,8 @@ public class LoginActivity extends BaseActivity implements MsgView {
                     if (json.optString("equipment").length() > 0) {
                         user.setEquipment(json.optString("equipment"));
                     }
-                    if (json.optString("headPicByte").length() > 0) {
-                        user.setHead_pic(json.optString("headPicByte"));
+                    if (json.optString("headPicURL").length() > 0) {
+                        user.setHead_pic(json.optString("headPicURL"));
                         Log.e("--------2", jsonObject.optString("headPicByte"));
                     }
                     MyApplication.newInstance().setUser(user);
@@ -313,9 +313,9 @@ public class LoginActivity extends BaseActivity implements MsgView {
             if (json.optString("equipment").length() > 0) {
                 user.setEquipment(json.optString("equipment"));
             }
-            if (json.optString("headPicByte").length() > 0) {
-                user.setHead_pic(json.optString("headPicByte"));
-                Log.e("--------2", jsonObject.optString("headPicByte"));
+            if (json.optString("headPicURL").length() > 0) {
+                user.setHead_pic(json.optString("headPicURL"));
+                Log.e("--------2", jsonObject.optString("headPicURL"));
 
             }
             MyApplication.newInstance().setUser(user);

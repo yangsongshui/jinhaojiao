@@ -273,8 +273,8 @@ public class MainActivity extends BaseActivity implements MsgView {
             } else
                 user.setType(0);
             user.setNikename(json.optString("nickName"));
-            if (json.optString("headPicByte").length() > 0) {
-                user.setHead_pic(json.optString("headPicByte"));
+            if (json.optString("headPicURL").length() > 0) {
+                user.setHead_pic(json.optString("headPicURL"));
             }
 
             if (json.optString("equipment").length() > 0) {
@@ -376,8 +376,8 @@ public class MainActivity extends BaseActivity implements MsgView {
                     if (json.optString("equipment").length() > 0) {
                         user.setEquipment(json.optString("equipment"));
                     }
-                    if (json.optString("headPicByte").length() > 0) {
-                        user.setHead_pic(json.optString("headPicByte"));
+                    if (json.optString("headPicURL").length() > 0) {
+                        user.setHead_pic(json.optString("headPicURL"));
 
                     }
                     MyApplication.newInstance().setUser(user);
