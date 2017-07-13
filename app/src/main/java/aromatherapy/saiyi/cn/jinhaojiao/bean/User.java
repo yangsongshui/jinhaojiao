@@ -1,7 +1,5 @@
 package aromatherapy.saiyi.cn.jinhaojiao.bean;
 
-import android.graphics.Bitmap;
-
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -76,14 +74,6 @@ public class User implements Serializable {
         this.weight = weight;
     }
 
-    public Bitmap getBitmap() {
-        return bitmap;
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
-    }
-
     public String getUserID() {
         return userID;
     }
@@ -92,7 +82,7 @@ public class User implements Serializable {
         this.userID = userID;
     }
 
-    private Bitmap bitmap;
+
 
     public String getClub() {
         return club;

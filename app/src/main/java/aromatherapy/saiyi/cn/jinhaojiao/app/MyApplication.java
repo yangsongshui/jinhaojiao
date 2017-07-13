@@ -6,8 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.umeng.socialize.Config;
 import com.umeng.socialize.PlatformConfig;
 
@@ -196,7 +196,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        mQueue = Volley.newRequestQueue(this);
+
         instance = this;
         AppContextUtil.init(this);
         JPushInterface.setDebugMode(true);
@@ -204,11 +204,6 @@ public class MyApplication extends Application {
 
     }
 
-    private RequestQueue mQueue;
-
-    public RequestQueue getmQueue() {
-        return mQueue;
-    }
 
     /**
      * 把活动添加到活动管理集合
@@ -244,5 +239,10 @@ public class MyApplication extends Application {
             e.printStackTrace();
         }
     }
+    public RequestManager getGlide() {
 
+        return Glide.with(this);
+
+
+    }
 }

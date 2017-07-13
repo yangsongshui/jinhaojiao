@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -28,6 +30,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static aromatherapy.saiyi.cn.jinhaojiao.util.AppUtil.stringtoBitmap;
+
 public class StudentActivity extends BaseActivity implements MsgView {
     private final static String TAG = Home.class.getSimpleName();
     private static double STEPNUM = 3000.0;
@@ -46,7 +50,8 @@ public class StudentActivity extends BaseActivity implements MsgView {
     ImageView home_sex_iv;
     @BindView(R.id.home_pic_iv)
     CircleImageView home_pic_iv;
-
+    @BindView(R.id.me_title_iv)
+    ImageView me_title_iv;
     @BindView(R.id.home_name_tv)
     TextView home_name_tv;
     @BindView(R.id.speed_tv)
@@ -103,10 +108,16 @@ public class StudentActivity extends BaseActivity implements MsgView {
         homeBack.setVisibility(View.VISIBLE);
         if (user != null) {
             home_name_tv.setText(user.getNikename());
-            if (user.getBitmap() != null) {
-                home_pic_iv.setImageBitmap(user.getBitmap());
+            if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+                if (user.getHead_pic().contains("http:")) {
+                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(home_pic_iv);
+                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
+
+                } else
+                    home_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
             } else {
                 home_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+                me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
             }
             if (user.getSex() != null) {
                 if (user.getSex().equals("男")) {

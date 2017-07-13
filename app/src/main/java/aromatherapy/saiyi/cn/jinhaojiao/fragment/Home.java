@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.activity.CardiacRate;
 import aromatherapy.saiyi.cn.jinhaojiao.activity.DistanceActivity;
@@ -24,6 +26,8 @@ import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static aromatherapy.saiyi.cn.jinhaojiao.util.AppUtil.stringtoBitmap;
 
 
 public class Home extends BaseFragment {
@@ -53,7 +57,8 @@ public class Home extends BaseFragment {
     TextView timeTv;
     @BindView(R.id.load_tv)
     TextView loadTv;
-    ;
+    @BindView(R.id.me_title_iv)
+    ImageView me_title_iv;
     MyBroadcastReciver reciver;
 
     @Override
@@ -122,10 +127,16 @@ public class Home extends BaseFragment {
         user = MyApplication.newInstance().getUser();
         if (user != null) {
             home_name_tv.setText(user.getNikename());
-            if (user.getBitmap() != null) {
-                home_pic_iv.setImageBitmap(user.getBitmap());
+            if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+                if (user.getHead_pic().contains("http:")) {
+                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(home_pic_iv);
+                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
+
+                } else
+                    home_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
             } else {
                 home_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+                me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
             }
             if (user.getSex() != null) {
                 if (user.getSex().equals("男")) {
@@ -159,6 +170,7 @@ public class Home extends BaseFragment {
 
             }
         }
+
     }
 
     @Override

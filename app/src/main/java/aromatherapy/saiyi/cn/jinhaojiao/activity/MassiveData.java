@@ -14,6 +14,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static aromatherapy.saiyi.cn.jinhaojiao.util.AppUtil.stringtoBitmap;
+
 public class MassiveData extends BaseActivity {
     @BindView(R.id.massive_name_tv)
     TextView massive_name_tv;
@@ -60,11 +62,15 @@ public class MassiveData extends BaseActivity {
         super.onResume();
         User user = MyApplication.newInstance().getUser();
         if (user != null) {
-            if (user.getBitmap() != null){
-                massive_pic_iv.setImageBitmap(user.getBitmap());
-            }else {
+            if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+                if (user.getHead_pic().contains("http:")) {
+                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(massive_pic_iv);
+                } else
+                    massive_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
+            } else {
                 massive_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
             }
+
             massive_name_tv.setText(user.getNikename());
             if (user.getSex().equals("男")) {
                 massive_sex_iv.setImageResource(R.drawable.manwhite);

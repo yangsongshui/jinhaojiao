@@ -13,10 +13,13 @@ import android.widget.TextView;
 import java.util.List;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.Student;
 import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemCheckListener;
 import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemPhotoCheckListener;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static aromatherapy.saiyi.cn.jinhaojiao.util.AppUtil.stringtoBitmap;
 
 /**
  * Created by Administrator on 2016/7/14.
@@ -28,7 +31,6 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
 
     private OnItemCheckListener onItemCheckListener;
     private OnItemPhotoCheckListener onItemPhotoCheckListener;
-
 
 
     public CoachAdapter(List<Student> data, Context context, int listType) {
@@ -60,17 +62,23 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
                     onItemPhotoCheckListener.OnPhotoCheck(holder, position);
             }
         });
-        holder.coach_item_name.setText(user.getNikename());
+        if (user.getUsername() != null) {
+            holder.coach_item_name.setText(user.getUsername());
+        } else {
+            holder.coach_item_name.setText(user.getNikename());
+        }
+
         if (user.getSex() != null) {
             if (user.getSex().equals("男")) {
                 holder.coach_item_sex.setImageResource(R.drawable.manwhite);
             } else if (user.getSex().equals("女"))
                 holder.coach_item_sex.setImageResource(R.drawable.nvxingbai);
         }
-        if (user.getBitmap() != null) {
-            holder.coach_item_pic.setImageBitmap(user.getBitmap());
-        } else {
-            holder.coach_item_pic.setImageResource(R.mipmap.logo);
+        if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+            if (user.getHead_pic().contains("http:")) {
+                MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(holder.coach_item_pic);
+            } else
+                holder.coach_item_pic.setImageBitmap(stringtoBitmap(user.getHead_pic()));
         }
         int speed = Integer.parseInt(user.getSpeed());
         if (speed < 5) {
@@ -155,6 +163,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
     public void setOnItemCheckListener(OnItemCheckListener onItemCheckListener) {
         this.onItemCheckListener = onItemCheckListener;
     }
+
     public void setOnItemPhotoCheckListener(OnItemPhotoCheckListener onItemPhotoCheckListener) {
         this.onItemPhotoCheckListener = onItemPhotoCheckListener;
     }

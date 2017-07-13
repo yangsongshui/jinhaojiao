@@ -63,7 +63,7 @@ import okhttp3.Response;
 
 import static aromatherapy.saiyi.cn.jinhaojiao.util.AppUtil.bitmapToString;
 
-public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.TakeResultListener, InvokeListener {
+public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.TakeResultListener, InvokeListener {
     private final static String TAG = MeInfoAcitvity.class.getSimpleName();
     private int TYPE;
     private int COACH = 0;
@@ -425,7 +425,9 @@ public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.
                                 builder.add("clubname", user.getClub());
                                 builder.add("phoneNumber", user.getPhone());
                                 if (photo.trim().length() > 0) {
-                                    map.put("headPicByte", photo);
+
+                                    // map.put("headPicByte", photo);
+                                    builder.add("headPicByte", photo);
                                 }
                                 //修改用户ixnxi
                                 RequestBody formBody = builder.build();
@@ -484,8 +486,8 @@ public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.
                 toastor.showSingletonToast("身高不能为0");
         } else
             toastor.showSingletonToast("真实姓名不能为空");
-        if (bitmap != null)
-            user.setBitmap(bitmap);
+        if (photo != null)
+            user.setHead_pic(photo);
     }
 
     private void initView(User user) {
@@ -504,11 +506,18 @@ public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.
             me_identity_tv.setText(user.getIdentity());
         if (TYPE == MEMBER)
             me_identity2_tv.setText(user.getIdentity());
-        if (user.getBitmap() != null) {
+
+        if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+            if (user.getHead_pic().contains("http:")) {
+                MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(me_info_pic_iv);
+            } else
+                me_info_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
+        }
+      /*  if (user.getHead_pic() != null) {
             me_info_pic_iv.setImageBitmap(user.getBitmap());
         } else {
             me_info_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
-        }
+        }*/
     }
 
     /**
@@ -570,8 +579,11 @@ public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.
             user.setBanji(object.optString("uclass"));
             user.setClub(object.optString("clubname"));
             user.setPhone(object.optString("phoneNumber"));
-            if (object.optString("headPicByte").length() > 0) {
-                user.setBitmap(stringtoBitmap(object.optString("headPicByte")));
+            if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+                if (user.getHead_pic().contains("http:")) {
+                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(me_info_pic_iv);
+                } else
+                    me_info_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
             }
             initView(user);
         }
@@ -648,9 +660,10 @@ public class MeInfoAcitvity extends BaseActivity implements  MsgView, TakePhoto.
 
     @Override
     public void takeSuccess(TResult result) {
-        Log.e(MyInfoActivity.class.getName(), "takeSuccess：" + result.getImage().getCompressPath());
+
         Glide.with(this).load(new File(result.getImage().getCompressPath())).into(me_info_pic_iv);
         photo = bitmapToString(result.getImage().getCompressPath());
+        Log.e(MyInfoActivity.class.getName(), "photo：" + photo);
     }
 
     @Override

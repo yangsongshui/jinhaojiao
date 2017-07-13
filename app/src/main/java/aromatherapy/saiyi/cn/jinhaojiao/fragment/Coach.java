@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -48,6 +50,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static aromatherapy.saiyi.cn.jinhaojiao.util.AppUtil.stringtoBitmap;
+
 
 public class Coach extends BaseFragment implements MsgView, RadioGroup.OnCheckedChangeListener, OnItemCheckListener, OnItemPhotoCheckListener {
     private final static String TAG = Coach.class.getSimpleName();
@@ -62,6 +66,8 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
     RecyclerView coachStuden;
     @BindView(R.id.radio_group)
     RadioGroup radio_group;
+    @BindView(R.id.me_title_iv)
+    ImageView me_title_iv;
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
@@ -202,16 +208,23 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         user = MyApplication.newInstance().getUser();
         if (user != null) {
             coachNameTv.setText(user.getNikename());
-            if (user.getBitmap() != null) {
-                coachPicIv.setImageBitmap(user.getBitmap());
+            if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+                if (user.getHead_pic().contains("http:")) {
+                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(coachPicIv);
+                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
+
+                } else
+                    coachPicIv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
             } else {
                 coachPicIv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+                me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
             }
             if (user.getSex() != null) {
                 if (user.getSex().equals("男")) {
                     coachSexIv.setImageResource(R.drawable.manwhite);
                 } else if (user.getSex().equals("女"))
                     coachSexIv.setImageResource(R.drawable.nvxingbai);
+
             }
 
         }
@@ -274,9 +287,12 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
 
 
     private void getStudent() {
-        map.clear();
-        map.put("userID", user.getUserID());
-        findStudenPresenterImp.loadMsg(map);
+        if (user != null) {
+            map.clear();
+            map.put("userID", user.getUserID());
+            findStudenPresenterImp.loadMsg(map);
+        }
+
 
     }
 
