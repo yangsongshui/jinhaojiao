@@ -263,6 +263,9 @@ public class MainActivity extends BaseActivity implements MsgView {
         if (jsonObject.optInt("resCode") == 1) {
             MyApplication.newInstance().outLogin();
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
+            frags.remove(3);
+            frags.add(new LoginFrag());
+            mAdapter.setCount(frags);
         } else if (jsonObject.optInt("resCode") == 0) {
             JSONObject json = jsonObject.optJSONObject("resBody");
             User user = MyApplication.newInstance().getUser();
@@ -301,6 +304,9 @@ public class MainActivity extends BaseActivity implements MsgView {
     public void loadDataError(Throwable throwable) {
         Log.e(TAG, throwable.getLocalizedMessage());
         toastor.showSingletonToast("服务器连接失败");
+        frags.remove(3);
+        frags.add(new LoginFrag());
+        mAdapter.setCount(frags);
     }
 
     private class CheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
@@ -388,6 +394,8 @@ public class MainActivity extends BaseActivity implements MsgView {
                     sendBroadcast(intent2);
                     handler.postDelayed(myRunnable2, 2);
                 }else {
+                    MyApplication.newInstance().outLogin();
+                    toastor.showSingletonToast(jsonObject.optString("resMessage"));
                     frags.remove(3);
                     frags.add(new LoginFrag());
                     mAdapter.setCount(frags);
@@ -398,6 +406,9 @@ public class MainActivity extends BaseActivity implements MsgView {
             public void loadDataError(Throwable throwable) {
                 Log.e(TAG, throwable.getLocalizedMessage());
                 toastor.showSingletonToast("服务器连接失败");
+                frags.remove(3);
+                frags.add(new LoginFrag());
+                mAdapter.setCount(frags);
               
             }
         }, this);
@@ -415,7 +426,7 @@ public class MainActivity extends BaseActivity implements MsgView {
 
             @Override
             public void loadDataSuccess(JSONObject jsonObject) {
-                toastor.showSingletonToast(jsonObject.optString("resMessage"));
+               // toastor.showSingletonToast(jsonObject.optString("resMessage"));
                 if (jsonObject.optInt("resCode") == 0) {
                     JSONObject json = jsonObject.optJSONObject("resBody");
                     DeviceInfo deviceInfo = new DeviceInfo();

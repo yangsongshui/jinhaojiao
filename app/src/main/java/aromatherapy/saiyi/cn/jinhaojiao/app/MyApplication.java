@@ -29,6 +29,7 @@ public class MyApplication extends Application {
     public static List<Activity> activitiesList = new ArrayList<Activity>();    //活动管理集合
     private static DeviceInfo deviceInfo = new DeviceInfo();
     private String EquipmentID;
+    public boolean isLogin = false;
 
     public DeviceInfo getDeviceInfo() {
         return deviceInfo;
@@ -55,7 +56,7 @@ public class MyApplication extends Application {
         String equipmentID = sharedPre.getString("equipmentID", "");
         String openid = sharedPre.getString("openid", "");
         Log.e(TAG, password + " " + phone + openid);
-        if (openid.length() > 0) {
+        if (openid.length() > 0 ) {
             user.setPhone(phone);
             user.setOpenid(openid);
             user.setEquipmentID(equipmentID);
@@ -71,6 +72,7 @@ public class MyApplication extends Application {
     }
 
     public void outLogin() {
+        isLogin = false;
         user = null;
         SharedPreferences sharedPre = this.getSharedPreferences("user", this.MODE_PRIVATE);
         //获取Editor对象
@@ -97,6 +99,7 @@ public class MyApplication extends Application {
 
     public void setUser(User user) {
         this.user = user;
+        isLogin = true;
         if (user.getType() == 1) {
             JPushInterface.setAliasAndTags(getApplicationContext(),
                     null,
@@ -240,6 +243,7 @@ public class MyApplication extends Application {
             e.printStackTrace();
         }
     }
+
     public RequestManager getGlide() {
 
         return Glide.with(this);

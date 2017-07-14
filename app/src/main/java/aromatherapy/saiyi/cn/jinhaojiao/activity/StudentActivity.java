@@ -8,11 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,10 +19,8 @@ import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.Student;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Home;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindHomePresenterImp;
-import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
-import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
@@ -122,12 +117,12 @@ public class StudentActivity extends BaseActivity implements MsgView {
                 home_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
 
             }
-            String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
+       /*     String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
             if (bg.length()>1){
                 MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
             }else {
                 me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
-            }
+            }*/
 
             if (user.getSex() != null) {
                 if (user.getSex().equals("男")) {

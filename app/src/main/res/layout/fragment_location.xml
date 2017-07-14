@@ -4,8 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_top"
+            android:background="@color/colorPrimary" />
         <com.amap.api.maps2d.MapView
             android:id="@+id/map"
+
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 

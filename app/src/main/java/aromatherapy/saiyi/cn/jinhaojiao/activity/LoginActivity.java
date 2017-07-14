@@ -220,7 +220,7 @@ public class LoginActivity extends BaseActivity implements MsgView {
     @Override
     protected void onResume() {
         super.onResume();
-        if (MyApplication.newInstance().getUser() != null) {
+        if (MyApplication.newInstance().getUser() != null&&MyApplication.newInstance().isLogin) {
             setResult(1);
             finish();
         }

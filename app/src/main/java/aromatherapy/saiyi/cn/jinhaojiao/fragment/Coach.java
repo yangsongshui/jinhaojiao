@@ -209,12 +209,12 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
 
     private void initUser() {
         user = MyApplication.newInstance().getUser();
-        if (user != null) {
+        if (user != null && MyApplication.newInstance().isLogin) {
             coachNameTv.setText(user.getNikename());
             if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
                 if (user.getHead_pic().contains("http:")) {
                     MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(coachPicIv);
-                } else{
+                } else {
                     coachPicIv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
                 }
 
@@ -223,9 +223,9 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
 
             }
             String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
-            if (bg.length()>1){
+            if (bg.length() > 1) {
                 MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
-            }else {
+            } else {
                 me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
             }
             if (user.getSex() != null) {
@@ -287,7 +287,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
             user.setDistance("8");
             user.setTime("30");
             mList.add(user);
-            mList.add(user);
+
         }
         //处理数据
 
@@ -296,7 +296,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
 
 
     private void getStudent() {
-        if (user != null) {
+        if (user != null && user.getUserID() != null) {
             map.clear();
             map.put("userID", user.getUserID());
             findStudenPresenterImp.loadMsg(map);
@@ -379,6 +379,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                 if (user != null && user.getUserID() != null && mList.size() == 0) {
                     //handler.removeCallbacks(myRunnable);
                     Log.e("广播", "收到广播");
+                    initUser();
                     getStudent();
                 }
 
@@ -400,15 +401,5 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
             }
 
         }
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        //判断Fragment中的ListView时候存在，判断该Fragment时候已经正在前台显示  通过这两个判断，就可以知道什么时候去加载数据了
-        if (isVisibleToUser) {
-        } else {
-
-        }
-        super.setUserVisibleHint(isVisibleToUser);
     }
 }

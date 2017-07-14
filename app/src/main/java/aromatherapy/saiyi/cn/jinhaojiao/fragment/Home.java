@@ -5,8 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +70,7 @@ public class Home extends BaseFragment {
 
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
+        translucentStatusBar();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("DATA_RECEIVE_BROADCAST");
         intentFilter.addAction("QQ_ABEL_ACTION_BROADCAST");
@@ -90,7 +94,7 @@ public class Home extends BaseFragment {
 
     @OnClick(value = {R.id.home_distance_rl, R.id.home_heartthrob_rl, R.id.home_step_rl, R.id.home_volocity_rl, R.id.home_calorie_rl})
     public void ClickView(View v) {
-        if (user != null) {
+        if (user != null && MyApplication.newInstance().isLogin) {
             if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
                 switch (v.getId()) {
                     case R.id.home_distance_rl:
@@ -129,7 +133,7 @@ public class Home extends BaseFragment {
 
     private void initUser() {
         user = MyApplication.newInstance().getUser();
-        if (user != null) {
+        if (user != null && MyApplication.newInstance().isLogin) {
             home_name_tv.setText(user.getNikename());
             if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
                 if (user.getHead_pic().contains("http:")) {
@@ -141,9 +145,9 @@ public class Home extends BaseFragment {
 
             }
             String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
-            if (bg.length()>1){
+            if (bg.length() > 1) {
                 MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
-            }else {
+            } else {
                 me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
             }
             if (user.getSex() != null) {
@@ -189,5 +193,18 @@ public class Home extends BaseFragment {
 
         }
         super.setUserVisibleHint(isVisibleToUser);
+    }
+
+    private void translucentStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0及以上
+            View decorView = getActivity().getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            decorView.setSystemUiVisibility(option);
+            getActivity().getWindow().setStatusBarColor(Color.TRANSPARENT);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4到5.0
+            WindowManager.LayoutParams localLayoutParams = getActivity().getWindow().getAttributes();
+            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
+        }
     }
 }
