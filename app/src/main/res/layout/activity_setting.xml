@@ -6,6 +6,7 @@
     android:background="@color/crimson"
     android:orientation="vertical"
     tools:context="aromatherapy.saiyi.cn.jinhaojiao.activity.Setting">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -28,12 +29,22 @@
             android:textSize="15sp" />
     </RelativeLayout>
 
-        <TextView
-            android:id="@+id/set_outlogin_iv"
-            android:layout_width="match_parent"
-            android:text="退出登录"
-            android:layout_marginTop="20dp"
-            android:background="@color/white"
-            android:padding="15dp"
-            android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/set_background_iv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
+        android:padding="15dp"
+        android:text="更换背景" />
+
+    <TextView
+        android:id="@+id/set_outlogin_iv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@color/white"
+        android:padding="15dp"
+        android:text="退出登录" />
+
 </LinearLayout>

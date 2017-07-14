@@ -25,6 +25,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,9 @@ import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemCheckListener;
 import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemPhotoCheckListener;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.AddStudenPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStudenPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
+import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
@@ -211,12 +214,18 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
             if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
                 if (user.getHead_pic().contains("http:")) {
                     MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(coachPicIv);
-                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
-
-                } else
+                } else{
                     coachPicIv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
+                }
+
             } else {
                 coachPicIv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+
+            }
+            String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
+            if (bg.length()>1){
+                MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
+            }else {
                 me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
             }
             if (user.getSex() != null) {

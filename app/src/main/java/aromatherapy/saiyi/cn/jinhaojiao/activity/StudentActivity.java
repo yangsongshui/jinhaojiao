@@ -12,6 +12,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +22,10 @@ import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.Student;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Home;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindHomePresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
+import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
@@ -106,19 +109,26 @@ public class StudentActivity extends BaseActivity implements MsgView {
 
     private void initUser() {
         homeBack.setVisibility(View.VISIBLE);
+
         if (user != null) {
             home_name_tv.setText(user.getNikename());
             if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
                 if (user.getHead_pic().contains("http:")) {
                     MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(home_pic_iv);
-                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
 
                 } else
                     home_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
             } else {
                 home_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+
+            }
+            String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
+            if (bg.length()>1){
+                MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
+            }else {
                 me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
             }
+
             if (user.getSex() != null) {
                 if (user.getSex().equals("男")) {
                     home_sex_iv.setImageResource(R.drawable.manwhite);

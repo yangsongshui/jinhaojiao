@@ -18,6 +18,7 @@ import java.util.Set;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.util.AppContextUtil;
+import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.TagAliasCallback;
 
@@ -196,8 +197,8 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         instance = this;
+        SpUtils.init(this);
         AppContextUtil.init(this);
         JPushInterface.setDebugMode(true);
         JPushInterface.init(this);

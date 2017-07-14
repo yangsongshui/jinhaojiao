@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.File;
+
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.activity.CardiacRate;
 import aromatherapy.saiyi.cn.jinhaojiao.activity.DistanceActivity;
@@ -22,7 +24,9 @@ import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
+import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -130,12 +134,16 @@ public class Home extends BaseFragment {
             if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
                 if (user.getHead_pic().contains("http:")) {
                     MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(home_pic_iv);
-                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
-
                 } else
                     home_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
             } else {
                 home_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+
+            }
+            String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
+            if (bg.length()>1){
+                MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
+            }else {
                 me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
             }
             if (user.getSex() != null) {

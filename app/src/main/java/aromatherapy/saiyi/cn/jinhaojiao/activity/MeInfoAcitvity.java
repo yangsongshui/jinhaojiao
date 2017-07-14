@@ -70,8 +70,6 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
     private int MEMBER = 1;
     private static final int RESULT = 1;
     private static final int PHOTO_REQUEST_CUT = 2;
-    /* 头像文件 */
-    private static final String IMAGE_FILE_NAME = "temp_head_image.jpg";
     private User user;
     private TakePhoto takePhoto;
     private InvokeParam invokeParam;
@@ -428,6 +426,7 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
 
                                     // map.put("headPicByte", photo);
                                     builder.add("headPicByte", photo);
+                                    user.setHead_pic(photo);
                                 }
                                 //修改用户ixnxi
                                 RequestBody formBody = builder.build();

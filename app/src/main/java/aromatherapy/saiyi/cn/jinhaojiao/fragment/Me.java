@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.File;
+
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.activity.AddDevice;
 import aromatherapy.saiyi.cn.jinhaojiao.activity.MassiveData;
@@ -18,6 +20,8 @@ import aromatherapy.saiyi.cn.jinhaojiao.activity.Setting;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
+import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -59,7 +63,7 @@ public class Me extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        initUser();
     }
 
     @Override
@@ -77,42 +81,38 @@ public class Me extends BaseFragment {
         return R.layout.fragment_me;
     }
 
+    private void initUser() {
+        User user = MyApplication.newInstance().getUser();
+        if (user != null) {
+            if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+                if (user.getHead_pic().contains("http:")) {
+                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(me_pic_iv);
+                } else
+                    me_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
+            } else {
+                me_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        //判断Fragment中的ListView时候存在，判断该Fragment时候已经正在前台显示  通过这两个判断，就可以知道什么时候去加载数据了
-        if (isVisibleToUser && isVisible()) {
+            }
+            String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
+            if (bg.length() > 1) {
+                MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
+            } else {
+                me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
+            }
+            me_name_tv.setText(user.getNikename());
+            if (user.getSex() != null) {
+                if (user.getSex().equals("男")) {
+                    me_sex_iv.setImageResource(R.drawable.manwhite);
+                } else if (user.getSex().equals("女"))
+                    me_sex_iv.setImageResource(R.drawable.nvxingbai);
+            }
+            if (user.getType() == 0) {
+                me_add_rl.setVisibility(View.GONE);
 
-            User user = MyApplication.newInstance().getUser();
-
-            if (user != null) {
-                if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
-                    if (user.getHead_pic().contains("http:")) {
-                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(me_pic_iv);
-                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
-
-                    } else
-                        me_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
-                } else {
-                    me_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
-                    me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
-                }
-
-                me_name_tv.setText(user.getNikename());
-                if (user.getSex() != null) {
-                    if (user.getSex().equals("男")) {
-                        me_sex_iv.setImageResource(R.drawable.manwhite);
-                    } else if (user.getSex().equals("女"))
-                        me_sex_iv.setImageResource(R.drawable.nvxingbai);
-                }
-                if (user.getType() == 0) {
-                    me_add_rl.setVisibility(View.GONE);
-
-                } else {
-                    me_add_rl.setVisibility(View.VISIBLE);
-                }
+            } else {
+                me_add_rl.setVisibility(View.VISIBLE);
             }
         }
-        super.setUserVisibleHint(isVisibleToUser);
     }
+
 }
