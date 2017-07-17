@@ -43,7 +43,11 @@ import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemCheckListener;
 import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemPhotoCheckListener;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.AddStudenPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStudenPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetSpeedPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetSportPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetSportStrengthPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Constant;
+import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
@@ -78,7 +82,12 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
     MyBroadcastReciver reciver;
     private Handler handler;
     private Runnable myRunnable;
-    private FindStudenPresenterImp findStudenPresenterImp;
+
+    private FindStudenPresenterImp findStudenPresenterImp;  // 我队
+    private GetSportPresenterImp getSportPresenterImp;      //负荷
+    private GetSportStrengthPresenterImp getSportStrengthPresenterImp;//强度
+    private GetSpeedPresenterImp getSpeedPresenterImp;//强度
+
     private AddStudenPresenterImp addStudenPresenterImp;
     private boolean isOne = true;
     private CoachAdapter adapter;
@@ -125,7 +134,12 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         dialog.setCanceledOnTouchOutside(false);
         radio_group.check(R.id.rab_student);
         radio_group.setOnCheckedChangeListener(this);
+
         findStudenPresenterImp = new FindStudenPresenterImp(this, getActivity());
+        getSportPresenterImp = new GetSportPresenterImp(this, getActivity());
+        getSportStrengthPresenterImp = new GetSportStrengthPresenterImp(this, getActivity());
+        getSpeedPresenterImp = new GetSpeedPresenterImp(this, getActivity());
+
         addStudenPresenterImp = new AddStudenPresenterImp(new MsgView() {
             @Override
             public void showProgress() {
@@ -148,9 +162,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                 toastor.showSingletonToast(jsonObject.optString("resMessage"));
                 if (jsonObject.optInt("resCode") == 0) {
                     toastor.showSingletonToast(jsonObject.optString("resMessage"));
-                    map.clear();
-                    map.put("userID", user.getUserID());
-                    findStudenPresenterImp.loadMsg(map);
+
                 }
             }
 
@@ -262,30 +274,25 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.optJSONObject(i);
             Student user = new Student();
-            if (jsonObject.optString("Remarks").length() > 0) {
-                user.setNikename(jsonObject.optString("Remarks"));
-                Log.e("-------", jsonObject.optString("Remarks"));
-            } else {
-                user.setNikename(jsonObject.optString("nickName"));
-            }
-
+            user.setNikename(jsonObject.optString("name"));
             user.setUserID(jsonObject.optString("userID"));
-            user.setEquipmentID(jsonObject.optString("equipmentID"));
-            if (jsonObject.optInt("zhuangtai") == 1) {
-                user.setIsLine(true);
-            } else if (jsonObject.optInt("zhuangtai") == 0) {
-                user.setIsLine(false);
+            user.setSex(jsonObject.optString("sex"));
+            if (jsonObject.optString("headPicURL").length() > 0) {
+                user.setHead_pic(jsonObject.optString("headPicURL"));
+                Log.e("--------1", jsonObject.optString("headPicURL"));
             }
-            if (jsonObject.optString("headPicByte").length() > 0) {
-                user.setHead_pic(jsonObject.optString("headPicByte"));
-                Log.e("--------1", jsonObject.optString("headPicByte"));
-            }
-            user.setLoad("30");
-            user.setSpeed("40");
-            user.setStrength("50");
-            user.setHeartrate("130");
-            user.setDistance("8");
-            user.setTime("30");
+            if (jsonObject.optString("sportLoad") != null)
+                user.setLoad(jsonObject.optString("sportLoad"));
+            if (jsonObject.optString("speed") != null)
+                user.setSpeed(jsonObject.optString("speed"));
+            if (jsonObject.optString("sportStrength") != null && !jsonObject.optString("sportStrength").equals(""))
+                user.setStrength(jsonObject.optString("sportStrength") + "");
+            else
+                user.setStrength("0");
+            if (jsonObject.optString("rate") != null)
+                user.setHeartrate(jsonObject.optString("rate"));
+            if (jsonObject.optString("sportMin") != null)
+                user.setTime(jsonObject.optString("sportMin"));
             mList.add(user);
 
         }
@@ -294,16 +301,6 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         adapter.setItems(mList, listType);
     }
 
-
-    private void getStudent() {
-        if (user != null && user.getUserID() != null) {
-            map.clear();
-            map.put("userID", user.getUserID());
-            findStudenPresenterImp.loadMsg(map);
-        }
-
-
-    }
 
     @Override
     public void showProgress() {
@@ -327,8 +324,16 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         if (isOne)
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
+            if (listType == 0) {
+                getUser(jsonObject.optJSONObject("resBody").optJSONArray("myTeamData"));
+            } else if (listType == 1) {
+                getUser(jsonObject.optJSONObject("resBody").optJSONArray("sportLoadList"));
+            } else if (listType == 2) {
+                getUser(jsonObject.optJSONObject("resBody").optJSONArray("sportStrengthList"));
+            } else if (listType == 3) {
+                getUser(jsonObject.optJSONObject("resBody").optJSONArray("speedList"));
+            }
 
-            getUser(jsonObject.optJSONObject("resBody").optJSONArray("list"));
         }
     }
 
@@ -344,20 +349,39 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         switch (checkedId) {
             case R.id.rab_student:
                 listType = 0;
-                adapter.setItems(mList, listType);
+                //adapter.setItems(mList, listType);
                 break;
             case R.id.rab_qiangdu:
                 listType = 2;
-                adapter.setItems(mList, listType);
+                //adapter.setItems(mList, listType);
                 break;
             case R.id.rab_sudu:
                 listType = 3;
-                adapter.setItems(mList, listType);
+                // adapter.setItems(mList, listType);
                 break;
             case R.id.rab_fuhe:
                 listType = 1;
-                adapter.setItems(mList, listType);
+                //adapter.setItems(mList, listType);
                 break;
+        }
+        getStudent();
+    }
+
+    private void getStudent() {
+        if (user != null && user.getUserID() != null) {
+            map.clear();
+            map.clear();
+            map.put("coachID", user.getUserID());
+            map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
+            if (listType == 0) {
+                findStudenPresenterImp.loadMsg(map);
+            } else if (listType == 1) {
+                getSportPresenterImp.loadMsg(map);
+            } else if (listType == 2) {
+                getSportStrengthPresenterImp.loadMsg(map);
+            } else if (listType == 3) {
+                getSpeedPresenterImp.loadMsg(map);
+            }
         }
     }
 
@@ -394,7 +418,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                             mList.get(i).setIsLine(false);
                         }
                         //学员状态更新广播
-                        //adapter.notifyDataSetChanged();
+                        adapter.notifyDataSetChanged();
                         break;
                     }
                 }
@@ -402,4 +426,5 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
 
         }
     }
+
 }

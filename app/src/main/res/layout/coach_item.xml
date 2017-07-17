@@ -4,11 +4,10 @@
     android:id="@+id/coach_ll"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="horizontal"
-
     android:layout_marginBottom="1dp"
- >
+    android:background="@color/white"
+
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/top_iv"
@@ -75,17 +74,16 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="50  bpm"
-            android:visibility="gone"
             android:textColor="@color/chocolate"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/coach_info_rl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:orientation="horizontal"
-           >
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -93,17 +91,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:src="@drawable/run" />
-
-            <TextView
-                android:id="@+id/coach_run_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="5dp"
-                android:layout_toEndOf="@+id/imageView"
-                android:text="52km"
-                android:textColor="@color/chocolate"
-                android:textSize="18sp" />
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -121,9 +108,9 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
                 android:layout_toEndOf="@+id/imageView2"
-                android:text="52bpm"
+                android:text="0bpm"
                 android:textColor="@color/chocolate"
-                android:textSize="18sp" />
+                android:textSize="17sp" />
 
             <ImageView
                 android:id="@+id/imageView3"
@@ -138,12 +125,24 @@
                 android:id="@+id/coach_time_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
                 android:layout_marginStart="5dp"
                 android:layout_toEndOf="@+id/imageView3"
-                android:text="52m"
+                android:text="0mim"
                 android:textColor="@color/chocolate"
-                android:textSize="18sp" />
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/coach_run_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/imageView"
+                android:text="1m/min"
+                android:textColor="@color/chocolate"
+                android:textSize="16sp" />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

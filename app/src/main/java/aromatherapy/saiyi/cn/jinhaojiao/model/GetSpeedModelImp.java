@@ -18,13 +18,13 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * 描述：MVP中的M实现类，处理业务逻辑数据
  */
-public class FindStudenModelImp extends BaseModel implements MsgModel<JSONObject> {
+public class GetSpeedModelImp extends BaseModel implements MsgModel<JSONObject> {
 
     private Context context = null;
     private ServiceApi serviceApi;
     private CompositeSubscription mCompositeSubscription;
 
-    public FindStudenModelImp(Context mContext) {
+    public GetSpeedModelImp(Context mContext) {
         super();
         context = mContext;
         serviceApi = retrofitManager.getService();
@@ -34,7 +34,7 @@ public class FindStudenModelImp extends BaseModel implements MsgModel<JSONObject
 
     @Override
     public void loadMsg(Map<String, String> map, final IBaseRequestCallBack<JSONObject> iBaseRequestCallBack) {
-        mCompositeSubscription.add(serviceApi.getMyTeamData(map)
+        mCompositeSubscription.add(serviceApi.getSpeed(map)
                 .observeOn(AndroidSchedulers.mainThread())//指定事件消费线程
                 .subscribeOn(Schedulers.io())   //指定 subscribe() 发生在 IO 线程
                 .subscribe(new Subscriber<JSONObject>() {

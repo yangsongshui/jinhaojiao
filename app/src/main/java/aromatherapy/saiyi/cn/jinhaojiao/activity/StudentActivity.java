@@ -1,9 +1,12 @@
 package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +21,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.Student;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Home;
-import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindHomePresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetPersonMsgPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
@@ -68,7 +71,7 @@ public class StudentActivity extends BaseActivity implements MsgView {
     private Handler handler;
     private Runnable myRunnable;
     private Student user;
-    private FindHomePresenterImp findHomePresenterImp;
+    private GetPersonMsgPresenterImp getPersonMsgPresenterImp;
     private boolean isOne = true;
 
     @Override
@@ -78,6 +81,7 @@ public class StudentActivity extends BaseActivity implements MsgView {
 
     @Override
     protected void init(Bundle savedInstanceState) {
+        translucentStatusBar();
         user = (Student) getIntent().getSerializableExtra("student");
 
         toastor = new Toastor(this);
@@ -85,18 +89,17 @@ public class StudentActivity extends BaseActivity implements MsgView {
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         handler = new Handler();
-        findHomePresenterImp = new FindHomePresenterImp(this, this);
+        getPersonMsgPresenterImp = new GetPersonMsgPresenterImp(this, this);
         myRunnable = new Runnable() {
             @Override
             public void run() {
                 Log.e(TAG, "更新数据");
                 map.clear();
-                if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
-                    map.put("equipmentID", user.getEquipmentID());
-                    map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
-                    findHomePresenterImp.loadMsg(map);
-                    handler.postDelayed(this, 10000);
-                }
+                map.put("userID", user.getUserID());
+                map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
+                getPersonMsgPresenterImp.loadMsg(map);
+                handler.postDelayed(this, 10000);
+
             }
         };
         initUser();
@@ -117,12 +120,6 @@ public class StudentActivity extends BaseActivity implements MsgView {
                 home_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
 
             }
-       /*     String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
-            if (bg.length()>1){
-                MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
-            }else {
-                me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
-            }*/
 
             if (user.getSex() != null) {
                 if (user.getSex().equals("男")) {
@@ -130,14 +127,14 @@ public class StudentActivity extends BaseActivity implements MsgView {
                 } else if (user.getSex().equals("女"))
                     home_sex_iv.setImageResource(R.drawable.nvxingbai);
             }
-            String speed = user.getSpeed() + percent;
+      /*      String speed = user.getSpeed() + percent;
             String time = user.getTime() + percent;
             String load = user.getLoad() + percent;
             String strength = user.getStrength() + percent;
             speedTv.setText(speed);
             timeTv.setText(time);
             loadTv.setText(load);
-            strengthTv.setText(strength);
+            strengthTv.setText(strength);*/
 
         }
     }
@@ -211,7 +208,7 @@ public class StudentActivity extends BaseActivity implements MsgView {
     @Override
     public void loadDataSuccess(JSONObject jsonObject) {
         Log.e(TAG, jsonObject.toString());
-        if (isOne)
+       /* if (isOne)
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
             JSONObject json = jsonObject.optJSONObject("resBody");
@@ -220,7 +217,7 @@ public class StudentActivity extends BaseActivity implements MsgView {
             home_heartthrob_tv.setText(json.optString("heartrate"));
             home_volocity_tv.setText(json.optString("speed"));
             home_step_tv.setText(json.optString("steps"));
-        }
+        }*/
     }
 
     @Override
@@ -228,4 +225,16 @@ public class StudentActivity extends BaseActivity implements MsgView {
         toastor.showSingletonToast("服务器连接失败");
     }
 
+    private void translucentStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0及以上
+            View decorView = getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            decorView.setSystemUiVisibility(option);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4到5.0
+            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
+        }
+    }
 }

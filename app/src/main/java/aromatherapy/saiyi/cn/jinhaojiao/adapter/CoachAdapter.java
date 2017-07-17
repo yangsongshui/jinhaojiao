@@ -80,14 +80,14 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             } else
                 holder.coach_item_pic.setImageBitmap(stringtoBitmap(user.getHead_pic()));
         }
-        int speed = Integer.parseInt(user.getSpeed());
-        if (speed < 5) {
+        int strength = Integer.parseInt(user.getStrength());
+        if (strength < 5) {
             holder.state_iv.setImageResource(R.drawable.stop);
-        } else if (speed <= 20) {
+        } else if (strength <= 20) {
             holder.state_iv.setImageResource(R.drawable.walk);
-        } else if (speed <= 40) {
+        } else if (strength <= 40) {
             holder.state_iv.setImageResource(R.drawable.benpao);
-        } else if (speed > 40) {
+        } else if (strength > 40) {
             holder.state_iv.setImageResource(R.drawable.fastrun);
         }
 
@@ -103,21 +103,21 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
         if (listType == 0) {
             holder.coach_info_rl.setVisibility(View.VISIBLE);
             holder.top_tv.setVisibility(View.GONE);
-            holder.coach_run_tv.setText(user.getDistance() + "km");
+            holder.coach_run_tv.setText(user.getSpeed() + "m/min");
             holder.coach_xinlv_tv.setText(user.getHeartrate() + "bpm");
-            holder.coach_time_tv.setText(user.getSpeed() + "m");
+            holder.coach_time_tv.setText(user.getTime() + "min");
         } else {
             holder.coach_info_rl.setVisibility(View.GONE);
             holder.top_tv.setVisibility(View.VISIBLE);
             switch (listType) {
                 case 1:
-                    holder.top_tv.setText(user.getStrength());
+                    holder.top_tv.setText(user.getLoad());
                     break;
                 case 2:
-                    holder.top_tv.setText(user.getLoad() + "bpm");
+                    holder.top_tv.setText(user.getStrength() + "bpm");
                     break;
                 case 3:
-                    holder.top_tv.setText(user.getSpeed() + "/km");
+                    holder.top_tv.setText(user.getSpeed() + "m/min");
                     break;
             }
 

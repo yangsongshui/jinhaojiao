@@ -5,11 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,7 +67,7 @@ public class Home extends BaseFragment {
 
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
-        translucentStatusBar();
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("DATA_RECEIVE_BROADCAST");
         intentFilter.addAction("QQ_ABEL_ACTION_BROADCAST");
@@ -195,16 +192,5 @@ public class Home extends BaseFragment {
         super.setUserVisibleHint(isVisibleToUser);
     }
 
-    private void translucentStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0及以上
-            View decorView = getActivity().getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            decorView.setSystemUiVisibility(option);
-            getActivity().getWindow().setStatusBarColor(Color.TRANSPARENT);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4到5.0
-            WindowManager.LayoutParams localLayoutParams = getActivity().getWindow().getAttributes();
-            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
-        }
-    }
+
 }
