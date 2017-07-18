@@ -46,8 +46,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,10 +77,10 @@
             android:id="@+id/volocity_fl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/volocity_rgrpNavigation" />
+            android:layout_above="@+id/line_rgrpNavigation" />
 
         <RadioGroup
-            android:id="@+id/volocity_rgrpNavigation"
+            android:id="@+id/line_rgrpNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -88,13 +89,13 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/volocity_tiem_rb"
+                android:id="@+id/line_week_rb"
                 style="@style/line_rb"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/service_rb_time"
-                android:text="最近两小时" />
+                android:text="周" />
 
             <ImageView
                 android:layout_width="1dp"
@@ -102,13 +103,27 @@
                 android:background="@color/lawngreen" />
 
             <RadioButton
-                android:id="@+id/volocity_day_rb"
+                android:id="@+id/line_month_rb"
+                style="@style/line_rb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/service_rb_month"
+                android:text="月" />
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/lawngreen" />
+
+            <RadioButton
+                android:id="@+id/line_year_rb"
                 style="@style/line_rb"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/service_rb_year"
-                android:text="天" />
+                android:text="年" />
         </RadioGroup>
     </RelativeLayout>
 </LinearLayout>

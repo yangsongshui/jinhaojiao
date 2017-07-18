@@ -8,23 +8,21 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
-import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
-import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
-import aromatherapy.saiyi.cn.jinhaojiao.fragment.Day;
-import aromatherapy.saiyi.cn.jinhaojiao.fragment.Time;
+import aromatherapy.saiyi.cn.jinhaojiao.fragment.Month;
+import aromatherapy.saiyi.cn.jinhaojiao.fragment.Week;
+import aromatherapy.saiyi.cn.jinhaojiao.fragment.Year;
 import butterknife.BindView;
 import butterknife.OnClick;
 
 public class CardiacRate extends BaseActivity {
 
-    @BindView(R.id.cardiac_rgrpNavigation)
+    @BindView(R.id.line_rgrpNavigation)
     RadioGroup rgrpNavigation;
     @BindView(R.id.volocity_load_tv)
     TextView volocity_load_tv;
-    private Fragment[] frags = new Fragment[2];
+    private Fragment[] frags = new Fragment[3];
     private int currentFragIndex = -1;
-    DeviceInfo deviceInfo;
 
     @Override
     protected int getContentView() {
@@ -33,14 +31,10 @@ public class CardiacRate extends BaseActivity {
 
     @Override
     protected void init(Bundle savedInstanceState) {
-        deviceInfo = MyApplication.newInstance().getDeviceInfo();
-        if (deviceInfo.getHeartrate() != null) {
-            volocity_load_tv.setText(deviceInfo.getHeartrate());
-        }
 
         initNavigation();
         showFrag(0);
-        rgrpNavigation.check(R.id.cardiac_tiem_rb);
+        rgrpNavigation.check(R.id.line_week_rb);
     }
 
     /**
@@ -72,35 +66,42 @@ public class CardiacRate extends BaseActivity {
         rgrpNavigation.setOnCheckedChangeListener(new CheckedChangeListener());
     }
 
-    private Fragment getFrag(int index) {
-        switch (index) {
-            case 0:
-                return new Time();
-            case 1:
-                return new Day();
-
-            default:
-                return null;
-        }
-    }
 
     @OnClick(R.id.cardiac_back_iv)
     public void onViewClicked(View v) {
         finish();
     }
 
+    private Fragment getFrag(int index) {
+        switch (index) {
+            case 0:
+                return new Week();
+            case 1:
+                return new Month();
+            case 2:
+                return new Year();
+            default:
+                return null;
+        }
+    }
+
+
     private class CheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
-                case R.id.cardiac_tiem_rb:
+                case R.id.line_week_rb:
                     showFrag(0);
                     break;
-                case R.id.cardiac_day_rb:
+                case R.id.line_month_rb:
                     showFrag(1);
+                    break;
+                case R.id.line_year_rb:
+                    showFrag(2);
                     break;
             }
         }
+
     }
 
 }

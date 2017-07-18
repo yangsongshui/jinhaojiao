@@ -84,40 +84,12 @@
             android:id="@+id/line_rgrpNavigation">
 
             <RadioButton
-                android:id="@+id/line_tiem_rb"
-                style="@style/line_rb"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/service_rb_time"
-                android:text="最近两小时" />
-
-            <ImageView
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/lawngreen" />
-
-            <RadioButton
-                android:id="@+id/line_day_rb"
-                style="@style/line_rb"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/service_rb_month"
-                android:text="日" />
-
-            <ImageView
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/lawngreen" />
-
-            <RadioButton
                 android:id="@+id/line_week_rb"
                 style="@style/line_rb"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/service_rb_month"
+                android:background="@drawable/service_rb_time"
                 android:text="周" />
 
             <ImageView

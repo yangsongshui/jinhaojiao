@@ -8,12 +8,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
-import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
-import aromatherapy.saiyi.cn.jinhaojiao.fragment.Day;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Month;
-import aromatherapy.saiyi.cn.jinhaojiao.fragment.Time;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Week;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Year;
 import butterknife.BindView;
@@ -28,7 +25,7 @@ public class LineDataActivity extends BaseActivity {
     TextView line_title_tv;
     @BindView(R.id.volocity_strength_tv)
     TextView volocityStrengthTv;
-    private Fragment[] frags = new Fragment[5];
+    private Fragment[] frags = new Fragment[3];
     private int currentFragIndex = -1;
     DeviceInfo deviceInfo;
 
@@ -44,11 +41,11 @@ public class LineDataActivity extends BaseActivity {
         } else if (getIntent().getIntExtra("type", -1) == 0) {
             line_title_tv.setText("步数");
         }
-        deviceInfo = MyApplication.newInstance().getDeviceInfo();
+
 
         initNavigation();
         showFrag(0);
-        rgrpNavigation.check(R.id.line_tiem_rb);
+        rgrpNavigation.check(R.id.line_week_rb);
     }
 
     /**
@@ -83,14 +80,10 @@ public class LineDataActivity extends BaseActivity {
     private Fragment getFrag(int index) {
         switch (index) {
             case 0:
-                return new Time();
-            case 1:
-                return new Day();
-            case 2:
                 return new Week();
-            case 3:
+            case 1:
                 return new Month();
-            case 4:
+            case 2:
                 return new Year();
             default:
                 return null;
@@ -107,20 +100,14 @@ public class LineDataActivity extends BaseActivity {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
-                case R.id.line_tiem_rb:
+                case R.id.line_week_rb:
                     showFrag(0);
                     break;
-                case R.id.line_day_rb:
+                case R.id.line_month_rb:
                     showFrag(1);
                     break;
-                case R.id.line_week_rb:
-                    showFrag(2);
-                    break;
-                case R.id.line_month_rb:
-                    showFrag(3);
-                    break;
                 case R.id.line_year_rb:
-                    showFrag(4);
+                    showFrag(2);
                     break;
             }
         }

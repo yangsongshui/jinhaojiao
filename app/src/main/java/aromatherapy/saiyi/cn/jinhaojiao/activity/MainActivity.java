@@ -25,7 +25,6 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.adapter.TestFragmentAdapter;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
-import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Coach;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Community;
@@ -33,10 +32,8 @@ import aromatherapy.saiyi.cn.jinhaojiao.fragment.Home;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Location;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.LoginFrag;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Me;
-import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindHomePresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.LoginPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.ThreeLoginPresenterImp;
-import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.MD5;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
@@ -57,12 +54,10 @@ public class MainActivity extends BaseActivity implements MsgView {
     private LoadingDialog dialog;
     private Toastor toastor;
     private Handler handler;
-    private Runnable myRunnable;
     private Runnable myRunnable2;
     private User user;
     LoginPresenterImp loginPresenterImp;
     ThreeLoginPresenterImp threeLoginPresenterImp;
-    FindHomePresenterImp findHomePresenterImp;
     TestFragmentAdapter mAdapter;
 
     @Override
@@ -140,22 +135,6 @@ public class MainActivity extends BaseActivity implements MsgView {
 
         rgrpNavigation.check(R.id.rab_purpose);
         handler = new Handler();
-        myRunnable = new Runnable() {
-            @Override
-            public void run() {
-                Log.e(TAG, "更新数据");
-                map.clear();
-                if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
-                    map.put("equipmentID", user.getEquipmentID());
-                    map.put("userID", user.getUserID());
-                    map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
-                    findHomePresenterImp.loadMsg(map);
-                    // handler.postDelayed(this, 10000);
-                }
-
-
-            }
-        };
 
         myRunnable2 = new Runnable() {
             @Override
@@ -219,7 +198,6 @@ public class MainActivity extends BaseActivity implements MsgView {
             handler.postDelayed(myRunnable2, 2);
         }
         if (resultCode == 2) {
-            handler.removeCallbacks(myRunnable);
             type = resultCode;
             frags.remove(3);
             frags.add(new LoginFrag());
@@ -233,16 +211,7 @@ public class MainActivity extends BaseActivity implements MsgView {
     @Override
     protected void onRestart() {
         super.onRestart();
-        user = MyApplication.newInstance().getUser();
-        if (user != null) {
-            if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
-                map.clear();
-                map.put("equipmentID", MyApplication.newInstance().getUser().getEquipmentID());
-                map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
-                map.put("userID", user.getUserID());
-                findHomePresenterImp.loadMsg(map);
-            }
-        }
+
     }
 
 
@@ -292,7 +261,6 @@ public class MainActivity extends BaseActivity implements MsgView {
             }
             if (json.optString("equipmentID").length() > 0) {
                 user.setEquipmentID(json.optString("equipmentID"));
-                handler.postDelayed(myRunnable, 10);
 
             }
             MyApplication.newInstance().setUser(user);
@@ -415,45 +383,6 @@ public class MainActivity extends BaseActivity implements MsgView {
                 frags.add(new LoginFrag());
                 mAdapter.setCount(frags);
 
-            }
-        }, this);
-        //查询首页数据
-        findHomePresenterImp = new FindHomePresenterImp(new MsgView() {
-            @Override
-            public void showProgress() {
-
-            }
-
-            @Override
-            public void disimissProgress() {
-
-            }
-
-            @Override
-            public void loadDataSuccess(JSONObject jsonObject) {
-                // toastor.showSingletonToast(jsonObject.optString("resMessage"));
-                if (jsonObject.optInt("resCode") == 0) {
-                    JSONObject json = jsonObject.optJSONObject("resBody");
-                    DeviceInfo deviceInfo = new DeviceInfo();
-                    deviceInfo.setCalorie(json.optString("Calorie"));
-                    deviceInfo.setDistance(json.optString("distance"));
-                    deviceInfo.setSpeed(json.optString("speed"));
-                    deviceInfo.setHeartrate(json.optString("heartrate"));
-                    deviceInfo.setSteps(json.optString("steps"));
-                    deviceInfo.setEquipmentID(json.optString("equipmentID"));
-                    MyApplication.newInstance().setDeviceInfo(deviceInfo);
-                    Intent intent = new Intent();
-                    intent.setAction("DATA_RECEIVE_BROADCAST");
-                    //要发送的内容
-                    intent.putExtra("device", deviceInfo);
-                    sendBroadcast(intent);
-                }
-            }
-
-            @Override
-            public void loadDataError(Throwable throwable) {
-                Log.e(TAG, throwable.getLocalizedMessage());
-                toastor.showSingletonToast("服务器连接失败");
             }
         }, this);
     }

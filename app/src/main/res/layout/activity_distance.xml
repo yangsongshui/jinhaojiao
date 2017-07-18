@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/service_rb_time"
-                android:text="天" />
+                android:text="周" />
 
             <ImageView
                 android:layout_width="1dp"

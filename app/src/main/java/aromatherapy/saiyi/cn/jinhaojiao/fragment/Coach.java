@@ -370,7 +370,6 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
     private void getStudent() {
         if (user != null && user.getUserID() != null) {
             map.clear();
-            map.clear();
             map.put("coachID", user.getUserID());
             map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
             if (listType == 0) {

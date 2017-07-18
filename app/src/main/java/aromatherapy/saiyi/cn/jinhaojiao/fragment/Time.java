@@ -75,8 +75,7 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
         findsuduPresenterImp = new FindsuduPresenterImp(this, getActivity());
         findStepPresenterImp = new FindStepPresenterImp(this, getActivity());
         init();
-        if ( MyApplication.newInstance().getEquipmentID() != null) {
-            map.put("equipmentID",  MyApplication.newInstance().getEquipmentID());
+
             map.put("time", string);
             map.put("type", "1");
             if (user.getType() == 1)
@@ -84,7 +83,7 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
             else {
                 user= (User) getActivity().getIntent().getSerializableExtra("student");
                 map.put("userID", user.getUserID());
-            }
+
         }
         Log.e(TAG, string);
         if (TYPE == 1 || TYPE == 0) {

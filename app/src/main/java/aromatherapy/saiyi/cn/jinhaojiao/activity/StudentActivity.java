@@ -67,12 +67,13 @@ public class StudentActivity extends BaseActivity implements MsgView {
     ImageView homeBack;
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
+    private boolean isOne = true;
     private Toastor toastor;
     private Handler handler;
     private Runnable myRunnable;
     private Student user;
     private GetPersonMsgPresenterImp getPersonMsgPresenterImp;
-    private boolean isOne = true;
+
 
     @Override
     protected int getContentView() {
@@ -127,14 +128,6 @@ public class StudentActivity extends BaseActivity implements MsgView {
                 } else if (user.getSex().equals("女"))
                     home_sex_iv.setImageResource(R.drawable.nvxingbai);
             }
-      /*      String speed = user.getSpeed() + percent;
-            String time = user.getTime() + percent;
-            String load = user.getLoad() + percent;
-            String strength = user.getStrength() + percent;
-            speedTv.setText(speed);
-            timeTv.setText(time);
-            loadTv.setText(load);
-            strengthTv.setText(strength);*/
 
         }
     }
@@ -147,28 +140,22 @@ public class StudentActivity extends BaseActivity implements MsgView {
     @OnClick(value = {R.id.home_distance_rl, R.id.home_heartthrob_rl, R.id.home_step_rl, R.id.home_volocity_rl, R.id.home_calorie_rl})
     public void ClickView(View v) {
         if (user != null) {
-
-            if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
-                MyApplication.newInstance().setEquipmentID(user.getEquipmentID());
-                switch (v.getId()) {
-                    case R.id.home_distance_rl:
-                        startActivity(new Intent(this, DistanceActivity.class).putExtra("type", 4).putExtra("student", user));
-                        break;
-                    case R.id.home_step_rl:
-                        startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 0).putExtra("student", user));
-                        break;
-                    case R.id.home_volocity_rl:
-                        startActivity(new Intent(this, VolocityActivity.class).putExtra("type", 3).putExtra("student", user));
-                        break;
-                    case R.id.home_heartthrob_rl:
-                        startActivity(new Intent(this, CardiacRate.class).putExtra("type", 2).putExtra("student", user));
-                        break;
-                    case R.id.home_calorie_rl:
-                        startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 1).putExtra("student", user));
-                        break;
-                }
-            } else {
-                Toast.makeText(this, "该学员未绑定设备", Toast.LENGTH_SHORT).show();
+            switch (v.getId()) {
+                case R.id.home_distance_rl:
+                    startActivity(new Intent(this, DistanceActivity.class).putExtra("type", 4).putExtra("student", user));
+                    break;
+                case R.id.home_step_rl:
+                    startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 0).putExtra("student", user));
+                    break;
+                case R.id.home_volocity_rl:
+                    startActivity(new Intent(this, VolocityActivity.class).putExtra("type", 3).putExtra("student", user));
+                    break;
+                case R.id.home_heartthrob_rl:
+                    startActivity(new Intent(this, CardiacRate.class).putExtra("type", 2).putExtra("student", user));
+                    break;
+                case R.id.home_calorie_rl:
+                    startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 1).putExtra("student", user));
+                    break;
             }
         } else {
             Toast.makeText(this, "请登录查看", Toast.LENGTH_SHORT).show();
@@ -208,16 +195,20 @@ public class StudentActivity extends BaseActivity implements MsgView {
     @Override
     public void loadDataSuccess(JSONObject jsonObject) {
         Log.e(TAG, jsonObject.toString());
-       /* if (isOne)
+        if (isOne)
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
             JSONObject json = jsonObject.optJSONObject("resBody");
-            home_distance_tv.setText(json.optString("Calorie"));
+            home_distance_tv.setText(json.optString("calorie"));
             home_calorie_tv.setText(json.optString("distance"));
-            home_heartthrob_tv.setText(json.optString("heartrate"));
+            home_heartthrob_tv.setText(json.optString("rate"));
             home_volocity_tv.setText(json.optString("speed"));
-            home_step_tv.setText(json.optString("steps"));
-        }*/
+            home_step_tv.setText(json.optString("step"));
+            speedTv.setText(json.optString("acceleration") + percent);
+            timeTv.setText(json.optString("sportMin") + percent);
+            strengthTv.setText(json.optString("sportStrength") + percent);
+            loadTv.setText(json.optString("sportLoad") + percent);
+        }
     }
 
     @Override

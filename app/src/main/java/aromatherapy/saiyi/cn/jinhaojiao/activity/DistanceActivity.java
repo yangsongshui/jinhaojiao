@@ -11,8 +11,8 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
-import aromatherapy.saiyi.cn.jinhaojiao.fragment.Day;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Month;
+import aromatherapy.saiyi.cn.jinhaojiao.fragment.Week;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Year;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -35,7 +35,7 @@ public class DistanceActivity extends BaseActivity {
 
     @Override
     protected void init(Bundle savedInstanceState) {
-        deviceInfo = MyApplication.newInstance().getDeviceInfo();
+
 
         initNavigation();
         showFrag(0);
@@ -72,10 +72,15 @@ public class DistanceActivity extends BaseActivity {
         distance_rgrpNavigation.setOnCheckedChangeListener(new CheckedChangeListener());
     }
 
+    @OnClick(R.id.distance_back_iv)
+    public void onViewClicked(View v) {
+        finish();
+    }
+
     private Fragment getFrag(int index) {
         switch (index) {
             case 0:
-                return new Day();
+                return new Week();
             case 1:
                 return new Month();
             case 2:
@@ -85,27 +90,22 @@ public class DistanceActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.distance_back_iv)
-    public void onViewClicked(View v) {
-        finish();
-    }
-
-
 
     private class CheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
-                case R.id.distance_day_rb:
+                case R.id.line_week_rb:
                     showFrag(0);
                     break;
-                case R.id.distance_month_rb:
+                case R.id.line_month_rb:
                     showFrag(1);
                     break;
-                case R.id.distance_year_rb:
+                case R.id.line_year_rb:
                     showFrag(2);
                     break;
             }
         }
+
     }
 }

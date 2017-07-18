@@ -8,18 +8,18 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
-import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
-import aromatherapy.saiyi.cn.jinhaojiao.fragment.Day;
-import aromatherapy.saiyi.cn.jinhaojiao.fragment.Time;
+import aromatherapy.saiyi.cn.jinhaojiao.fragment.Month;
+import aromatherapy.saiyi.cn.jinhaojiao.fragment.Week;
+import aromatherapy.saiyi.cn.jinhaojiao.fragment.Year;
 import butterknife.BindView;
 import butterknife.OnClick;
 
 public class VolocityActivity extends BaseActivity {
 
 
-    @BindView(R.id.volocity_rgrpNavigation)
+    @BindView(R.id.line_rgrpNavigation)
     RadioGroup rgrpNavigation;
     @BindView(R.id.volocity_speed_tv)
     TextView volocitySpeedTv;
@@ -36,12 +36,12 @@ public class VolocityActivity extends BaseActivity {
 
     @Override
     protected void init(Bundle savedInstanceState) {
-        deviceInfo = MyApplication.newInstance().getDeviceInfo();
+
 
 
         initNavigation();
         showFrag(0);
-        rgrpNavigation.check(R.id.volocity_tiem_rb);
+        rgrpNavigation.check(R.id.line_week_rb);
     }
 
     /**
@@ -73,17 +73,6 @@ public class VolocityActivity extends BaseActivity {
         rgrpNavigation.setOnCheckedChangeListener(new CheckedChangeListener());
     }
 
-    private Fragment getFrag(int index) {
-        switch (index) {
-            case 0:
-                return new Time();
-            case 1:
-                return new Day();
-
-            default:
-                return null;
-        }
-    }
 
     @OnClick(R.id.volocity_back_iv)
     public void Click(View v) {
@@ -91,18 +80,35 @@ public class VolocityActivity extends BaseActivity {
     }
 
 
+    private Fragment getFrag(int index) {
+        switch (index) {
+            case 0:
+                return new Week();
+            case 1:
+                return new Month();
+            case 2:
+                return new Year();
+            default:
+                return null;
+        }
+    }
+
 
     private class CheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
-                case R.id.volocity_tiem_rb:
+                case R.id.line_week_rb:
                     showFrag(0);
                     break;
-                case R.id.volocity_day_rb:
+                case R.id.line_month_rb:
                     showFrag(1);
+                    break;
+                case R.id.line_year_rb:
+                    showFrag(2);
                     break;
             }
         }
+
     }
 }

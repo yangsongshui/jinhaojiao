@@ -92,7 +92,7 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener, M
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 initChart();
-                map.put("equipmentID", MyApplication.newInstance().getEquipmentID());
+
                 map.put("time", time);
                 map.put("type", "2");
                 if (user.getType() == 1)
@@ -103,7 +103,7 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener, M
                 }
 
                 Log.e(TAG, time);
-                if (MyApplication.newInstance().getEquipmentID() != null) {
+
                     if (TYPE == 1 || TYPE == 0) {
                      findStepPresenterImp.loadMsg(map);
                     } else if (TYPE == 2) {
@@ -114,7 +114,7 @@ public class Day extends BaseFragment implements OnChartValueSelectedListener, M
                         findjvliPresenterImp.loadMsg(map);
 
                     }
-                }
+
             }
         };
         initChart();

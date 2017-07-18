@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.util.AppContextUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
@@ -27,17 +26,9 @@ public class MyApplication extends Application {
 
     private static MyApplication instance;
     public static List<Activity> activitiesList = new ArrayList<Activity>();    //活动管理集合
-    private static DeviceInfo deviceInfo = new DeviceInfo();
-    private String EquipmentID;
     public boolean isLogin = false;
 
-    public DeviceInfo getDeviceInfo() {
-        return deviceInfo;
-    }
 
-    public void setDeviceInfo(DeviceInfo deviceInfo) {
-        MyApplication.deviceInfo = deviceInfo;
-    }
 
     //保存登录用户信息
     private User user = new User();
@@ -86,16 +77,6 @@ public class MyApplication extends Application {
         editor.commit();
     }
 
-    public String getEquipmentID() {
-        if (user.getType() == 1)
-            return user.getEquipmentID();
-        else
-            return EquipmentID;
-    }
-
-    public void setEquipmentID(String EquipmentID) {
-        this.EquipmentID = EquipmentID;
-    }
 
     public void setUser(User user) {
         this.user = user;

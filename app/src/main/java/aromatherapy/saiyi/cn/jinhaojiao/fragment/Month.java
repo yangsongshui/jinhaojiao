@@ -3,7 +3,6 @@ package aromatherapy.saiyi.cn.jinhaojiao.fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -18,9 +17,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +26,10 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
-import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStepPresenterImp;
-import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindjvliPresenterImp;
-import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindsuduPresenterImp;
-import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindxinlvPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetCaloriePresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetDistancePresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetRatePresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetSpeedHistoryPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
@@ -61,20 +58,17 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
     TextView month_kaluli;
     Handler handler;
     int index;
-    int MONTH;
-    int YEAY;
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
-    List<String> Calorie = new ArrayList<>();
-    List<String> steps = new ArrayList<>();
+    List<String> data;
     private int TYPE = 0;
     User user;
 
-    FindxinlvPresenterImp findxinlvPresenterImp;
-    FindsuduPresenterImp findsuduPresenterImp;
-    FindStepPresenterImp findStepPresenterImp;
-    FindjvliPresenterImp findjvliPresenterImp;
+    GetSpeedHistoryPresenterImp getSpeedHistoryPresenterImp;//速度历史记录
+    GetDistancePresenterImp getDistancePresenterImp;//距离
+    GetCaloriePresenterImp getCaloriePresenterImp;//卡路里和步数
+    GetRatePresenterImp getRatePresenterImp;//心率
 
     @Override
     public void onResume() {
@@ -85,16 +79,17 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
 
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
+        data = new ArrayList<>();
         user = MyApplication.newInstance().getUser();
         toastor = new Toastor(getActivity());
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         TYPE = getActivity().getIntent().getIntExtra("type", -1);
-        findxinlvPresenterImp = new FindxinlvPresenterImp(this, getActivity());
-        findsuduPresenterImp = new FindsuduPresenterImp(this, getActivity());
-        findStepPresenterImp = new FindStepPresenterImp(this, getActivity());
-        findjvliPresenterImp = new FindjvliPresenterImp(this, getActivity());
+        getSpeedHistoryPresenterImp = new GetSpeedHistoryPresenterImp(this, getActivity());
+        getDistancePresenterImp = new GetDistancePresenterImp(this, getActivity());
+        getCaloriePresenterImp = new GetCaloriePresenterImp(this, getActivity());
+        getRatePresenterImp = new GetRatePresenterImp(this, getActivity());
         if (TYPE == 1 || TYPE == 0) {
             month_data_tv.setText("步");
             month_kaluli.setVisibility(View.VISIBLE);
@@ -110,48 +105,17 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
         } else if (TYPE == 4) {
             month_kaluli.setVisibility(View.GONE);
             month_data_tv.setText("公里");
-
         }
+        map.put("startTime", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
+        map.put("type", "1");
+        if (user.getType() == 1)
+            map.put("userID", user.getUserID());
+        else {
+            user = (User) getActivity().getIntent().getSerializableExtra("student");
+            map.put("userID", user.getUserID());
+        }
+        getData();
 
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                initChart();
-                map.put("equipmentID", MyApplication.newInstance().getEquipmentID());
-                //map.put("time", string);
-                map.put("time", string);
-                map.put("type", "3");
-                if (user.getType() == 1)
-                    map.put("userID", user.getUserID());
-                else {
-                    user = (User) getActivity().getIntent().getSerializableExtra("student");
-                    map.put("userID", user.getUserID());
-                }
-                Log.e(TAG, string);
-                if (MyApplication.newInstance().getEquipmentID() != null) {
-                    if (TYPE == 1 || TYPE == 0) {
-                        findStepPresenterImp.loadMsg(map);
-                    } else if (TYPE == 2) {
-                        findxinlvPresenterImp.loadMsg(map);
-                    } else if (TYPE == 3) {
-                        findsuduPresenterImp.loadMsg(map);
-                    } else if (TYPE == 4) {
-                        findjvliPresenterImp.loadMsg(map);
-
-                    }
-                }
-            }
-        };
-
-
-            /*   Calendar cal = Calendar.getInstance();
-               YEAY = cal.get(Calendar.YEAR);
-               MONTH = cal.get(Calendar.MONTH)+1;
-               DAY = util.getDaysOfMonth(YEAY, MONTH);
-               SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
-               textClock.setText(format.format(cal.getTime()));*/
-        MonthNext(0);
     }
 
     @Override
@@ -198,13 +162,13 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
 
     private LineData getLineData() {
         ArrayList<String> xVals = new ArrayList<String>();
-        for (int i = 0; i <= DAY; i++) {
+        for (int i = 0; i <= 30; i++) {
             xVals.add((i + 1) + "");
         }
 
         ArrayList<Entry> yVals = new ArrayList<Entry>();
-        for (int i = 0; i < steps.size(); i++) {
-            yVals.add(new Entry(Float.parseFloat(steps.get(i)), i));
+        for (int i = 0; i < data.size(); i++) {
+            yVals.add(new Entry(Float.parseFloat(data.get(i)), i));
         }
 
         LineDataSet set1 = new LineDataSet(yVals, "");
@@ -225,10 +189,9 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         month_data.setText(yy[e.getXIndex()]);
         month_tiem.setText((e.getXIndex() + 1) + "日");
-        month_data.setText(steps.get(e.getXIndex()));
-        if (Calorie.size() > 0) {
-            month_kaluli.setText(Calorie.get(e.getXIndex()) + "千卡");
-        }
+        month_data.setText(data.get(e.getXIndex()));
+        month_kaluli.setText(data.get(e.getXIndex()) + "千卡");
+
     }
 
     @Override
@@ -245,61 +208,27 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
                 mChart.setData(new LineData());
                 mChart.invalidate();
                 index++;
-                MonthNext(index);
+
                 break;
             case R.id.month_up:
                 mChart.clear();
                 mChart.setData(new LineData());
                 mChart.invalidate();
                 index--;
-                MonthNext(index);
+
                 break;
             default:
                 break;
         }
     }
 
-    int DAY;
-    String string = "";
-
-    private void MonthNext(int i) {
-        string = "";
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, i);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
-        SimpleDateFormat format2 = new SimpleDateFormat("yyyyMM");
-        String time = format2.format(cal.getTime());
-        textClock.setText(format.format(cal.getTime()));
-        YEAY = cal.get(Calendar.YEAR);
-        MONTH = cal.get(Calendar.MONTH) + 1;
-        DAY = util.getDaysOfMonth(YEAY, MONTH);
-        for (int x = 1; x <= DAY; x++) {
-            if (x < 10) {
-                string += time + "0" + x + ",";
-            } else if (x == DAY) {
-                string += time + x;
-            } else {
-                string += time + x + ",";
-            }
-        }
-        Message mes = new Message();
-        mes.obj = 1;
-        handler.sendMessage(mes);
-    }
-
 
     private void initInfo(JSONArray jsonArray) {
-        Calorie.clear();
-        steps.clear();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            if (TYPE == 1 || TYPE == 0) {
-                Calorie.add(jsonArray.optJSONObject(i).optString("Calorie"));
-                steps.add(jsonArray.optJSONObject(i).optString("steps"));
-            } else if (TYPE == 4) {
-                steps.add(jsonArray.optJSONObject(i).optString("distance"));
-            }
 
-            Log.e("--", jsonArray.optJSONObject(i).optString("steps") + i);
+        data.clear();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            data.add(jsonArray.optString(i));
+            //Log.e("--", jsonArray.optJSONObject(i).optString("steps") + i);
         }
         LineData data = getLineData();
         data.setDrawValues(false); //隐藏坐标轴数据
@@ -327,7 +256,16 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
         Log.e(TAG, jsonObject.toString());
         toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
-            initInfo(jsonObject.optJSONObject("resBody").optJSONArray("list"));
+            if (TYPE == 1 || TYPE == 0) {
+                initInfo(jsonObject.optJSONObject("resBody").optJSONArray("calorieList"));
+            } else if (TYPE == 2) {
+                initInfo(jsonObject.optJSONObject("resBody").optJSONArray("rateList"));
+            } else if (TYPE == 3) {
+                initInfo(jsonObject.optJSONObject("resBody").optJSONArray("speedList"));
+            } else if (TYPE == 4) {
+                initInfo(jsonObject.optJSONObject("resBody").optJSONArray("distanceList"));
+
+            }
         }
 
     }
@@ -337,5 +275,18 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
     public void loadDataError(Throwable throwable) {
         Log.e(TAG, throwable.getLocalizedMessage());
         toastor.showSingletonToast("服务器连接失败");
+    }
+
+    private void getData() {
+        if (TYPE == 1 || TYPE == 0) {
+            getCaloriePresenterImp.loadMsg(map);
+        } else if (TYPE == 2) {
+            getRatePresenterImp.loadMsg(map);
+        } else if (TYPE == 3) {
+            getSpeedHistoryPresenterImp.loadMsg(map);
+        } else if (TYPE == 4) {
+            getDistancePresenterImp.loadMsg(map);
+
+        }
     }
 }
