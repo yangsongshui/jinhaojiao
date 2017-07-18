@@ -222,7 +222,7 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
     List<String> times = new ArrayList<>();
 
     private void MonthNext() {
-        map.put("startTime", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
+        map.put("startTime", DateUtil.getCurrDate("yyyy"));
         map.put("type", "2");
         if (user.getType() == 1)
             map.put("userID", user.getUserID());
