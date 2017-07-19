@@ -59,12 +59,13 @@
             android:text="0" />
 
         <TextView
+            android:id="@+id/week_kaluli"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/hotpink"
             android:textSize="17sp"
             android:text="步" />
-        <TextView
+      <!--  <TextView
             android:id="@+id/tweek_kaluli"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,7 +79,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/hotpink"
             android:textSize="17sp"
-            android:text="千卡" />
+            android:text="千卡" />-->
     </LinearLayout>
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"

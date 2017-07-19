@@ -51,7 +51,7 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
 
     @BindView(R.id.week_data)
     TextView week_data;
-    @BindView(R.id.tweek_kaluli)
+    @BindView(R.id.week_kaluli)
     TextView week_kaluli;
     @BindView(R.id.week_tiem)
     TextView week_tiem;
@@ -64,7 +64,7 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
     private Toastor toastor;
 
     List<String> data;
-
+    List<String> week;
     GetSpeedHistoryPresenterImp getSpeedHistoryPresenterImp;//速度历史记录
     GetDistancePresenterImp getDistancePresenterImp;//距离
     GetCaloriePresenterImp getCaloriePresenterImp;//卡路里和步数
@@ -76,6 +76,7 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
     protected void initData(View layout, Bundle savedInstanceState) {
         user = MyApplication.newInstance().getUser();
         data = new ArrayList<>();
+        week = new ArrayList<>();
         toastor = new Toastor(getActivity());
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
@@ -89,7 +90,7 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
         date = new Date();
         format = new SimpleDateFormat("MM.dd");
         format2 = new SimpleDateFormat("yyyyMMdd");
-        textClock.setText(format.format(date) + "-" + format.format(util.nextDay(date, 6)));
+        textClock.setText(format.format(util.nextDay(date, -6)) + "-" + format.format(date));
         map.put("startTime", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
         map.put("type", "0");
         if (user.getType() == 1)
@@ -100,17 +101,13 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
         }
 
         if (TYPE == 1 || TYPE == 0) {
-            week_data.setText("步");
-            week_kaluli.setVisibility(View.VISIBLE);
+            week_kaluli.setText("步");
         } else if (TYPE == 2) {
-            week_kaluli.setVisibility(View.GONE);
-            week_data.setText("bmp");
+            week_kaluli.setText("bmp");
         } else if (TYPE == 3) {
-            week_kaluli.setVisibility(View.GONE);
-            week_data.setText("米/min");
+            week_kaluli.setText("米/min");
         } else if (TYPE == 4) {
-            week_kaluli.setVisibility(View.GONE);
-            week_data.setText("公里");
+            week_kaluli.setText("公里");
         }
         getData();
     }
@@ -192,9 +189,8 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
 
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-        week_tiem.setText(util.dayNames[e.getXIndex()]);
+        week_tiem.setText(week.get(e.getXIndex()));
         week_data.setText(data.get(e.getXIndex()));
-        week_kaluli.setText(data.get(e.getXIndex()));
     }
 
     @Override
@@ -213,7 +209,7 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
                 break;
             case R.id.week_up:
                 date = util.nextDay(date, -7);
-                textClock.setText(format.format(util.nextDay(date, -7)) + "-" + format.format(util.nextDay(date, -1)));
+                textClock.setText(format.format(util.nextDay(date, -6)) + "-" + format.format(util.nextDay(date,0 )));
                 gettiem2();
                 break;
             default:
@@ -223,13 +219,26 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
 
 
     private void gettiem() {
-        map.put("time", format.format(data));
+        initWeek();
+        map.put("time", format.format(date));
         getData();
 
     }
 
+    private void initWeek() {
+        week.clear();
+        String string = "";
+        SimpleDateFormat format2 = new SimpleDateFormat("EEEE");
+        for (int i = 0; i < 7; i++) {
+            string = format2.format(DateUtil.nextDay(date, -i));
+            week.add(0, string);
+
+        }
+    }
+
     private void gettiem2() {
-        map.put("time", format.format(data));
+        initWeek();
+        map.put("time", format.format(date));
         getData();
 
     }
@@ -278,6 +287,7 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
     }
 
     private void getData() {
+        initWeek();
         if (TYPE == 1 || TYPE == 0) {
             getCaloriePresenterImp.loadMsg(map);
         } else if (TYPE == 2) {
@@ -286,7 +296,6 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
             getSpeedHistoryPresenterImp.loadMsg(map);
         } else if (TYPE == 4) {
             getDistancePresenterImp.loadMsg(map);
-
         }
     }
 }

@@ -73,7 +73,10 @@ public class StudentActivity extends BaseActivity implements MsgView {
     private Runnable myRunnable;
     private Student user;
     private GetPersonMsgPresenterImp getPersonMsgPresenterImp;
-
+    String acceleration;
+    String sportLoad;
+    String sportMin;
+    String sportStrength;
 
     @Override
     protected int getContentView() {
@@ -142,19 +145,19 @@ public class StudentActivity extends BaseActivity implements MsgView {
         if (user != null) {
             switch (v.getId()) {
                 case R.id.home_distance_rl:
-                    startActivity(new Intent(this, DistanceActivity.class).putExtra("type", 4).putExtra("student", user));
+                    startActivity(new Intent(this, DistanceActivity.class).putExtra("type", 4).putExtra("student", user).putExtra("data",sportMin));
                     break;
                 case R.id.home_step_rl:
-                    startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 0).putExtra("student", user));
+                    startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 0).putExtra("student", user).putExtra("data",sportStrength));
                     break;
                 case R.id.home_volocity_rl:
-                    startActivity(new Intent(this, VolocityActivity.class).putExtra("type", 3).putExtra("student", user));
+                    startActivity(new Intent(this, VolocityActivity.class).putExtra("type", 3).putExtra("student", user).putExtra("data",acceleration));
                     break;
                 case R.id.home_heartthrob_rl:
-                    startActivity(new Intent(this, CardiacRate.class).putExtra("type", 2).putExtra("student", user));
+                    startActivity(new Intent(this, CardiacRate.class).putExtra("type", 2).putExtra("student", user).putExtra("data",sportLoad));
                     break;
                 case R.id.home_calorie_rl:
-                    startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 1).putExtra("student", user));
+                    startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 1).putExtra("student", user).putExtra("data",sportStrength));
                     break;
             }
         } else {
@@ -204,10 +207,16 @@ public class StudentActivity extends BaseActivity implements MsgView {
             home_heartthrob_tv.setText(json.optString("rate"));
             home_volocity_tv.setText(json.optString("speed"));
             home_step_tv.setText(json.optString("step"));
-            speedTv.setText(json.optString("acceleration") + percent);
-            timeTv.setText(json.optString("sportMin") + percent);
-            strengthTv.setText(json.optString("sportStrength") + percent);
-            loadTv.setText(json.optString("sportLoad") + percent);
+
+            sportStrength= json.optString("sportStrength");
+            sportMin= json.optString("sportMin");
+            sportLoad= json.optString("sportLoad");
+            acceleration= json.optString("acceleration");
+
+            speedTv.setText(json.optString("accelerationPercent") + percent);
+            timeTv.setText(json.optString("sportMinPercent") + percent);
+            strengthTv.setText(json.optString("sportStrengthPercent") + percent);
+            loadTv.setText(json.optString("sportLoadPercent") + percent);
         }
     }
 

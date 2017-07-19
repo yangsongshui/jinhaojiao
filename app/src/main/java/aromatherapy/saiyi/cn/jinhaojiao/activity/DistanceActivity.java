@@ -8,7 +8,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
-import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Month;
@@ -26,8 +25,6 @@ public class DistanceActivity extends BaseActivity {
     private Fragment[] frags = new Fragment[3];
     private int currentFragIndex = -1;
     DeviceInfo deviceInfo;
-
-
     @Override
     protected int getContentView() {
         return R.layout.activity_distance;
@@ -36,7 +33,8 @@ public class DistanceActivity extends BaseActivity {
     @Override
     protected void init(Bundle savedInstanceState) {
 
-
+        String  data=getIntent().getStringExtra("data");
+        volocityTimeTv.setText(data);
         initNavigation();
         showFrag(0);
         distance_rgrpNavigation.check(R.id.distance_day_rb);

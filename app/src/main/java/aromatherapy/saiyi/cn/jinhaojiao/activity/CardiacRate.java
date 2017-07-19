@@ -31,7 +31,8 @@ public class CardiacRate extends BaseActivity {
 
     @Override
     protected void init(Bundle savedInstanceState) {
-
+        String  data=getIntent().getStringExtra("data");
+        volocity_load_tv.setText(data);
         initNavigation();
         showFrag(0);
         rgrpNavigation.check(R.id.line_week_rb);

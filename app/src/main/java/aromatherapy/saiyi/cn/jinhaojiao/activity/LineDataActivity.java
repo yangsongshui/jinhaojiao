@@ -41,7 +41,8 @@ public class LineDataActivity extends BaseActivity {
         } else if (getIntent().getIntExtra("type", -1) == 0) {
             line_title_tv.setText("步数");
         }
-
+        String  data=getIntent().getStringExtra("data");
+        volocityStrengthTv.setText(data);
 
         initNavigation();
         showFrag(0);

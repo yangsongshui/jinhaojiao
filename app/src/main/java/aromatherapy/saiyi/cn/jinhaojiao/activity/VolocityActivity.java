@@ -36,7 +36,8 @@ public class VolocityActivity extends BaseActivity {
 
     @Override
     protected void init(Bundle savedInstanceState) {
-
+        String  data=getIntent().getStringExtra("data");
+        volocitySpeedTv.setText(data);
 
 
         initNavigation();
