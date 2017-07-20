@@ -32,7 +32,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.widget.MyRadioGroup;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class MyInfoActivity extends BaseActivity implements  MsgView {
+public class MyInfoActivity extends BaseActivity implements MsgView {
     private final String TAG = "MyInfoActivity";
     private int TYPE;
     private int COACH = 0;
@@ -64,6 +64,8 @@ public class MyInfoActivity extends BaseActivity implements  MsgView {
     RelativeLayout my_identity_rl;
     @BindView(R.id.my_weight_tv)
     TextView my_weight_tv;
+    @BindView(R.id.my_name_rl)
+    RelativeLayout my_name_rl;
     private Map<String, String> map = new HashMap<String, String>();
     private LoadingDialog dialog;
     private Toastor toastor;
@@ -86,9 +88,11 @@ public class MyInfoActivity extends BaseActivity implements  MsgView {
         if (TYPE == COACH) {
             coach_identity_rl.setVisibility(View.VISIBLE);
             my_identity_rl.setVisibility(View.GONE);
+            my_name_rl.setVisibility(View.VISIBLE);
         } else if (TYPE == MEMBER) {
             coach_identity_rl.setVisibility(View.GONE);
             my_identity_rl.setVisibility(View.VISIBLE);
+            my_name_rl.setVisibility(View.GONE);
         }
     }
 
@@ -340,48 +344,44 @@ public class MyInfoActivity extends BaseActivity implements  MsgView {
         } else if (TYPE == MEMBER) {
             identity = my_identity_tv.getText().toString();
         }
-        if (name.length() > 0 && !name.equals("未填写")) {
-            if (height.length() > 0 && !height.equals("0")) {
-                if (weight.length() > 0 && !weight.equals("0")) {
-                    if (sex.length() > 0 && !sex.equals("未填写")) {
-                        if (birthday.length() > 0 && !birthday.equals("未填写")) {
-                            map.clear();
-                            user.setWeight(weight);
-                            user.setAddress(address);
-                            user.setSchool(school);
-                            user.setBanji(banji);
-                            user.setClub(club);
-                            user.setSex(sex);
-                            user.setUsername(name);
-                            user.setIdentity(identity);
-                            user.setHeight(height);
-                            user.setBirthday(birthday);
-                            map.put("userID", user.getUserID());
-                            map.put("name", user.getUsername());
-                            map.put("sex", user.getSex());
-                            map.put("height", user.getHeight());
-                            map.put("weight", user.getWeight());
-                            map.put("birthday", user.getBirthday());
-                            map.put("address", user.getAddress());
-                            map.put("school", user.getSchool());
-                            map.put("uclass", user.getBanji());
-                            map.put("identity", user.getIdentity());
-                            map.put("clubname", user.getClub());
-                            addDeteileduserPresenterImp.loadMsg(map);
-                        } else
-                            toastor.showSingletonToast("年龄不能为空");
+
+        if (height.length() > 0 && !height.equals("0")) {
+            if (weight.length() > 0 && !weight.equals("0")) {
+                if (sex.length() > 0 && !sex.equals("未填写")) {
+                    if (birthday.length() > 0 && !birthday.equals("未填写")) {
+                        map.clear();
+                        user.setWeight(weight);
+                        user.setAddress(address);
+                        user.setSchool(school);
+                        user.setBanji(banji);
+                        user.setClub(club);
+                        user.setSex(sex);
+                        user.setUsername(name);
+                        user.setIdentity(identity);
+                        user.setHeight(height);
+                        user.setBirthday(birthday);
+                        map.put("userID", user.getUserID());
+                        map.put("name", user.getUsername());
+                        map.put("sex", user.getSex());
+                        map.put("height", user.getHeight());
+                        map.put("weight", user.getWeight());
+                        map.put("birthday", user.getBirthday());
+                        map.put("address", user.getAddress());
+                        map.put("school", user.getSchool());
+                        map.put("uclass", user.getBanji());
+                        map.put("identity", user.getIdentity());
+                        map.put("clubname", user.getClub());
+                        addDeteileduserPresenterImp.loadMsg(map);
                     } else
-                        toastor.showSingletonToast("性别不能为空");
+                        toastor.showSingletonToast("年龄不能为空");
                 } else
-                    toastor.showSingletonToast("体重不能为0");
-
+                    toastor.showSingletonToast("性别不能为空");
             } else
-                toastor.showSingletonToast("身高不能为0");
+                toastor.showSingletonToast("体重不能为0");
+
         } else
-            toastor.showSingletonToast("真实姓名不能为空");
+            toastor.showSingletonToast("身高不能为0");
     }
-
-
 
 
     @Override

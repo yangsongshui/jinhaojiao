@@ -102,7 +102,7 @@ public class StudentActivity extends BaseActivity implements MsgView {
                 map.put("userID", user.getUserID());
                 map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
                 getPersonMsgPresenterImp.loadMsg(map);
-                handler.postDelayed(this, 10000);
+                handler.postDelayed(this, 200000);
 
             }
         };
@@ -145,19 +145,19 @@ public class StudentActivity extends BaseActivity implements MsgView {
         if (user != null) {
             switch (v.getId()) {
                 case R.id.home_distance_rl:
-                    startActivity(new Intent(this, DistanceActivity.class).putExtra("type", 4).putExtra("student", user).putExtra("data",sportMin));
+                    startActivity(new Intent(this, DistanceActivity.class).putExtra("type", 4).putExtra("student", user).putExtra("data", sportMin));
                     break;
                 case R.id.home_step_rl:
-                    startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 0).putExtra("student", user).putExtra("data",sportStrength));
+                    startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 0).putExtra("student", user).putExtra("data", sportStrength));
                     break;
                 case R.id.home_volocity_rl:
-                    startActivity(new Intent(this, VolocityActivity.class).putExtra("type", 3).putExtra("student", user).putExtra("data",acceleration));
+                    startActivity(new Intent(this, VolocityActivity.class).putExtra("type", 3).putExtra("student", user).putExtra("data", acceleration));
                     break;
                 case R.id.home_heartthrob_rl:
-                    startActivity(new Intent(this, CardiacRate.class).putExtra("type", 2).putExtra("student", user).putExtra("data",sportLoad));
+                    startActivity(new Intent(this, CardiacRate.class).putExtra("type", 2).putExtra("student", user).putExtra("data", sportLoad));
                     break;
                 case R.id.home_calorie_rl:
-                    startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 1).putExtra("student", user).putExtra("data",sportStrength));
+                    startActivity(new Intent(this, LineDataActivity.class).putExtra("type", 1).putExtra("student", user).putExtra("data", sportStrength));
                     break;
             }
         } else {
@@ -202,21 +202,43 @@ public class StudentActivity extends BaseActivity implements MsgView {
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
             JSONObject json = jsonObject.optJSONObject("resBody");
-            home_distance_tv.setText(json.optString("calorie"));
-            home_calorie_tv.setText(json.optString("distance"));
-            home_heartthrob_tv.setText(json.optString("rate"));
-            home_volocity_tv.setText(json.optString("speed"));
-            home_step_tv.setText(json.optString("step"));
+            if (!json.optString("distance").equals("0"))
+                home_distance_tv.setText(json.optString("distance"));
 
-            sportStrength= json.optString("sportStrength");
-            sportMin= json.optString("sportMin");
-            sportLoad= json.optString("sportLoad");
-            acceleration= json.optString("acceleration");
+            if (!json.optString("calorie").equals("0"))
+                home_calorie_tv.setText(json.optString("calorie"));
 
-            speedTv.setText(json.optString("accelerationPercent") + percent);
-            timeTv.setText(json.optString("sportMinPercent") + percent);
-            strengthTv.setText(json.optString("sportStrengthPercent") + percent);
-            loadTv.setText(json.optString("sportLoadPercent") + percent);
+            if (!json.optString("rate").equals("0"))
+                home_heartthrob_tv.setText(json.optString("rate"));
+
+            if (!json.optString("speed").equals("0"))
+                home_volocity_tv.setText(json.optString("speed"));
+
+            if (!json.optString("step").equals("0"))
+                home_step_tv.setText(json.optString("step"));
+
+            if (!json.optString("sportStrength").equals("0"))
+                sportStrength = json.optString("sportStrength");
+            if (!json.optString("sportMin").equals("0"))
+                sportMin = json.optString("sportMin");
+
+            if (!json.optString("sportLoad").equals("0"))
+                sportLoad = json.optString("sportLoad");
+
+            if (!json.optString("acceleration").equals("0"))
+                acceleration = json.optString("acceleration");
+
+            if (!json.optString("accelerationPercent").equals("0"))
+                speedTv.setText(json.optString("accelerationPercent") + percent);
+
+            if (!json.optString("sportMinPercent").equals("0"))
+                timeTv.setText(json.optString("sportMinPercent") + percent);
+
+            if (!json.optString("sportStrengthPercent").equals("0"))
+                strengthTv.setText(json.optString("sportStrengthPercent") + percent);
+
+            if (!json.optString("sportLoadPercent").equals("0"))
+                loadTv.setText(json.optString("sportLoadPercent") + percent);
         }
     }
 

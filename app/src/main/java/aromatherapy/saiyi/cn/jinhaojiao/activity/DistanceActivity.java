@@ -93,13 +93,13 @@ public class DistanceActivity extends BaseActivity {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
-                case R.id.line_week_rb:
+                case R.id.distance_day_rb:
                     showFrag(0);
                     break;
-                case R.id.line_month_rb:
+                case R.id.distance_month_rb:
                     showFrag(1);
                     break;
-                case R.id.line_year_rb:
+                case R.id.distance_year_rb:
                     showFrag(2);
                     break;
             }

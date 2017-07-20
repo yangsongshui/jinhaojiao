@@ -101,13 +101,13 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
         }
 
         if (TYPE == 1 || TYPE == 0) {
-            week_kaluli.setText("步");
+            week_kaluli.setText("Kcar");
         } else if (TYPE == 2) {
             week_kaluli.setText("bmp");
         } else if (TYPE == 3) {
-            week_kaluli.setText("米/min");
+            week_kaluli.setText("m/min");
         } else if (TYPE == 4) {
-            week_kaluli.setText("公里");
+            week_kaluli.setText("米");
         }
         getData();
     }
@@ -170,8 +170,8 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
         }
 
         ArrayList<Entry> yVals = new ArrayList<Entry>();
-        for (int i = 0; i < data.size(); i++) {
-            yVals.add(new Entry(Float.parseFloat(data.get(i)), i));
+        for (int i = (data.size() - 1), j = 0; i >= 0; i--, j++) {
+            yVals.add(new Entry(Float.parseFloat(data.get(i)), j));
         }
 
         LineDataSet set1 = new LineDataSet(yVals, "");
@@ -190,7 +190,7 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         week_tiem.setText(week.get(e.getXIndex()));
-        week_data.setText(data.get(e.getXIndex()));
+        week_data.setText(e.getVal() + "");
     }
 
     @Override
@@ -201,15 +201,18 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
 
     @OnClick(value = {R.id.week_next, R.id.week_up})
     public void Click(View view) {
+        week_tiem.setText("");
+        week_data.setText("0");
         switch (view.getId()) {
+
             case R.id.week_next:
-                gettiem();
-                textClock.setText(format.format(data) + "-" + format.format(util.nextDay(date, 6)));
+                textClock.setText(format.format(date) + "-" + format.format(util.nextDay(date, 6)));
                 date = util.nextDay(date, 7);
+                gettiem();
                 break;
             case R.id.week_up:
                 date = util.nextDay(date, -7);
-                textClock.setText(format.format(util.nextDay(date, -6)) + "-" + format.format(util.nextDay(date,0 )));
+                textClock.setText(format.format(util.nextDay(date, -6)) + "-" + format.format(util.nextDay(date, 0)));
                 gettiem2();
                 break;
             default:
@@ -219,9 +222,10 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
 
 
     private void gettiem() {
-        initWeek();
-        map.put("time", format.format(date));
+
+        map.put("startTime", format2.format(date));
         getData();
+        initWeek();
 
     }
 
@@ -237,9 +241,9 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
     }
 
     private void gettiem2() {
-        initWeek();
-        map.put("time", format.format(date));
+        map.put("startTime", format2.format(date));
         getData();
+        initWeek();
 
     }
 
@@ -264,6 +268,7 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
         Log.e(TAG, jsonObject.toString());
         toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
+            data.clear();
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
             if (TYPE == 1 || TYPE == 0) {
                 initInfo(jsonObject.optJSONObject("resBody").optJSONArray("calorieList"));

@@ -17,7 +17,9 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,13 +49,11 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
     LineChart mChart;
     @BindView(R.id.textClock)
     TextView textClock;
-    @BindView(R.id.month_data)
-    TextView month_data;
     @BindView(R.id.month_tiem)
     TextView month_tiem;
     DateUtil util = new DateUtil();
-    @BindView(R.id.month_data_tv)
-    TextView month_data_tv;
+    @BindView(R.id.month_data)
+    TextView month_data;
     @BindView(R.id.month_kaluli)
     TextView month_kaluli;
     Handler handler;
@@ -62,9 +62,11 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
     private LoadingDialog dialog;
     private Toastor toastor;
     List<String> data;
+    Date date;
     private int TYPE = 0;
     User user;
-
+    SimpleDateFormat format;
+    SimpleDateFormat format2;
     GetSpeedHistoryPresenterImp getSpeedHistoryPresenterImp;//速度历史记录
     GetDistancePresenterImp getDistancePresenterImp;//距离
     GetCaloriePresenterImp getCaloriePresenterImp;//卡路里和步数
@@ -80,31 +82,28 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
         data = new ArrayList<>();
+        date = new Date();
         user = MyApplication.newInstance().getUser();
         toastor = new Toastor(getActivity());
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         TYPE = getActivity().getIntent().getIntExtra("type", -1);
+        format = new SimpleDateFormat("MM.dd");
+        format2 = new SimpleDateFormat("yyyyMMdd");
         getSpeedHistoryPresenterImp = new GetSpeedHistoryPresenterImp(this, getActivity());
         getDistancePresenterImp = new GetDistancePresenterImp(this, getActivity());
         getCaloriePresenterImp = new GetCaloriePresenterImp(this, getActivity());
         getRatePresenterImp = new GetRatePresenterImp(this, getActivity());
+        textClock.setText(format.format(util.nextDay(date, -30)) + "-" + format.format(date));
         if (TYPE == 1 || TYPE == 0) {
-            month_data_tv.setText("步");
-            month_kaluli.setVisibility(View.VISIBLE);
-
+            month_kaluli.setText("Kcar");
         } else if (TYPE == 2) {
-            month_kaluli.setVisibility(View.GONE);
-            month_data_tv.setText("bmp");
-
+            month_kaluli.setText("bmp");
         } else if (TYPE == 3) {
-            month_kaluli.setVisibility(View.GONE);
-            month_data_tv.setText("米/min");
-
+            month_kaluli.setText("m/min");
         } else if (TYPE == 4) {
-            month_kaluli.setVisibility(View.GONE);
-            month_data_tv.setText("公里");
+            month_kaluli.setText("米");
         }
         map.put("startTime", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
         map.put("type", "1");
@@ -114,7 +113,7 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
             user = (User) getActivity().getIntent().getSerializableExtra("student");
             map.put("userID", user.getUserID());
         }
-        getData();
+        gettiem();
 
     }
 
@@ -167,8 +166,8 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
         }
 
         ArrayList<Entry> yVals = new ArrayList<Entry>();
-        for (int i = 0; i < data.size(); i++) {
-            yVals.add(new Entry(Float.parseFloat(data.get(i)), i));
+        for (int i = (data.size() - 1), j = 0; i >= 0; i--, j++) {
+            yVals.add(new Entry(Float.parseFloat(data.get(i)), j));
         }
 
         LineDataSet set1 = new LineDataSet(yVals, "");
@@ -187,11 +186,8 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
 
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-        month_data.setText(yy[e.getXIndex()]);
-        month_tiem.setText((e.getXIndex() + 1) + "日");
-        month_data.setText(data.get(e.getXIndex()));
-        month_kaluli.setText(data.get(e.getXIndex()) + "千卡");
-
+        month_tiem.setText(month.get(e.getXIndex()));
+        month_data.setText(e.getVal() + "");
     }
 
     @Override
@@ -202,19 +198,19 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
 
     @OnClick(value = {R.id.month_next, R.id.month_up})
     public void Click(View view) {
+        month_tiem.setText("");
+        month_data.setText("0");
         switch (view.getId()) {
             case R.id.month_next:
-                mChart.clear();
-                mChart.setData(new LineData());
-                mChart.invalidate();
-                index++;
+                textClock.setText(format.format(date) + "-" + format.format(util.nextDay(date, 29)));
+                date = util.nextDay(date, 29);
+                gettiem();
 
                 break;
             case R.id.month_up:
-                mChart.clear();
-                mChart.setData(new LineData());
-                mChart.invalidate();
-                index--;
+                date = util.nextDay(date, -30);
+                textClock.setText(format.format(util.nextDay(date, -29)) + "-" + format.format(util.nextDay(date, 0)));
+                gettiem2();
 
                 break;
             default:
@@ -228,7 +224,7 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
         data.clear();
         for (int i = 0; i < jsonArray.length(); i++) {
             data.add(jsonArray.optString(i));
-            //Log.e("--", jsonArray.optJSONObject(i).optString("steps") + i);
+
         }
         LineData data = getLineData();
         data.setDrawValues(false); //隐藏坐标轴数据
@@ -270,6 +266,30 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
 
     }
 
+    List<String> month = new ArrayList<>();
+
+    private void initMonth() {
+        String string = "";
+        month.clear();
+        for (int i = 0; i < 30; i++) {
+            string = format.format(DateUtil.nextDay(date, -i));
+            month.add(0, string);
+        }
+    }
+
+    private void gettiem() {
+        map.put("startTime", format2.format(date));
+        getData();
+        initMonth();
+
+    }
+
+    private void gettiem2() {
+        map.put("startTime", format2.format(date));
+        getData();
+        initMonth();
+
+    }
 
     @Override
     public void loadDataError(Throwable throwable) {

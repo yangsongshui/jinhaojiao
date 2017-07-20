@@ -24,7 +24,7 @@ public class VolocityActivity extends BaseActivity {
     @BindView(R.id.volocity_speed_tv)
     TextView volocitySpeedTv;
 
-    private Fragment[] frags = new Fragment[2];
+    private Fragment[] frags = new Fragment[3];
     private int currentFragIndex = -1;
 
     DeviceInfo deviceInfo;

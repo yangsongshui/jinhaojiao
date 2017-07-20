@@ -36,6 +36,7 @@
             android:padding="10dp"
             android:src="@drawable/day_next" />
     </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:gravity="center"
@@ -59,22 +60,15 @@
             android:text="0" />
 
         <TextView
-            android:id="@+id/month_data_tv"
+            android:id="@+id/month_kaluli"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/hotpink"
             android:textSize="17sp"
             android:text="步" />
-        <TextView
-            android:id="@+id/month_kaluli"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="17sp"
-            android:layout_marginLeft="30dp"
-            android:textColor="@color/hotpink"
-            android:text="0千卡" />
 
     </LinearLayout>
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"
         android:layout_width="match_parent"

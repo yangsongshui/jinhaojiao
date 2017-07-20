@@ -74,7 +74,7 @@
             android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -84,19 +84,24 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/luopan" />
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/bigluopan" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
                     android:gravity="center"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="加速度:" />
+                        android:text="加速度"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/speed_tv"
@@ -104,12 +109,12 @@
                         android:layout_height="wrap_content"
                         android:text="0%"
                         android:textColor="@color/chocolate"
-                        android:textSize="17sp" />
+                        android:textSize="25sp" />
                 </LinearLayout>
 
-            </LinearLayout>
+            </RelativeLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -119,19 +124,24 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/luopan" />
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/bigluopan" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
                     android:gravity="center"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="运动时间:" />
+                        android:text="运动时间"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/time_tv"
@@ -139,10 +149,10 @@
                         android:layout_height="wrap_content"
                         android:text="0%"
                         android:textColor="@color/chocolate"
-                        android:textSize="17sp" />
+                        android:textSize="25sp" />
                 </LinearLayout>
 
-            </LinearLayout>
+            </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -151,7 +161,7 @@
             android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -161,19 +171,24 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/luopan" />
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/bigluopan" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
                     android:gravity="center"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="运动负荷:" />
+                        android:text="运动负荷"
+                        android:id="@+id/textView2" />
 
                     <TextView
                         android:id="@+id/load_tv"
@@ -181,12 +196,12 @@
                         android:layout_height="wrap_content"
                         android:text="0%"
                         android:textColor="@color/chocolate"
-                        android:textSize="17sp" />
+                        android:textSize="25sp" />
                 </LinearLayout>
 
-            </LinearLayout>
+            </RelativeLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -196,19 +211,24 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/luopan" />
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/bigluopan" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
                     android:gravity="center"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="运动强度:" />
+                        android:text="运动强度"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/strength_tv"
@@ -216,10 +236,10 @@
                         android:layout_height="wrap_content"
                         android:text="0%"
                         android:textColor="@color/chocolate"
-                        android:textSize="17sp" />
+                        android:textSize="25sp" />
                 </LinearLayout>
 
-            </LinearLayout>
+            </RelativeLayout>
         </LinearLayout>
 
         <ImageView
@@ -522,7 +542,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ka" />
+                        android:text="Kcar" />
                 </LinearLayout>
             </LinearLayout>
 

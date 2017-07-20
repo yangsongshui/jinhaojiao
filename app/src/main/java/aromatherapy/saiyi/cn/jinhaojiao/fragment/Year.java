@@ -15,7 +15,6 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -30,7 +29,6 @@ import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetCaloriePresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetDistancePresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetRatePresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetSpeedHistoryPresenterImp;
-import aromatherapy.saiyi.cn.jinhaojiao.util.DateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
@@ -54,9 +52,6 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
 
     @BindView(R.id.year_tiem)
     TextView year_tiem;
-
-    @BindView(R.id.year_data_tv)
-    TextView year_data_tv;
     @BindView(R.id.year_kaluli)
     TextView year_kaluli;
     private Map<String, String> map = new HashMap<String, String>();
@@ -87,24 +82,16 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
         getRatePresenterImp = new GetRatePresenterImp(this, getActivity());
         TYPE = getActivity().getIntent().getIntExtra("type", -1);
         if (TYPE == 1 || TYPE == 0) {
-            year_data_tv.setText("步");
-            year_kaluli.setVisibility(View.VISIBLE);
-
+            year_kaluli.setText("Kcar");
         } else if (TYPE == 2) {
-            year_kaluli.setVisibility(View.GONE);
-            year_data_tv.setText("bmp");
-
+            year_kaluli.setText("bmp");
         } else if (TYPE == 3) {
-            year_kaluli.setVisibility(View.GONE);
-            year_data_tv.setText("米/min");
+            year_kaluli.setText("m/min");
         } else if (TYPE == 4) {
-            year_kaluli.setVisibility(View.GONE);
-            year_data_tv.setText("公里");
+            year_kaluli.setText("米");
         }
-        MonthNext();
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy");
-        textClock.setText(format.format(cal.getTime()));
+        index = Calendar.getInstance().get(Calendar.YEAR);
+        MonthNext(index + "");
     }
 
 
@@ -112,7 +99,6 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
         data.clear();
         for (int i = 0; i < jsonArray.length(); i++) {
             data.add(jsonArray.optString(i));
-            android.util.Log.e("--", jsonArray.optJSONObject(i).optString("steps") + i);
         }
         LineData data = getLineData();
         data.setDrawValues(false); //隐藏坐标轴数据
@@ -165,7 +151,7 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
     private LineData getLineData() {
 
         ArrayList<String> xVals = new ArrayList<String>();
-        for (int i = 0; i < xx.length; i++) {
+        for (int i = 0; i < 12; i++) {
             xVals.add(xx[i]);
         }
 
@@ -190,10 +176,8 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         year_data.setText(data.get(e.getXIndex()));
-        year_tiem.setText(times.get(e.getXIndex()) + "");
-        if (data.size() > 0) {
-            year_kaluli.setText(data.get(e.getXIndex()) + "千卡");
-        }
+        year_tiem.setText(e.getXIndex() + 1 + "月");
+
     }
 
     @Override
@@ -204,14 +188,16 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
 
     @OnClick(value = {R.id.day_next, R.id.day_up})
     public void Click(View view) {
+        year_data.setText("");
+        year_tiem.setText("0");
         switch (view.getId()) {
             case R.id.day_next:
                 index++;
-                MonthNext();
+                MonthNext(index + "");
                 break;
             case R.id.day_up:
                 index--;
-                MonthNext();
+                MonthNext(index + "");
                 break;
             default:
                 break;
@@ -219,10 +205,9 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
     }
 
 
-    List<String> times = new ArrayList<>();
-
-    private void MonthNext() {
-        map.put("startTime", DateUtil.getCurrDate("yyyy"));
+    private void MonthNext(String time) {
+        textClock.setText(time);
+        map.put("startTime", time);
         map.put("type", "2");
         if (user.getType() == 1)
             map.put("userID", user.getUserID());
@@ -251,7 +236,6 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
     @Override
     public void loadDataSuccess(JSONObject jsonObject) {
         Log.e(TAG, jsonObject.toString());
-        toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
             if (TYPE == 1 || TYPE == 0) {

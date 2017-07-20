@@ -62,20 +62,12 @@
             android:textSize="17sp" />
 
         <TextView
-            android:id="@+id/year_data_tv"
+            android:id="@+id/year_kaluli"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="步"
             android:textColor="@color/hotpink"
             android:textSize="17sp" />
-        <TextView
-            android:id="@+id/year_kaluli"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="17sp"
-            android:layout_marginLeft="30dp"
-            android:textColor="@color/hotpink"
-            android:text="0千卡" />
 
 
     </LinearLayout>

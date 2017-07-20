@@ -104,6 +104,8 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
 
     @BindView(R.id.me_identity2_rl)
     RelativeLayout me_identity2_rl;
+    @BindView(R.id.me_name_rl)
+    RelativeLayout me_name_rl;
     @BindView(R.id.me_identity_rl)
     RelativeLayout me_identity_rl;
     private Map<String, String> map = new HashMap<String, String>();
@@ -111,6 +113,7 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
     private Toastor toastor;
     Bitmap bitmap;
     String photo = "";
+    int type;
     private FindPersonalPresenterImp findPersonalPresenterImp;
 
     @Override
@@ -120,6 +123,12 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
 
     @Override
     protected void init(Bundle savedInstanceState) {
+        type = getIntent().getIntExtra("type",1);
+        if (type==0){
+            me_name_rl.setVisibility(View.VISIBLE);
+        }else {
+            me_name_rl.setVisibility(View.GONE);
+        }
         getTakePhoto().onCreate(savedInstanceState);
         user = MyApplication.newInstance().getUser();
         TYPE = user.getType();
