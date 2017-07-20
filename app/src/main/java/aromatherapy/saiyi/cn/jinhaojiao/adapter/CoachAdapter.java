@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -41,7 +40,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.coach_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_time, parent, false);
         return new CoachAdapter.ViewHolder(view);
     }
 
@@ -80,7 +79,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             } else
                 holder.coach_item_pic.setImageBitmap(stringtoBitmap(user.getHead_pic()));
         }
-        int strength = Integer.parseInt(user.getStrength());
+        double strength = Double.parseDouble(user.getStrength());
         if (strength < 5) {
             holder.state_iv.setImageResource(R.drawable.stop);
         } else if (strength <= 20) {
@@ -103,9 +102,9 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
         if (listType == 0) {
             holder.coach_info_rl.setVisibility(View.VISIBLE);
             holder.top_tv.setVisibility(View.GONE);
-            holder.coach_run_tv.setText(user.getSpeed() + "m/min");
-            holder.coach_xinlv_tv.setText(user.getHeartrate() + "bpm");
-            holder.coach_time_tv.setText(user.getTime() + "min");
+            holder.coach_run_tv.setText(user.getSpeed());
+            holder.coach_xinlv_tv.setText(user.getHeartrate());
+            holder.coach_time_tv.setText(user.getTime());
         } else {
             holder.coach_info_rl.setVisibility(View.GONE);
             holder.top_tv.setVisibility(View.VISIBLE);
@@ -136,7 +135,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
         private CircleImageView coach_item_pic;
         private TextView coach_item_name, top_tv, coach_run_tv, coach_xinlv_tv, coach_time_tv;
         private LinearLayout coach_ll;
-        private RelativeLayout coach_info_rl;
+        private LinearLayout coach_info_rl;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -150,7 +149,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             coach_xinlv_tv = (TextView) itemView.findViewById(R.id.coach_xinlv_tv);
             coach_time_tv = (TextView) itemView.findViewById(R.id.coach_time_tv);
             coach_ll = (LinearLayout) itemView.findViewById(R.id.coach_ll);
-            coach_info_rl = (RelativeLayout) itemView.findViewById(R.id.coach_info_rl);
+            coach_info_rl = (LinearLayout) itemView.findViewById(R.id.coach_info_rl);
         }
     }
 

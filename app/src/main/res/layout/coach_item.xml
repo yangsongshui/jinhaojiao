@@ -14,14 +14,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:padding="10dp"
+        android:padding="5dp"
         android:src="@drawable/huanguanyellow" />
 
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/coach_item_pic"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="10dp"
@@ -87,18 +87,18 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_centerVertical="true"
                 android:src="@drawable/run" />
 
             <ImageView
                 android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
-                android:layout_toEndOf="@+id/coach_run_tv"
+                android:layout_toEndOf="@+id/coach_run"
                 android:src="@drawable/xinzang" />
 
             <TextView
@@ -108,41 +108,72 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
                 android:layout_toEndOf="@+id/imageView2"
-                android:text="0bpm"
+                android:text="0"
                 android:textColor="@color/chocolate"
                 android:textSize="17sp" />
 
-            <ImageView
-                android:id="@+id/imageView3"
+            <TextView
+                android:id="@+id/coach_xinlv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="5dp"
                 android:layout_toEndOf="@+id/coach_xinlv_tv"
+                android:text="bpm"
+                android:textColor="@color/chocolate"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/coach_xinlv"
                 android:src="@drawable/time" />
 
             <TextView
                 android:id="@+id/coach_time_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+
                 android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
                 android:layout_toEndOf="@+id/imageView3"
-                android:text="0mim"
+                android:text="0"
                 android:textColor="@color/chocolate"
                 android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/coach_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/coach_time_tv"
+                android:text="mim"
+                android:textColor="@color/chocolate"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/coach_run_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="5dp"
                 android:layout_toEndOf="@+id/imageView"
-                android:text="1m/min"
+                android:text="1"
                 android:textColor="@color/chocolate"
-                android:textSize="16sp" />
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/coach_run"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/coach_run_tv"
+                android:text="m/min"
+                android:textColor="@color/chocolate"
+                android:textSize="14sp" />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

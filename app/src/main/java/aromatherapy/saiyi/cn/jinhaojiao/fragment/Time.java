@@ -1,49 +1,33 @@
 package aromatherapy.saiyi.cn.jinhaojiao.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
-import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStepPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindsuduPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindxinlvPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
-import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
-import aromatherapy.saiyi.cn.jinhaojiao.widget.MyMarkerView;
 import butterknife.BindView;
 
 /**
  * Created by Administrator on 2016/5/28.
  */
-public class Time extends BaseFragment implements OnChartValueSelectedListener, MsgView{
+public class Time extends BaseFragment{
     private final static String TAG = Time.class.getSimpleName();
     @BindView(R.id.line_chart)
     LineChart mChart;
-    @BindView(R.id.time_data)
+   /* @BindView(R.id.time_data)
     TextView time_data;
     @BindView(R.id.itme_data_tv)
     TextView itme_data_tv;
@@ -51,7 +35,7 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
     @BindView(R.id.time_kaluli)
     TextView time_kaluli;
     @BindView(R.id.time_tiem)
-    TextView time_tiem;
+    TextView time_tiem;*/
     private int TYPE = 0;
     private Map<String, String> map = new HashMap<String, String>();
     private Toastor toastor;
@@ -64,7 +48,7 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
     private LoadingDialog dialog;
     @Override
     protected void initData(View layout, Bundle savedInstanceState) {
-        user = MyApplication.newInstance().getUser();
+        /*user = MyApplication.newInstance().getUser();
         TYPE = getActivity().getIntent().getIntExtra("type", -1);
         initChart();
         dialog = new LoadingDialog(getActivity());
@@ -85,8 +69,8 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
                 map.put("userID", user.getUserID());
 
         }
-        Log.e(TAG, string);
-        if (TYPE == 1 || TYPE == 0) {
+        Log.e(TAG, string);*/
+      /*  if (TYPE == 1 || TYPE == 0) {
             itme_data_tv.setText("步");
             time_kaluli.setVisibility(View.VISIBLE);
             findStepPresenterImp.loadMsg(map);
@@ -99,7 +83,7 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
             time_kaluli.setVisibility(View.GONE);
             itme_data_tv.setText("米/min");
             findsuduPresenterImp.loadMsg(map);
-        }
+        }*/
     }
 
     @Override
@@ -107,10 +91,10 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
         return R.layout.fragment_time;
     }
 
-    private void initChart() {
-        /**
+   /* private void initChart() {
+        *//**
          * ====================1.初始化-自由配置===========================
-         */
+         *//*
         // 是否在折线图上添加边框
         mChart.setDrawGridBackground(false);
         mChart.setDrawBorders(false);
@@ -225,10 +209,10 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
                 }else if (TYPE == 3){
                     steps.add(0, (step - jsonArray.optJSONObject(i).optInt(string)) + "");
                     step = jsonArray.optJSONObject(i).optInt(string);
-                }/*else if (TYPE == 4){
+                }*//*else if (TYPE == 4){
                     steps.add(0, (step - jsonArray.optJSONObject(i).optInt(string)) + "");
                     step = jsonArray.optJSONObject(i).optInt(string);
-                }*/
+                }*//*
             }
             Log.e("--", steps.size() + " " + jsonArray.length() + " " + i);
         }
@@ -276,5 +260,5 @@ public class Time extends BaseFragment implements OnChartValueSelectedListener, 
     public void loadDataError(Throwable throwable) {
         Log.e(TAG, throwable.getLocalizedMessage());
         toastor.showSingletonToast("服务器连接失败");
-    }
+    }*/
 }
