@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
+import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindPersonalPresenterImp;
@@ -25,7 +26,7 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class StudentInfoActivity extends BaseActivity implements MsgView {
-    private final static String TAG = MeInfoAcitvity.class.getSimpleName();
+    private final static String TAG = StudentInfoActivity.class.getSimpleName();
     @BindView(R.id.student_name_tv)
     TextView student_name_tv;
     @BindView(R.id.student_height_tv)
@@ -70,7 +71,16 @@ public class StudentInfoActivity extends BaseActivity implements MsgView {
         map.clear();
         map.put("userID", user.getUserID());
         findPersonalPresenterImp.loadMsg(map);
+        if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+            if (user.getHead_pic().contains("http:")) {
+                MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(student_info_pic_iv);
 
+            } else
+                student_info_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
+        } else {
+            student_info_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+
+        }
     }
 
 
@@ -123,9 +133,7 @@ public class StudentInfoActivity extends BaseActivity implements MsgView {
             student_school_tv.setText(object.optString("school"));
             student_name_tv.setText(object.optString("name"));
             student_birthday_tv.setText(object.optString("birthday"));
-            if (object.optString("headPicByte").length() > 0) {
-                student_info_pic_iv.setImageBitmap(stringtoBitmap(object.optString("headPicByte")));
-            }
+
         }
     }
 

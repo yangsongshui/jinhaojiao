@@ -189,6 +189,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                     return;
                 else {
                     map.clear();
+
                     map.put("coachID", user.getUserID());
                     map.put("phoneNumber", editText.getText().toString().trim());
                     addStudenPresenterImp.loadMsg(map);
@@ -271,6 +272,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
 
     private void getUser(JSONArray jsonArray) {
         mList.clear();
+        adapter.setItems(mList, listType);
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.optJSONObject(i);
             Student user = new Student();
@@ -283,6 +285,8 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
             }
             if (jsonObject.optString("sportLoad") != null)
                 user.setLoad(jsonObject.optString("sportLoad"));
+            if (jsonObject.optString("sportMin") != null)
+                user.setSportMin(jsonObject.optString("sportMin"));
             if (jsonObject.optString("speed") != null)
                 user.setSpeed(jsonObject.optString("speed"));
             if (jsonObject.optString("sportStrength") != null && !jsonObject.optString("sportStrength").equals(""))
@@ -291,6 +295,8 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                 user.setStrength("0");
             if (jsonObject.optString("rate") != null)
                 user.setHeartrate(jsonObject.optString("rate"));
+            if (jsonObject.optString("step") != null)
+                user.setSteps(jsonObject.optString("step"));
             if (jsonObject.optString("sportMin") != null)
                 user.setTime(jsonObject.optString("sportMin"));
             mList.add(user);
@@ -340,7 +346,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
 
     @Override
     public void loadDataError(Throwable throwable) {
-        Log.e(TAG, throwable.getLocalizedMessage());
+        Log.e(TAG, throwable.getLocalizedMessage() + throwable.toString());
         toastor.showSingletonToast("服务器连接失败");
     }
 
@@ -349,21 +355,22 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         switch (checkedId) {
             case R.id.rab_student:
                 listType = 0;
-                //adapter.setItems(mList, listType);
+
                 break;
             case R.id.rab_qiangdu:
                 listType = 2;
-                //adapter.setItems(mList, listType);
+
                 break;
             case R.id.rab_sudu:
                 listType = 3;
-                // adapter.setItems(mList, listType);
+
                 break;
             case R.id.rab_fuhe:
                 listType = 1;
-                //adapter.setItems(mList, listType);
+
                 break;
         }
+        isOne = true;
         getStudent();
     }
 

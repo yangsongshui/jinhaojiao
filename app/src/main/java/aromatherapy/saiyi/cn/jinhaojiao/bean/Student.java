@@ -16,6 +16,15 @@ public class Student extends User implements Serializable {
     private String equipmentID;
     private String strength;
     private String load;
+    private String sportMin;
+
+    public String getSportMin() {
+        return sportMin;
+    }
+
+    public void setSportMin(String sportMin) {
+        this.sportMin = sportMin;
+    }
 
     public String getStrength() {
         return strength;

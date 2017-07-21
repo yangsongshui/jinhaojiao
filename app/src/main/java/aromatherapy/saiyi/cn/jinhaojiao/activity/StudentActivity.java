@@ -63,6 +63,11 @@ public class StudentActivity extends BaseActivity implements MsgView {
     TextView strengthTv;
     @BindView(R.id.load_tv)
     TextView loadTv;
+    @BindView(R.id.line_tv)
+    TextView lineTv;
+    @BindView(R.id.line_min)
+    TextView lineMin;
+
     @BindView(R.id.home_back)
     ImageView homeBack;
     private Map<String, String> map = new HashMap<String, String>();
@@ -73,10 +78,10 @@ public class StudentActivity extends BaseActivity implements MsgView {
     private Runnable myRunnable;
     private Student user;
     private GetPersonMsgPresenterImp getPersonMsgPresenterImp;
-    String acceleration;
-    String sportLoad;
-    String sportMin;
-    String sportStrength;
+    String acceleration = "0";
+    String sportLoad = "0";
+    String sportMin = "0";
+    String sportStrength = "0";
 
     @Override
     protected int getContentView() {
@@ -201,49 +206,74 @@ public class StudentActivity extends BaseActivity implements MsgView {
         if (isOne)
             toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
-            JSONObject json = jsonObject.optJSONObject("resBody");
-            if (!json.optString("distance").equals("0"))
-                home_distance_tv.setText(json.optString("distance"));
+            JSONObject json = jsonObject.optJSONObject("resBody").optJSONObject("personMsgMap");
+            if (json.length() > 0) {
+                if (!json.optString("distance").equals("0"))
+                    home_distance_tv.setText(json.optString("distance"));
 
-            if (!json.optString("calorie").equals("0"))
-                home_calorie_tv.setText(json.optString("calorie"));
+                if (!json.optString("calorie").equals("0"))
+                    home_calorie_tv.setText(json.optString("calorie"));
 
-            if (!json.optString("rate").equals("0"))
-                home_heartthrob_tv.setText(json.optString("rate"));
+                if (!json.optString("rate").equals("0"))
+                    home_heartthrob_tv.setText(json.optString("rate"));
 
-            if (!json.optString("speed").equals("0"))
-                home_volocity_tv.setText(json.optString("speed"));
+                if (!json.optString("speed").equals("0"))
+                    home_volocity_tv.setText(json.optString("speed"));
 
-            if (!json.optString("step").equals("0"))
-                home_step_tv.setText(json.optString("step"));
+                if (!json.optString("step").equals("0"))
+                    home_step_tv.setText(json.optString("step"));
 
-            if (!json.optString("sportStrength").equals("0"))
-                sportStrength = json.optString("sportStrength");
-            if (!json.optString("sportMin").equals("0"))
-                sportMin = json.optString("sportMin");
+                if (!json.optString("sportStrength").equals("0"))
+                    sportStrength = json.optString("sportStrength");
+                if (!json.optString("sportMin").equals("0")) {
+                    sportMin = json.optString("sportMin");
+                    int min = Integer.parseInt(sportMin);
+                    if (min >= 60) {
+                        int h = (min / 60);
+                        int m = (min % 60);
+                        if (h >= 10 && m >= 10) {
+                            lineTv.setText((h + ":" + m));
+                        } else if (h < 10 && m >= 10) {
+                            lineTv.setText(("0" + h + ":" + m));
+                        } else if (h >= 10 && m < 10) {
+                            lineTv.setText((h + ":0 +" + m));
+                        } else if (h < 10 && m < 10) {
+                            lineTv.setText(("0" + h + ":0" + m));
+                        }
+                        lineMin.setVisibility(View.GONE);
+                    } else {
+                        lineTv.setText(min + "");
+                        lineMin.setVisibility(View.VISIBLE);
+                    }
+                }
 
-            if (!json.optString("sportLoad").equals("0"))
-                sportLoad = json.optString("sportLoad");
 
-            if (!json.optString("acceleration").equals("0"))
-                acceleration = json.optString("acceleration");
+                if (!json.optString("sportLoad").equals("0")) {
+                    sportLoad = json.optString("sportLoad");
 
-            if (!json.optString("accelerationPercent").equals("0"))
-                speedTv.setText(json.optString("accelerationPercent") + percent);
+                }
 
-            if (!json.optString("sportMinPercent").equals("0"))
-                timeTv.setText(json.optString("sportMinPercent") + percent);
+                if (!json.optString("acceleration").equals("0"))
+                    acceleration = json.optString("acceleration");
 
-            if (!json.optString("sportStrengthPercent").equals("0"))
-                strengthTv.setText(json.optString("sportStrengthPercent") + percent);
+                if (!json.optString("accelerationPercent").equals("0"))
+                    speedTv.setText(json.optString("accelerationPercent") + percent);
 
-            if (!json.optString("sportLoadPercent").equals("0"))
-                loadTv.setText(json.optString("sportLoadPercent") + percent);
+                if (!json.optString("sportMinPercent").equals("0"))
+                    timeTv.setText(json.optString("sportMinPercent") + percent);
+
+                if (!json.optString("sportStrengthPercent").equals("0"))
+                    strengthTv.setText(json.optString("sportStrengthPercent") + percent);
+
+                if (!json.optString("sportLoadPercent").equals("0"))
+                    loadTv.setText(json.optString("sportLoadPercent") + percent);
+            }
         }
     }
 
     @Override
     public void loadDataError(Throwable throwable) {
+        Log.e(TAG, throwable.toString());
         toastor.showSingletonToast("服务器连接失败");
     }
 

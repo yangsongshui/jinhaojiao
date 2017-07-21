@@ -47,6 +47,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         Student user = data.get(position);
+        holder.setIsRecyclable(false);
         holder.coach_ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,11 +101,29 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             holder.top_iv.setVisibility(View.INVISIBLE);
         }
         if (listType == 0) {
-            holder.coach_info_rl.setVisibility(View.VISIBLE);
+           holder.coach_info_rl.setVisibility(View.VISIBLE);
             holder.top_tv.setVisibility(View.GONE);
             holder.coach_run_tv.setText(user.getSpeed());
             holder.coach_xinlv_tv.setText(user.getHeartrate());
-            holder.coach_time_tv.setText(user.getTime());
+            holder.coach_step_tv.setText(user.getSteps());
+            int min = Integer.parseInt(user.getTime());
+            if (min >= 60) {
+                int h = (min / 60);
+                int m = (min % 60);
+                if (h >= 10 && m >= 10) {
+                    holder.coach_time_tv.setText((h + ":" + m));
+                } else if (h < 10 && m >= 10) {
+                    holder.coach_time_tv.setText(("0" + h + ":" + m));
+                } else if (h >= 10 && m < 10) {
+                    holder.coach_time_tv.setText((h + ":0 +" + m));
+                } else if (h < 10 && m < 10) {
+                    holder.coach_time_tv.setText(("0" + h + ":0" + m));
+                }
+                holder.coach_time.setVisibility(View.GONE);
+            } else {
+                holder.coach_time_tv.setText(min + "");
+                holder.coach_time.setVisibility(View.VISIBLE);
+            }
         } else {
             holder.coach_info_rl.setVisibility(View.GONE);
             holder.top_tv.setVisibility(View.VISIBLE);
@@ -133,7 +152,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
 
         private ImageView top_iv, state_iv, coach_item_sex;
         private CircleImageView coach_item_pic;
-        private TextView coach_item_name, top_tv, coach_run_tv, coach_xinlv_tv, coach_time_tv;
+        private TextView coach_item_name, top_tv, coach_run_tv, coach_xinlv_tv, coach_time_tv,coach_time,coach_step_tv;
         private LinearLayout coach_ll;
         private LinearLayout coach_info_rl;
 
@@ -146,6 +165,8 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             coach_item_name = (TextView) itemView.findViewById(R.id.coach_item_name);
             top_tv = (TextView) itemView.findViewById(R.id.top_tv);
             coach_run_tv = (TextView) itemView.findViewById(R.id.coach_run_tv);
+            coach_time = (TextView) itemView.findViewById(R.id.coach_time);
+            coach_step_tv = (TextView) itemView.findViewById(R.id.coach_step_tv);
             coach_xinlv_tv = (TextView) itemView.findViewById(R.id.coach_xinlv_tv);
             coach_time_tv = (TextView) itemView.findViewById(R.id.coach_time_tv);
             coach_ll = (LinearLayout) itemView.findViewById(R.id.coach_ll);
