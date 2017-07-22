@@ -105,7 +105,7 @@ public class Location extends BaseFragment implements MsgView {
                     return;
                 }
             } else {
-                init();
+               init();
             }
         }
     }
@@ -145,7 +145,7 @@ public class Location extends BaseFragment implements MsgView {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                setMarker(object, 2);
+                                setMarker(object, 2, title);
                             }
                         });
                     }
@@ -247,7 +247,7 @@ public class Location extends BaseFragment implements MsgView {
             JSONObject object = jsonObject.optJSONObject("resBody");
             if (jsonObject.optInt("type") == 1) {
                 //GPS坐标
-                setMarker(object, 1);
+                setMarker(object, 1, object.optString("time"));
             } else {
                 String url = object.optString("http");
                 Log.e("--------", url);
@@ -255,7 +255,7 @@ public class Location extends BaseFragment implements MsgView {
                 zuobiao(url, object.optString("time"));
             }
             //十分钟定位一次
-            //handler.postDelayed(myRunnable, 60*1000);
+            handler.postDelayed(myRunnable, 60 * 1000);
         }
     }
 
@@ -266,7 +266,7 @@ public class Location extends BaseFragment implements MsgView {
         toastor.showSingletonToast("服务器连接失败");
     }
 
-    private void setMarker(JSONObject object, int type) {
+    private void setMarker(JSONObject object, int type, String title) {
         LatLng latLng = null;
         if (type == 1) {
             Log.e("setMarker", "GPS");
@@ -299,13 +299,13 @@ public class Location extends BaseFragment implements MsgView {
             }
         }
 
-        Log.e("setMarker", "用户位置:latitude" + latLng.latitude + " longitude:" + latLng.longitude);
+        // Log.e("setMarker", "用户位置:latitude" + latLng.latitude + " longitude:" + latLng.longitude);
         mMap.clear();
         mMap = mMapView.getMap();
         mMap.addMarker(new MarkerOptions().
                 position(latLng).
                 draggable(true)
-                .title(object.optString("time")).snippet("用户最后一次所在位置"));
+                .title(title).snippet("用户最后一次所在位置"));
         mMap.invalidate();// 刷新地图
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latLng.latitude, latLng.longitude), 13));
 
