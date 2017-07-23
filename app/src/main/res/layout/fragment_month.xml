@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,8 +74,7 @@
         android:id="@+id/line_chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:background="@color/block_column_1"
-        />
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
 </LinearLayout>

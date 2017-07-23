@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,28 +66,11 @@
             android:textColor="@color/hotpink"
             android:textSize="17sp"
             android:text="步" />
-      <!--  <TextView
-            android:id="@+id/tweek_kaluli"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="17sp"
-            android:layout_marginLeft="30dp"
-            android:textColor="@color/hotpink"
-            android:text="0" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/hotpink"
-            android:textSize="17sp"
-            android:text="千卡" />-->
     </LinearLayout>
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:background="@color/block_column_1"
         />
 </LinearLayout>

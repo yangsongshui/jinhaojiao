@@ -1,5 +1,9 @@
 package aromatherapy.saiyi.cn.jinhaojiao.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -9,7 +13,6 @@ import android.widget.TextView;
 
 import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.base.BaseActivity;
-import aromatherapy.saiyi.cn.jinhaojiao.bean.DeviceInfo;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Month;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Week;
 import aromatherapy.saiyi.cn.jinhaojiao.fragment.Year;
@@ -27,8 +30,7 @@ public class VolocityActivity extends BaseActivity {
     private Fragment[] frags = new Fragment[3];
     private int currentFragIndex = -1;
 
-    DeviceInfo deviceInfo;
-
+    MyBroadcastReciver reciver;
     @Override
     protected int getContentView() {
         return R.layout.activity_volocity;
@@ -43,6 +45,10 @@ public class VolocityActivity extends BaseActivity {
         initNavigation();
         showFrag(0);
         rgrpNavigation.check(R.id.line_week_rb);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("VOLOCITY_ACTIVITY_DATA");
+        reciver = new MyBroadcastReciver();
+       registerReceiver(reciver, intentFilter);
     }
 
     /**
@@ -112,4 +118,24 @@ public class VolocityActivity extends BaseActivity {
         }
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(reciver);
+    }
+
+    private class MyBroadcastReciver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals("VOLOCITY_ACTIVITY_DATA")) {
+                String  data=intent.getStringExtra("data");
+                volocitySpeedTv.setText(data);
+
+            }
+        }
+
+    }
+
 }

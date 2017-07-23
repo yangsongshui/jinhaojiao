@@ -52,8 +52,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="加速度"
-                android:textSize="14sp" />
+                android:text="平均加速度"
+                android:textSize="12sp" />
 
             <TextView
 
@@ -64,6 +64,12 @@
                 android:text="0"
                 android:textColor="@color/hotpink"
                 android:textSize="25sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="m/min"
+                android:textColor="@color/hotpink"
+                android:textSize="10sp" />
         </LinearLayout>
     </RelativeLayout>
 

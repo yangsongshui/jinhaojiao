@@ -1,5 +1,6 @@
 package aromatherapy.saiyi.cn.jinhaojiao.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -54,6 +55,8 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
     TextView year_tiem;
     @BindView(R.id.year_kaluli)
     TextView year_kaluli;
+
+
     private Map<String, String> map = new HashMap<String, String>();
 
     List<String> data;
@@ -87,6 +90,7 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
             year_kaluli.setText("bmp");
         } else if (TYPE == 3) {
             year_kaluli.setText("m/min");
+
         } else if (TYPE == 4) {
             year_kaluli.setText("米");
         }
@@ -97,7 +101,16 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
 
     private void initInfo(JSONArray jsonArray) {
         data.clear();
-        for (int i = 0; i < jsonArray.length(); i++) {
+        if (TYPE == 3) {
+            Intent intent2 = new Intent();
+            intent2.setAction("VOLOCITY_ACTIVITY_DATA");
+            //发送 一个无序广播
+            intent2.putExtra("data",jsonArray.optString(12));
+            getActivity().sendBroadcast(intent2);
+            jsonArray.remove(jsonArray.length());
+            jsonArray.remove(12);
+        }
+        for (int i = 0; i < 12; i++) {
             data.add(jsonArray.optString(i));
         }
         LineData data = getLineData();
