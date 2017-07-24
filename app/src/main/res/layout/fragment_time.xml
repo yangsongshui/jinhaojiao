@@ -43,14 +43,6 @@
         android:layout_marginStart="10dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/top_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="50  bpm"
-            android:textColor="@color/chocolate"
-            android:textSize="35sp"
-            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,6 +102,14 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/top_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50  bpm"
+            android:textColor="@color/chocolate"
+            android:textSize="35sp"
+            android:visibility="gone" />
         <LinearLayout
             android:id="@+id/coach_info_rl"
             android:layout_width="match_parent"

@@ -30,6 +30,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindPositionPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.CoordinateUtil;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
+import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
@@ -64,7 +65,8 @@ public class Location extends BaseFragment implements MsgView {
         //获取地图控件引用
         mMapView = (MapView) layout.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
-        user = MyApplication.newInstance().getUser();
+        if (SpUtils.getBoolean("out", false))
+            user = MyApplication.newInstance().getUser();
         toastor = new Toastor(getActivity());
         dialog = new LoadingDialog(getActivity());
         dialog.setCancelable(false);
@@ -74,7 +76,10 @@ public class Location extends BaseFragment implements MsgView {
         myRunnable = new Runnable() {
             @Override
             public void run() {
-                findPositionPresenterImp.loadMsg(map);
+                if (SpUtils.getBoolean("out", false)) {
+                    findPositionPresenterImp.loadMsg(map);
+                }
+
 
             }
         };
@@ -92,21 +97,25 @@ public class Location extends BaseFragment implements MsgView {
         super.onResume();
         //在activity执行onResume时执行mMapView.onResume ()，实现地图生命周期管理
         mMapView.onResume();
-        if (user != null) {
-            if (user.getType() == 1) {
-                if (mMap == null) {
-                    mMap = mMapView.getMap();
+        if (SpUtils.getBoolean("out", false)) {
+            if (user != null) {
+                if (user.getType() == 1) {
+                    if (mMap == null) {
+                        mMap = mMapView.getMap();
+                    }
+                    if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
+                        Log.e("----", user.getEquipmentID() + " ");
+                        map.clear();
+                        map.put("equipmentID", user.getEquipmentID());
+                        findPositionPresenterImp.loadMsg(map);
+                        return;
+                    }
+                } else {
+                    init();
                 }
-                if (user.getEquipmentID() != null && user.getEquipmentID().length() > 0) {
-                    Log.e("----", user.getEquipmentID() + " ");
-                    map.clear();
-                    map.put("equipmentID", user.getEquipmentID());
-                    findPositionPresenterImp.loadMsg(map);
-                    return;
-                }
-            } else {
-               init();
             }
+        } else {
+            init();
         }
     }
 

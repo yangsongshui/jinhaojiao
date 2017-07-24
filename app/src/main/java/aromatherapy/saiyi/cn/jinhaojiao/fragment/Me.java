@@ -82,36 +82,41 @@ public class Me extends BaseFragment {
     }
 
     private void initUser() {
-        User user = MyApplication.newInstance().getUser();
-        if (user != null) {
-            if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
-                if (user.getHead_pic().contains("http:")) {
-                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(me_pic_iv);
-                } else
-                    me_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
-            } else {
-                me_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+        if (SpUtils.getBoolean("out", false)) {
+            User user = MyApplication.newInstance().getUser();
 
-            }
-            String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
-            if (bg.length() > 1) {
-                MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
-            } else {
-                me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
-            }
-            me_name_tv.setText(user.getNikename());
-            if (user.getSex() != null) {
-                if (user.getSex().equals("男")) {
-                    me_sex_iv.setImageResource(R.drawable.manwhite);
-                } else if (user.getSex().equals("女"))
-                    me_sex_iv.setImageResource(R.drawable.nvxingbai);
-            }
-            if (user.getType() == 0) {
-                me_add_rl.setVisibility(View.GONE);
+            if (user != null) {
+                if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+                    if (user.getHead_pic().contains("http:")) {
+                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(me_pic_iv);
+                    } else
+                        me_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
+                } else {
+                    me_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
 
-            } else {
-                me_add_rl.setVisibility(View.VISIBLE);
+                }
+                String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
+                if (bg.length() > 1) {
+                    MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
+                } else {
+                    me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
+                }
+                me_name_tv.setText(user.getNikename());
+                if (user.getSex() != null) {
+                    if (user.getSex().equals("男")) {
+                        me_sex_iv.setImageResource(R.drawable.manwhite);
+                    } else if (user.getSex().equals("女"))
+                        me_sex_iv.setImageResource(R.drawable.nvxingbai);
+                }
+                if (user.getType() == 0) {
+                    me_add_rl.setVisibility(View.GONE);
+
+                } else {
+                    me_add_rl.setVisibility(View.VISIBLE);
+                }
             }
+        } else {
+            me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
         }
     }
 

@@ -29,7 +29,6 @@ public class MyApplication extends Application {
     public boolean isLogin = false;
 
 
-
     //保存登录用户信息
     private User user = new User();
 
@@ -47,7 +46,7 @@ public class MyApplication extends Application {
         String equipmentID = sharedPre.getString("equipmentID", "");
         String openid = sharedPre.getString("openid", "");
         Log.e(TAG, password + " " + phone + openid);
-        if (openid.length() > 0 ) {
+        if (openid.length() > 0) {
             user.setPhone(phone);
             user.setOpenid(openid);
             user.setEquipmentID(equipmentID);
@@ -63,8 +62,9 @@ public class MyApplication extends Application {
     }
 
     public void outLogin() {
+        SpUtils.putBoolean("out", false);
         isLogin = false;
-        user = null;
+      /*  user = null;
         SharedPreferences sharedPre = this.getSharedPreferences("user", this.MODE_PRIVATE);
         //获取Editor对象
         SharedPreferences.Editor editor = sharedPre.edit();
@@ -74,11 +74,12 @@ public class MyApplication extends Application {
         editor.putString("equipmentID", "");
         editor.putString("openid", "");
         //提交
-        editor.commit();
+        editor.commit();*/
     }
 
 
     public void setUser(User user) {
+
         this.user = user;
         isLogin = true;
         if (user.getType() == 1) {

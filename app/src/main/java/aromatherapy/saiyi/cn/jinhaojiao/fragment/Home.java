@@ -165,31 +165,44 @@ public class Home extends BaseFragment implements MsgView {
     }
 
     private void initUser() {
-        user = MyApplication.newInstance().getUser();
-        if (user != null && MyApplication.newInstance().isLogin) {
-            home_name_tv.setText(user.getNikename());
-            if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
-                if (user.getHead_pic().contains("http:")) {
-                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(home_pic_iv);
-                } else
-                    home_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
-            } else {
-                home_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+        if (SpUtils.getBoolean("out", false)) {
+            user = MyApplication.newInstance().getUser();
+            if (user != null && MyApplication.newInstance().isLogin) {
+                home_name_tv.setText(user.getNikename());
+                if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+                    if (user.getHead_pic().contains("http:")) {
+                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(home_pic_iv);
+                    } else
+                        home_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
+                } else {
+                    home_pic_iv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
 
+                }
+                String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
+                if (bg.length() > 1) {
+                    MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
+                } else {
+                    me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
+                }
+                if (user.getSex() != null) {
+                    if (user.getSex().equals("男")) {
+                        home_sex_iv.setImageResource(R.drawable.manwhite);
+                    } else if (user.getSex().equals("女"))
+                        home_sex_iv.setImageResource(R.drawable.nvxingbai);
+                }
+                handler.postDelayed(myRunnable, 0);
             }
-            String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
-            if (bg.length() > 1) {
-                MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
-            } else {
-                me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
-            }
-            if (user.getSex() != null) {
-                if (user.getSex().equals("男")) {
-                    home_sex_iv.setImageResource(R.drawable.manwhite);
-                } else if (user.getSex().equals("女"))
-                    home_sex_iv.setImageResource(R.drawable.nvxingbai);
-            }
-            handler.postDelayed(myRunnable, 0);
+        } else {
+            me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
+            home_distance_tv.setText("0");
+            home_calorie_tv.setText("0");
+            home_heartthrob_tv.setText("0");
+            home_volocity_tv.setText("0");
+            home_step_tv.setText("0");
+            speedTv.setText("0" + percent);
+            timeTv.setText("0" + percent);
+            strengthTv.setText("0" + percent);
+            loadTv.setText("0" + percent);
         }
     }
 

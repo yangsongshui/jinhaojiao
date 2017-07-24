@@ -15,6 +15,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.R;
 import aromatherapy.saiyi.cn.jinhaojiao.app.MyApplication;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.Student;
 import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemCheckListener;
+import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemLongCheckListener;
 import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemPhotoCheckListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,6 +31,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
 
     private OnItemCheckListener onItemCheckListener;
     private OnItemPhotoCheckListener onItemPhotoCheckListener;
+    private OnItemLongCheckListener onItemLongCheckListener;
 
 
     public CoachAdapter(List<Student> data, Context context, int listType) {
@@ -53,6 +55,16 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             public void onClick(View v) {
                 if (onItemCheckListener != null)
                     onItemCheckListener.OnItemCheck(holder, position);
+            }
+        });
+        holder.coach_ll.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (onItemLongCheckListener != null) {
+                    onItemLongCheckListener.OnItemLong(holder, position);
+                }
+                return false;
+
             }
         });
         holder.coach_item_pic.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +113,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             holder.top_iv.setVisibility(View.INVISIBLE);
         }
         if (listType == 0) {
-           holder.coach_info_rl.setVisibility(View.VISIBLE);
+            holder.coach_info_rl.setVisibility(View.VISIBLE);
             holder.top_tv.setVisibility(View.GONE);
             holder.coach_run_tv.setText(user.getSpeed());
             holder.coach_xinlv_tv.setText(user.getHeartrate());
@@ -152,7 +164,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
 
         private ImageView top_iv, state_iv, coach_item_sex;
         private CircleImageView coach_item_pic;
-        private TextView coach_item_name, top_tv, coach_run_tv, coach_xinlv_tv, coach_time_tv,coach_time,coach_step_tv;
+        private TextView coach_item_name, top_tv, coach_run_tv, coach_xinlv_tv, coach_time_tv, coach_time, coach_step_tv;
         private LinearLayout coach_ll;
         private LinearLayout coach_info_rl;
 
@@ -187,4 +199,10 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
     public void setOnItemPhotoCheckListener(OnItemPhotoCheckListener onItemPhotoCheckListener) {
         this.onItemPhotoCheckListener = onItemPhotoCheckListener;
     }
+
+    public void setOnItemLongCheckListener(OnItemLongCheckListener onItemLongCheckListener) {
+        this.onItemLongCheckListener = onItemLongCheckListener;
+    }
+
 }
+

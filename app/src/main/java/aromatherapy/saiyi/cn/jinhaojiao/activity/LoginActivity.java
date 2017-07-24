@@ -28,6 +28,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.presenter.LoginPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.ThreeLoginPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.MD5;
+import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
@@ -103,6 +104,7 @@ public class LoginActivity extends BaseActivity implements MsgView {
                         user.setHead_pic(json.optString("headPicURL"));
                         Log.e("--------2", jsonObject.optString("headPicByte"));
                     }
+                    SpUtils.putBoolean("out", true);
                     MyApplication.newInstance().setUser(user);
                     setResult(1);
                     finish();
@@ -220,9 +222,16 @@ public class LoginActivity extends BaseActivity implements MsgView {
     @Override
     protected void onResume() {
         super.onResume();
-        if (MyApplication.newInstance().getUser() != null&&MyApplication.newInstance().isLogin) {
-            setResult(1);
-            finish();
+        if (SpUtils.getBoolean("out", false)) {
+            if (MyApplication.newInstance().getUser() != null && MyApplication.newInstance().isLogin) {
+                setResult(1);
+                finish();
+            }
+        }else {
+            if (MyApplication.newInstance().getUser() != null){
+                login_phone_et.setText(MyApplication.newInstance().getUser().getPhone());
+                login_pasw_et.setText(MyApplication.newInstance().getUser().getPassword());
+            }
         }
     }
 
@@ -255,7 +264,7 @@ public class LoginActivity extends BaseActivity implements MsgView {
             if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
             }
-            toastor.showSingletonToast(platform+"第三方登陆失败");
+            toastor.showSingletonToast(platform + "第三方登陆失败");
         }
 
         @Override
@@ -263,7 +272,7 @@ public class LoginActivity extends BaseActivity implements MsgView {
             if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
             }
-            toastor.showSingletonToast(platform+"第三方登陆取消");
+            toastor.showSingletonToast(platform + "第三方登陆取消");
 
 
         }
@@ -275,7 +284,6 @@ public class LoginActivity extends BaseActivity implements MsgView {
         super.onActivityResult(requestCode, resultCode, data);
         mShareAPI.onActivityResult(requestCode, resultCode, data);
     }
-
 
 
     @Override
@@ -318,6 +326,7 @@ public class LoginActivity extends BaseActivity implements MsgView {
                 Log.e("--------2", jsonObject.optString("headPicURL"));
 
             }
+            SpUtils.putBoolean("out", true);
             MyApplication.newInstance().setUser(user);
             // toastor.getSingletonToast("登陆成功");
             setResult(1);

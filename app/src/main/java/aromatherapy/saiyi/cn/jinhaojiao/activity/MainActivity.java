@@ -36,6 +36,7 @@ import aromatherapy.saiyi.cn.jinhaojiao.presenter.LoginPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.ThreeLoginPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Log;
 import aromatherapy.saiyi.cn.jinhaojiao.util.MD5;
+import aromatherapy.saiyi.cn.jinhaojiao.util.SpUtils;
 import aromatherapy.saiyi.cn.jinhaojiao.util.Toastor;
 import aromatherapy.saiyi.cn.jinhaojiao.view.MsgView;
 import aromatherapy.saiyi.cn.jinhaojiao.widget.LoadingDialog;
@@ -77,10 +78,15 @@ public class MainActivity extends BaseActivity implements MsgView {
         frags.add(new Home());
         frags.add(new Location());
         frags.add(new Community());
-        if (MyApplication.newInstance().getUser() == null)
+        initHttp();
+        if (SpUtils.getBoolean("out", false)) {
+            if (MyApplication.newInstance().getUser() == null)
+                frags.add(new LoginFrag());
+            else
+                frags.add(new Me());
+        } else {
             frags.add(new LoginFrag());
-        else
-            frags.add(new Me());
+        }
         mAdapter = new TestFragmentAdapter(getSupportFragmentManager(), frags);
         pager.setAdapter(mAdapter);
         pager.setOffscreenPageLimit(3);
@@ -113,24 +119,22 @@ public class MainActivity extends BaseActivity implements MsgView {
 
             }
         });
+        if (SpUtils.getBoolean("out", false))
+            if (user != null) {
+                if (user.getPassword() != null && user.getPassword().length() > 0) {
+                    dialog.show();
+                    map.clear();
+                    map.put("phoneNumber", user.getPhone());
+                    map.put("passWord", MD5.getMD5(user.getPassword()));
+                    loginPresenterImp.loadMsg(map);
+                } else if (user.getOpenid() != null && user.getOpenid().length() > 0) {
+                    dialog.show();
+                    map.clear();
+                    map.put("account", user.getOpenid());
+                    threeLoginPresenterImp.loadMsg(map);
+                }
 
-
-        initHttp();
-        if (user != null) {
-            if (user.getPassword() != null && user.getPassword().length() > 0) {
-                dialog.show();
-                map.clear();
-                map.put("phoneNumber", user.getPhone());
-                map.put("passWord", MD5.getMD5(user.getPassword()));
-                loginPresenterImp.loadMsg(map);
-            } else if (user.getOpenid() != null && user.getOpenid().length() > 0) {
-                dialog.show();
-                map.clear();
-                map.put("account", user.getOpenid());
-                threeLoginPresenterImp.loadMsg(map);
             }
-
-        }
         initNavigation();
 
         rgrpNavigation.check(R.id.rab_purpose);
@@ -223,6 +227,7 @@ public class MainActivity extends BaseActivity implements MsgView {
 
     }
 
+
     @Override
     public void disimissProgress() {
         if (dialog != null && dialog.isShowing()) {
@@ -263,8 +268,8 @@ public class MainActivity extends BaseActivity implements MsgView {
                 user.setEquipmentID(json.optString("equipmentID"));
 
             }
+            SpUtils.putBoolean("out", true);
             MyApplication.newInstance().setUser(user);
-
             Intent intent2 = new Intent();
             intent2.setAction("QQ_ABEL_ACTION_BROADCAST");
             //发送 一个无序广播
@@ -359,6 +364,7 @@ public class MainActivity extends BaseActivity implements MsgView {
                         user.setHead_pic(json.optString("headPicURL"));
 
                     }
+                    SpUtils.putBoolean("out", true);
                     MyApplication.newInstance().setUser(user);
 
                     Intent intent2 = new Intent();

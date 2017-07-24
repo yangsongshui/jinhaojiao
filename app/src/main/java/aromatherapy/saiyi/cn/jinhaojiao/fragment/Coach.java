@@ -40,8 +40,10 @@ import aromatherapy.saiyi.cn.jinhaojiao.base.BaseFragment;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.Student;
 import aromatherapy.saiyi.cn.jinhaojiao.bean.User;
 import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemCheckListener;
+import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemLongCheckListener;
 import aromatherapy.saiyi.cn.jinhaojiao.connector.OnItemPhotoCheckListener;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.AddStudenPresenterImp;
+import aromatherapy.saiyi.cn.jinhaojiao.presenter.DeleteStudenPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.FindStudenPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetSpeedPresenterImp;
 import aromatherapy.saiyi.cn.jinhaojiao.presenter.GetSportPresenterImp;
@@ -60,7 +62,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static aromatherapy.saiyi.cn.jinhaojiao.util.AppUtil.stringtoBitmap;
 
 
-public class Coach extends BaseFragment implements MsgView, RadioGroup.OnCheckedChangeListener, OnItemCheckListener, OnItemPhotoCheckListener {
+public class Coach extends BaseFragment implements MsgView, RadioGroup.OnCheckedChangeListener, OnItemCheckListener, OnItemPhotoCheckListener, OnItemLongCheckListener {
     private final static String TAG = Coach.class.getSimpleName();
     User user;
     @BindView(R.id.coach_pic_iv)
@@ -87,6 +89,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
     private GetSportPresenterImp getSportPresenterImp;      //负荷
     private GetSportStrengthPresenterImp getSportStrengthPresenterImp;//强度
     private GetSpeedPresenterImp getSpeedPresenterImp;//强度
+    private DeleteStudenPresenterImp deleteStudenPresenterImp;//强度
 
     private AddStudenPresenterImp addStudenPresenterImp;
     private boolean isOne = true;
@@ -106,7 +109,8 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         mList = new ArrayList<>();
         reciver = new MyBroadcastReciver();
         getActivity().registerReceiver(reciver, intentFilter);
-        user = MyApplication.newInstance().getUser();
+        if (SpUtils.getBoolean("out", false))
+            user = MyApplication.newInstance().getUser();
         handler = new Handler();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -116,14 +120,17 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         coachStuden.setAdapter(adapter);
         adapter.setOnItemCheckListener(this);
         adapter.setOnItemPhotoCheckListener(this);
+        adapter.setOnItemLongCheckListener(this);
         myRunnable = new Runnable() {
             @Override
             public void run() {
-                user = MyApplication.newInstance().getUser();
-                if (user != null && user.getUserID() != null) {
-                    Log.e(TAG, "更新数据");
-                    getStudent();
-                    // handler.postDelayed(this, 60 * 1000);
+                if (SpUtils.getBoolean("out", false)) {
+                    user = MyApplication.newInstance().getUser();
+                    if (user != null && user.getUserID() != null) {
+                        Log.e(TAG, "更新数据");
+                        getStudent();
+                        handler.postDelayed(this, 60 * 1000);
+                    }
                 }
             }
         };
@@ -139,6 +146,35 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         getSportPresenterImp = new GetSportPresenterImp(this, getActivity());
         getSportStrengthPresenterImp = new GetSportStrengthPresenterImp(this, getActivity());
         getSpeedPresenterImp = new GetSpeedPresenterImp(this, getActivity());
+        deleteStudenPresenterImp = new DeleteStudenPresenterImp(new MsgView() {
+            public void showProgress() {
+                if (dialog != null && !dialog.isShowing()) {
+                    dialog.show();
+                }
+
+            }
+
+            @Override
+            public void disimissProgress() {
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void loadDataSuccess(JSONObject jsonObject) {
+                toastor.showSingletonToast(jsonObject.optString("resMessage"));
+                if (jsonObject.optInt("resCode") == 0) {
+                    getStudent();
+                }
+            }
+
+            @Override
+            public void loadDataError(Throwable throwable) {
+                toastor.showSingletonToast("服务器连接失败");
+
+            }
+        }, getActivity());
 
         addStudenPresenterImp = new AddStudenPresenterImp(new MsgView() {
             @Override
@@ -161,8 +197,9 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                 Log.e(TAG, jsonObject.toString());
                 toastor.showSingletonToast(jsonObject.optString("resMessage"));
                 if (jsonObject.optInt("resCode") == 0) {
-                    toastor.showSingletonToast(jsonObject.optString("resMessage"));
 
+
+                    getStudent();
                 }
             }
 
@@ -221,34 +258,40 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
     }
 
     private void initUser() {
-        user = MyApplication.newInstance().getUser();
-        if (user != null && MyApplication.newInstance().isLogin) {
-            coachNameTv.setText(user.getNikename());
-            if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
-                if (user.getHead_pic().contains("http:")) {
-                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(coachPicIv);
+        if (SpUtils.getBoolean("out", false)) {
+            user = MyApplication.newInstance().getUser();
+            if (user != null && MyApplication.newInstance().isLogin) {
+                coachNameTv.setText(user.getNikename());
+                if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
+                    if (user.getHead_pic().contains("http:")) {
+                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(coachPicIv);
+                    } else {
+                        coachPicIv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
+                    }
+
                 } else {
-                    coachPicIv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
+                    coachPicIv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
+
+                }
+                String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
+                if (bg.length() > 1) {
+                    MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
+                } else {
+                    me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
+                }
+                if (user.getSex() != null) {
+                    if (user.getSex().equals("男")) {
+                        coachSexIv.setImageResource(R.drawable.manwhite);
+                    } else if (user.getSex().equals("女"))
+                        coachSexIv.setImageResource(R.drawable.nvxingbai);
+
                 }
 
-            } else {
-                coachPicIv.setImageDrawable(getResources().getDrawable(R.mipmap.logo));
-
             }
-            String bg = SpUtils.getString(Constant.IMAGE_FILE_NAME, "");
-            if (bg.length() > 1) {
-                MyApplication.newInstance().getGlide().load(new File(bg)).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).into(me_title_iv);
-            } else {
-                me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
-            }
-            if (user.getSex() != null) {
-                if (user.getSex().equals("男")) {
-                    coachSexIv.setImageResource(R.drawable.manwhite);
-                } else if (user.getSex().equals("女"))
-                    coachSexIv.setImageResource(R.drawable.nvxingbai);
-
-            }
-
+        } else {
+            me_title_iv.setBackground(getResources().getDrawable(R.drawable.dakuai));
+            mList.clear();
+            adapter.setItems(mList, listType);
         }
     }
 
@@ -375,19 +418,24 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
     }
 
     private void getStudent() {
-        if (user != null && user.getUserID() != null) {
-            map.clear();
-            map.put("coachID", user.getUserID());
-            map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
-            if (listType == 0) {
-                findStudenPresenterImp.loadMsg(map);
-            } else if (listType == 1) {
-                getSportPresenterImp.loadMsg(map);
-            } else if (listType == 2) {
-                getSportStrengthPresenterImp.loadMsg(map);
-            } else if (listType == 3) {
-                getSpeedPresenterImp.loadMsg(map);
+        if (SpUtils.getBoolean("out", false)) {
+            if (user != null && user.getUserID() != null) {
+                map.clear();
+                map.put("coachID", user.getUserID());
+                map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
+                if (listType == 0) {
+                    findStudenPresenterImp.loadMsg(map);
+                } else if (listType == 1) {
+                    getSportPresenterImp.loadMsg(map);
+                } else if (listType == 2) {
+                    getSportStrengthPresenterImp.loadMsg(map);
+                } else if (listType == 3) {
+                    getSpeedPresenterImp.loadMsg(map);
+                }
             }
+        } else {
+            mList.clear();
+            adapter.setItems(mList, listType);
         }
     }
 
@@ -399,6 +447,11 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
     @Override
     public void OnPhotoCheck(RecyclerView.ViewHolder viewHolder, int position) {
         startActivity(new Intent(getActivity(), StudentInfoActivity.class).putExtra("student", mList.get(position)));
+    }
+
+    @Override
+    public void OnItemLong(RecyclerView.ViewHolder viewHolder, int position) {
+        deletestu(position);
     }
 
     private class MyBroadcastReciver extends BroadcastReceiver {
@@ -433,4 +486,25 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
         }
     }
 
+    private void deletestu(final int position) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("是否删除");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                map.clear();
+                map.put("studentID", mList.get(position).getUserID());
+                map.put("teacherID", user.getUserID());
+                deleteStudenPresenterImp.loadMsg(map);
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+
+            }
+        });
+        builder.create().show();
+    }
 }
