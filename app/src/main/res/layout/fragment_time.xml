@@ -96,25 +96,39 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:gravity="bottom"
-                android:text="min"
+                android:text="分"
                 android:textColor="@color/chocolate"
                 android:textSize="5sp" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/top_tv"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/top_ll"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="50  bpm"
-            android:textColor="@color/chocolate"
-            android:textSize="35sp"
-            android:visibility="gone" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/top_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50 "
+                android:textColor="@color/chocolate"
+                android:textSize="35sp" />
+            <TextView
+                android:id="@+id/top_danwei"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="次/分"
+                android:textSize="5sp" />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/coach_info_rl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <ImageView
@@ -147,7 +161,7 @@
                     android:layout_below="@+id/coach_run_tv"
                     android:layout_marginTop="-7dp"
                     android:gravity="center"
-                    android:text="m/min"
+                    android:text="米/分"
                     android:textColor="@color/chocolate"
                     android:textSize="5sp" />
             </RelativeLayout>
@@ -184,7 +198,7 @@
                     android:layout_below="@+id/coach_xinlv_tv"
                     android:layout_marginTop="-7dp"
                     android:gravity="center"
-                    android:text="bpm"
+                    android:text="次/分"
                     android:textColor="@color/chocolate"
                     android:textSize="5sp" />
             </RelativeLayout>

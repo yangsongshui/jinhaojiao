@@ -98,11 +98,11 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
         getRatePresenterImp = new GetRatePresenterImp(this, getActivity());
         textClock.setText(format.format(util.nextDay(date, -30)) + "-" + format.format(date));
         if (TYPE == 1 || TYPE == 0) {
-            month_kaluli.setText("Kcar");
+            month_kaluli.setText("千卡");
         } else if (TYPE == 2) {
-            month_kaluli.setText("bmp");
+            month_kaluli.setText("次/分");
         } else if (TYPE == 3) {
-            month_kaluli.setText("m/min");
+            month_kaluli.setText("米/分");
         } else if (TYPE == 4) {
             month_kaluli.setText("米");
         }

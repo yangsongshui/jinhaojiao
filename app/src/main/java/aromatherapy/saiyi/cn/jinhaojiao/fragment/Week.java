@@ -103,11 +103,11 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
         }
 
         if (TYPE == 1 || TYPE == 0) {
-            week_kaluli.setText("Kcar");
+            week_kaluli.setText("千卡");
         } else if (TYPE == 2) {
-            week_kaluli.setText("bmp");
+            week_kaluli.setText("次/分");
         } else if (TYPE == 3) {
-            week_kaluli.setText("m/min");
+            week_kaluli.setText("米/分");
         } else if (TYPE == 4) {
             week_kaluli.setText("米");
         }

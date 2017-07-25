@@ -216,7 +216,7 @@
                     android:id="@+id/line_min"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="min"
+                    android:text="分"
                     android:textSize="5sp" />
             </LinearLayout>
 
@@ -335,7 +335,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="bmp"
+                        android:text="次/分"
                         android:textSize="5sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -464,7 +464,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="m/min"
+                        android:text="米/分"
                         android:textSize="5sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -527,7 +527,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Kcar"
+                        android:text="千卡"
                         android:textSize="5sp" />
                 </LinearLayout>
             </LinearLayout>

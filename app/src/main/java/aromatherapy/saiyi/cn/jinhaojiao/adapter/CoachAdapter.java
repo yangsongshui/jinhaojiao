@@ -114,7 +114,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
         }
         if (listType == 0) {
             holder.coach_info_rl.setVisibility(View.VISIBLE);
-            holder.top_tv.setVisibility(View.GONE);
+            holder.top_ll.setVisibility(View.GONE);
             holder.coach_run_tv.setText(user.getSpeed());
             holder.coach_xinlv_tv.setText(user.getHeartrate());
             holder.coach_step_tv.setText(user.getSteps());
@@ -138,16 +138,19 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             }
         } else {
             holder.coach_info_rl.setVisibility(View.GONE);
-            holder.top_tv.setVisibility(View.VISIBLE);
+            holder.top_ll.setVisibility(View.VISIBLE);
             switch (listType) {
                 case 1:
                     holder.top_tv.setText(user.getLoad());
+                    holder.top_danwei.setText("次/分");
                     break;
                 case 2:
-                    holder.top_tv.setText(user.getStrength() + "bpm");
+                    holder.top_tv.setText(user.getStrength() );
+                    holder.top_danwei.setText("步/分");
                     break;
                 case 3:
-                    holder.top_tv.setText(user.getSpeed() + "m/min");
+                    holder.top_tv.setText(user.getSpeed());
+                    holder.top_danwei.setText("米/分");
                     break;
             }
 
@@ -164,9 +167,9 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
 
         private ImageView top_iv, state_iv, coach_item_sex;
         private CircleImageView coach_item_pic;
-        private TextView coach_item_name, top_tv, coach_run_tv, coach_xinlv_tv, coach_time_tv, coach_time, coach_step_tv;
+        private TextView coach_item_name, top_tv, coach_run_tv, coach_xinlv_tv, coach_time_tv, coach_time, coach_step_tv,top_danwei;
         private LinearLayout coach_ll;
-        private LinearLayout coach_info_rl;
+        private LinearLayout coach_info_rl,top_ll;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -181,8 +184,10 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             coach_step_tv = (TextView) itemView.findViewById(R.id.coach_step_tv);
             coach_xinlv_tv = (TextView) itemView.findViewById(R.id.coach_xinlv_tv);
             coach_time_tv = (TextView) itemView.findViewById(R.id.coach_time_tv);
+            top_danwei = (TextView) itemView.findViewById(R.id.top_danwei);
             coach_ll = (LinearLayout) itemView.findViewById(R.id.coach_ll);
             coach_info_rl = (LinearLayout) itemView.findViewById(R.id.coach_info_rl);
+            top_ll = (LinearLayout) itemView.findViewById(R.id.top_ll);
         }
     }
 

@@ -85,11 +85,11 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
         getRatePresenterImp = new GetRatePresenterImp(this, getActivity());
         TYPE = getActivity().getIntent().getIntExtra("type", -1);
         if (TYPE == 1 || TYPE == 0) {
-            year_kaluli.setText("Kcar");
+            year_kaluli.setText("千卡");
         } else if (TYPE == 2) {
-            year_kaluli.setText("bmp");
+            year_kaluli.setText("次/分");
         } else if (TYPE == 3) {
-            year_kaluli.setText("m/min");
+            year_kaluli.setText("米/分");
 
         } else if (TYPE == 4) {
             year_kaluli.setText("米");
