@@ -113,6 +113,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             holder.top_iv.setVisibility(View.INVISIBLE);
         }
         if (listType == 0) {
+            holder.time_ll.setVisibility(View.VISIBLE);
             holder.coach_info_rl.setVisibility(View.VISIBLE);
             holder.top_ll.setVisibility(View.GONE);
             holder.coach_run_tv.setText(user.getSpeed());
@@ -138,6 +139,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             }
         } else {
             holder.coach_info_rl.setVisibility(View.GONE);
+            holder.time_ll.setVisibility(View.INVISIBLE);
             holder.top_ll.setVisibility(View.VISIBLE);
             switch (listType) {
                 case 1:
@@ -169,7 +171,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
         private CircleImageView coach_item_pic;
         private TextView coach_item_name, top_tv, coach_run_tv, coach_xinlv_tv, coach_time_tv, coach_time, coach_step_tv,top_danwei;
         private LinearLayout coach_ll;
-        private LinearLayout coach_info_rl,top_ll;
+        private LinearLayout coach_info_rl,top_ll,time_ll;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -188,6 +190,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
             coach_ll = (LinearLayout) itemView.findViewById(R.id.coach_ll);
             coach_info_rl = (LinearLayout) itemView.findViewById(R.id.coach_info_rl);
             top_ll = (LinearLayout) itemView.findViewById(R.id.top_ll);
+            time_ll = (LinearLayout) itemView.findViewById(R.id.time_ll);
         }
     }
 
