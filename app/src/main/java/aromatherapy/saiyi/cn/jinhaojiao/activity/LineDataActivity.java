@@ -39,7 +39,7 @@ public class LineDataActivity extends BaseActivity {
         if (getIntent().getIntExtra("type", -1) == 1) {
             line_title_tv.setText("卡路里");
         } else if (getIntent().getIntExtra("type", -1) == 0) {
-            line_title_tv.setText("步数");
+            line_title_tv.setText("总步数");
         }
         String  data=getIntent().getStringExtra("data");
         volocityStrengthTv.setText(data);

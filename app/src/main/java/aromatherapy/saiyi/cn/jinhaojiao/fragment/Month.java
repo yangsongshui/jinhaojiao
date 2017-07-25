@@ -157,9 +157,6 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
         mChart.setOnChartValueSelectedListener(this);
     }
 
-    String[] yy = {"20", "80", "10", "60", "30", "70", "55", "30", "70", "55", "30", "70", "55", "30", "70", "55"
-            , "20", "80", "10", "60", "30", "70", "55", "30", "70", "55", "30", "70", "55", "30", "70"};
-
     private LineData getLineData() {
         ArrayList<String> xVals = new ArrayList<String>();
         for (int i = 0; i <= 30; i++) {
@@ -232,7 +229,10 @@ public class Month extends BaseFragment implements OnChartValueSelectedListener,
             jsonArray.remove(30);
         }
         for (int i = 0; i <30; i++) {
-            data.add(jsonArray.optString(i));
+            if (jsonArray.length() > i)
+                data.add(jsonArray.optString(i));
+            else
+                data.add("0");
 
         }
         LineData data = getLineData();

@@ -197,8 +197,6 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                 Log.e(TAG, jsonObject.toString());
                 toastor.showSingletonToast(jsonObject.optString("resMessage"));
                 if (jsonObject.optInt("resCode") == 0) {
-
-
                     getStudent();
                 }
             }

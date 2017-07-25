@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="距离"
+            android:text="总距离"
             android:textColor="@color/white"
             android:textSize="15sp" />
     </RelativeLayout>

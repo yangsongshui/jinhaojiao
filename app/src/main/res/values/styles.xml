@@ -60,10 +60,11 @@
         <item name="android:textColor">@color/lawngreen</item>
         <item name="android:layout_marginEnd">5dp</item>
         <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_centerVertical">true</item>
     </style>
 
     <style name="home_text2">
-        <item name="android:textSize">35sp</item>
+        <item name="android:textSize">40sp</item>
         <item name="android:textColor">@color/chocolate</item>
         <item name="android:textStyle">bold</item>
         <item name="android:layout_marginEnd">3dp</item>

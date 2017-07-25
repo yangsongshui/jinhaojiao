@@ -109,6 +109,7 @@
             android:id="@+id/top_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
@@ -122,7 +123,8 @@
             <TextView
                 android:id="@+id/top_danwei"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
                 android:text="次/分"
                 android:textSize="5sp" />
         </LinearLayout>

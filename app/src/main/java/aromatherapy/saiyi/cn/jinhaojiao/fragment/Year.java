@@ -111,7 +111,10 @@ public class Year extends BaseFragment implements OnChartValueSelectedListener, 
             jsonArray.remove(12);
         }
         for (int i = 0; i < 12; i++) {
-            data.add(jsonArray.optString(i));
+            if (jsonArray.length() > i)
+                data.add(jsonArray.optString(i));
+            else
+                data.add("0");
         }
         LineData data = getLineData();
         data.setDrawValues(false); //隐藏坐标轴数据

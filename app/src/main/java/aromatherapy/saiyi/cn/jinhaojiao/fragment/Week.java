@@ -126,19 +126,23 @@ public class Week extends BaseFragment implements OnChartValueSelectedListener, 
             Intent intent2 = new Intent();
             intent2.setAction("VOLOCITY_ACTIVITY_DATA");
             //发送 一个无序广播
-            intent2.putExtra("data",jsonArray.optString(7));
+            intent2.putExtra("data", jsonArray.optString(7));
             getActivity().sendBroadcast(intent2);
             jsonArray.remove(jsonArray.length());
         }
 
         for (int i = 0; i < 7; i++) {
-            data.add(jsonArray.optString(i));
+            if (jsonArray.length() > i)
+                data.add(jsonArray.optString(i));
+            else
+                data.add("0");
 
         }
         LineData data = getLineData();
         data.setDrawValues(false); //隐藏坐标轴数据
         mChart.setData(data);
         mChart.invalidate();
+
     }
 
     private void initChart() {

@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="步数"
+            android:text="总步数"
             android:textColor="@color/white"
             android:textSize="15sp" />
     </RelativeLayout>
