@@ -367,9 +367,9 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
 
     @Override
     public void loadDataSuccess(JSONObject jsonObject) {
-        Log.e(TAG, jsonObject.toString());
-        if (isOne)
-            toastor.showSingletonToast(jsonObject.optString("resMessage"));
+       // Log.e(TAG, jsonObject.toString());
+
+           // toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
             if (listType == 0) {
                 getUser(jsonObject.optJSONObject("resBody").optJSONArray("myTeamData"));

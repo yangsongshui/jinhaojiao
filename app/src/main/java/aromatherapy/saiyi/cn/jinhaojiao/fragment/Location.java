@@ -249,7 +249,6 @@ public class Location extends BaseFragment implements MsgView {
     @Override
     public void loadDataSuccess(JSONObject jsonObject) {
         Log.e(TAG, jsonObject.toString());
-        toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 1) {
             init();
         } else if (jsonObject.optInt("resCode") == 0) {

@@ -404,7 +404,7 @@ public class MyInfoActivity extends BaseActivity implements MsgView {
         toastor.showSingletonToast(jsonObject.optString("resMessage"));
         if (jsonObject.optInt("resCode") == 0) {
             MyApplication.newInstance().setUser(user);
-            toastor.showSingletonToast("资料填写成功");
+           // toastor.showSingletonToast("资料填写成功");
             finish();
 
         }

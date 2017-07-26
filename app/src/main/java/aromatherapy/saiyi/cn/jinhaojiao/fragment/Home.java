@@ -225,8 +225,7 @@ public class Home extends BaseFragment implements MsgView {
     @Override
     public void loadDataSuccess(JSONObject jsonObject) {
         Log.e(TAG, jsonObject.toString());
-        if (isOne)
-            toastor.showSingletonToast(jsonObject.optString("resMessage"));
+
         if (jsonObject.optInt("resCode") == 0) {
             JSONObject json = jsonObject.optJSONObject("resBody").optJSONObject("personMsgMap");
             if (json.length() > 0) {

@@ -389,19 +389,21 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
         String identity = "";
         String name = me_name_tv.getText().toString();
         String birthday = me_birthday_tv.getText().toString();
-        String nickname = me_nickname_tv.getText().toString();
+            String nickname = me_nickname_tv.getText().toString();
         String sex = me_sex_tv.getText().toString();
         String address = me_address_tv.getText().toString();
         String school = me_school_tv.getText().toString();
         String banji = me_class_tv.getText().toString();
         String club = me_club_tv.getText().toString();
         String height = me_height_tv.getText().toString();
-        String weight = me_height_tv.getText().toString();
+        String weight = me_weight_tv.getText().toString();
         if (TYPE == COACH) {
-            identity = me_identity2_tv.getText().toString();
+            identity = me_identity_tv.getText().toString();
+
         } else if (TYPE == MEMBER) {
             identity = me_identity2_tv.getText().toString();
         }
+        Log.e(TAG,identity);
         if (name.length() > 0 && !name.equals("")) {
             if (height.length() > 0 && !height.equals("0")) {
                 if (weight.length() > 0 && !weight.equals("0")) {
@@ -419,10 +421,12 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
                                 user.setSex(sex);
                                 user.setHeight(height);
                                 user.setBirthday(birthday);
+                                user.setNikename(nickname);
                                 builder.add("userID", user.getUserID());
                                 builder.add("name", user.getUsername());
                                 builder.add("sex", user.getSex());
                                 builder.add("height", user.getHeight());
+                                builder.add("nickName", user.getNikename());
                                 builder.add("weight", user.getWeight());
                                 builder.add("birthday", user.getBirthday());
                                 builder.add("address", user.getAddress());
@@ -431,8 +435,8 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
                                 builder.add("identity", user.getIdentity());
                                 builder.add("clubname", user.getClub());
                                 builder.add("phoneNumber", user.getPhone());
+                                builder.add("identity", user.getIdentity());
                                 if (photo.trim().length() > 0) {
-
                                     // map.put("headPicByte", photo);
                                     builder.add("headPicByte", photo);
                                     user.setHead_pic(photo);
@@ -494,7 +498,7 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
                 toastor.showSingletonToast("身高不能为0");
         } else
             toastor.showSingletonToast("真实姓名不能为空");
-        if (photo != null)
+        if (photo.trim().length() > 0)
             user.setHead_pic(photo);
     }
 
