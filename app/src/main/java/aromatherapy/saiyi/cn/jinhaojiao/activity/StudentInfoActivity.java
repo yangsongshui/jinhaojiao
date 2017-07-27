@@ -73,7 +73,7 @@ public class StudentInfoActivity extends BaseActivity implements MsgView {
         findPersonalPresenterImp.loadMsg(map);
         if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
             if (user.getHead_pic().contains("http:")) {
-                MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(student_info_pic_iv);
+                MyApplication.newInstance().getGlide().load(user.getHead_pic()).placeholder(R.mipmap.logo).error(R.mipmap.logo).into(student_info_pic_iv);
 
             } else
                 student_info_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));

@@ -521,7 +521,7 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
 
         if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
             if (user.getHead_pic().contains("http:")) {
-                MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(me_info_pic_iv);
+                MyApplication.newInstance().getGlide().load(user.getHead_pic()).placeholder(R.mipmap.logo).error(R.mipmap.logo).into(me_info_pic_iv);
             } else
                 me_info_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
         }
@@ -593,7 +593,7 @@ public class MeInfoAcitvity extends BaseActivity implements MsgView, TakePhoto.T
             user.setPhone(object.optString("phoneNumber"));
             if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
                 if (user.getHead_pic().contains("http:")) {
-                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(me_info_pic_iv);
+                    MyApplication.newInstance().getGlide().load(user.getHead_pic()).placeholder(R.mipmap.logo).error(R.mipmap.logo).into(me_info_pic_iv);
                 } else
                     me_info_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
             }

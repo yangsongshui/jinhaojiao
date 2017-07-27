@@ -88,7 +88,7 @@ public class Me extends BaseFragment {
             if (user != null) {
                 if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
                     if (user.getHead_pic().contains("http:")) {
-                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(me_pic_iv);
+                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).placeholder(R.mipmap.logo).error(R.mipmap.logo).into(me_pic_iv);
                     } else
                         me_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
                 } else {

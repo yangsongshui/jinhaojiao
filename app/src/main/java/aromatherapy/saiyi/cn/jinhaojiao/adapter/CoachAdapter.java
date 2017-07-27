@@ -88,7 +88,7 @@ public class CoachAdapter extends RecyclerView.Adapter<CoachAdapter.ViewHolder> 
         }
         if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
             if (user.getHead_pic().contains("http:")) {
-                MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(holder.coach_item_pic);
+                MyApplication.newInstance().getGlide().load(user.getHead_pic()).placeholder(R.mipmap.logo).error(R.mipmap.logo).into(holder.coach_item_pic);
             } else
                 holder.coach_item_pic.setImageBitmap(stringtoBitmap(user.getHead_pic()));
         }

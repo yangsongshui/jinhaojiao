@@ -193,7 +193,7 @@ public class Location extends BaseFragment implements MsgView {
         //初始化定位蓝点样式类
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
         myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));
-        myLocationStyle.interval(10000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
+        myLocationStyle.interval(60000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
         myLocationStyle.strokeColor(Color.argb(00, 255, 255, 255));//设置定位蓝点精度圆圈的边框颜色的方法。
         myLocationStyle.radiusFillColor(Color.argb(00, 255, 255, 255));//设置定位蓝点精度圆圈的填充颜色的方法。
         mMap.moveCamera(CameraUpdateFactory.zoomBy(3));
@@ -262,7 +262,7 @@ public class Location extends BaseFragment implements MsgView {
                 //基站
                 zuobiao(url, object.optString("time"));
             }
-            //十分钟定位一次
+            //一分钟分钟定位一次
             handler.postDelayed(myRunnable, 60 * 1000);
         }
     }

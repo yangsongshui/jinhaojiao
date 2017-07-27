@@ -211,6 +211,7 @@ public class MyApplication extends Application {
             activitiesList.remove(acty);
     }
 
+
     /**
      * 程序退出
      */

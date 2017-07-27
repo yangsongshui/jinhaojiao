@@ -111,7 +111,7 @@ public class Home extends BaseFragment implements MsgView {
                 map.put("userID", user.getUserID());
                 map.put("time", DateUtil.getCurrDate(DateUtil.LONG_DATE_FORMAT2));
                 getPersonMsgPresenterImp.loadMsg(map);
-                handler.postDelayed(this, 200000);
+                handler.postDelayed(this, 20000);
 
             }
         };
@@ -171,7 +171,7 @@ public class Home extends BaseFragment implements MsgView {
                 home_name_tv.setText(user.getNikename());
                 if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
                     if (user.getHead_pic().contains("http:")) {
-                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(home_pic_iv);
+                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).placeholder(R.mipmap.logo).error(R.mipmap.logo).into(home_pic_iv);
                     } else
                         home_pic_iv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
                 } else {
@@ -214,7 +214,11 @@ public class Home extends BaseFragment implements MsgView {
         }
 
     }
-
+    @Override
+    public void onStop() {
+        super.onStop();
+        handler.removeCallbacks(myRunnable);
+    }
     @Override
     public void disimissProgress() {
         if (dialog != null && dialog.isShowing()) {

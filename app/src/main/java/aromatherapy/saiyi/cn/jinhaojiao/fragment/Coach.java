@@ -129,7 +129,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                     if (user != null && user.getUserID() != null) {
                         Log.e(TAG, "更新数据");
                         getStudent();
-                        handler.postDelayed(this, 60 * 1000);
+                        handler.postDelayed(this, 20000);
                     }
                 }
             }
@@ -207,6 +207,8 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                 toastor.showSingletonToast("服务器连接失败");
             }
         }, getActivity());
+        initUser();
+        handler.postDelayed(myRunnable, 0);
     }
 
 
@@ -252,7 +254,6 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
     public void onResume() {
         super.onResume();
         initUser();
-        getStudent();
     }
 
     private void initUser() {
@@ -262,7 +263,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
                 coachNameTv.setText(user.getNikename());
                 if (user.getHead_pic() != null && user.getHead_pic().length() > 5) {
                     if (user.getHead_pic().contains("http:")) {
-                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).into(coachPicIv);
+                        MyApplication.newInstance().getGlide().load(user.getHead_pic()).placeholder(R.mipmap.logo).error(R.mipmap.logo).into(coachPicIv);
                     } else {
                         coachPicIv.setImageBitmap(stringtoBitmap(user.getHead_pic()));
                     }
@@ -310,6 +311,7 @@ public class Coach extends BaseFragment implements MsgView, RadioGroup.OnChecked
 
 
     }
+
 
     private void getUser(JSONArray jsonArray) {
         mList.clear();
