@@ -40,7 +40,8 @@ public class LogdingActivity extends BaseActivity {
             }
         };
 
-        MPermissions.requestPermissions(LogdingActivity.this, REQUECT_CODE_COARSE, Manifest.permission.ACCESS_COARSE_LOCATION);
+        MPermissions.requestPermissions(LogdingActivity.this, REQUECT_CODE_COARSE, Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE ,Manifest.permission.ACCESS_COARSE_LOCATION);
 
     }
     @Override

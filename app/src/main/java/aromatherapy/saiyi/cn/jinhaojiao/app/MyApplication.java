@@ -33,7 +33,7 @@ public class MyApplication extends Application {
     private User user = new User();
 
     {
-        PlatformConfig.setWeixin("wx9b8ccd08509634e2", "e3fd3dbc651c79fdc01ef5b0f057b3a0");
+        PlatformConfig.setWeixin("wx9b8ccd08509634e2", "ab19af3b830bcedb2b6600050f45cedc");
         PlatformConfig.setQQZone("1105725444", "6Q64qSIcWxDnqg3P");
         Config.DEBUG = true;
     }
