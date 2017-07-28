@@ -250,7 +250,7 @@ public class LoginActivity extends BaseActivity implements MsgView {
             for (String key : data.keySet()) {
                 Log.e("-----", "QQ" + "key= " + key + " and value= " + data.get(key));
             }
-            if (data.get("name") != null) {
+            if (data.get("openid") != null) {
                 name = data.get("name");
                 openid = data.get("openid");
                 map.put("account", data.get("openid"));
